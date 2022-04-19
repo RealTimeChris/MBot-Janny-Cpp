@@ -271,7 +271,6 @@ namespace DiscordCoreAPI {
 						deleteData.messageId = value.id;
 						deleteData.reason = "Purging messages.";
 						Messages::deleteMessageAsync(deleteData);
-						
 					}
 				}
 			}
@@ -299,7 +298,7 @@ namespace DiscordCoreAPI {
 				DiscordGuild discordGuild(value);
 				discordGuildVector.push_back(discordGuild);
 				for (int32_t x = 0; x < discordGuild.data.deletionChannels.size(); x += 1) {
-					deleteMessagesToBeWrapped(discordGuild, x).get();
+					deleteMessagesToBeWrapped(discordGuild, x);
 				}
 			}
 

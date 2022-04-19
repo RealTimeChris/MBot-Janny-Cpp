@@ -236,11 +236,11 @@ namespace DiscordCoreAPI {
 		}
 
 		static void execute(OnInviteCreationData dataPackage) {
-			updateInvitesDataBaseToWrap(dataPackage.invite.guildId);			
+			updateInvitesDataBaseToWrap(dataPackage.invite.guildId);
 		}
 
 		static void execute(OnInviteDeletionData dataPackage) {
-			updateInvitesDataBaseToWrap(dataPackage.guildId);			
+			updateInvitesDataBaseToWrap(dataPackage.guildId);
 		}
 
 		static CoRoutine<void> execute(MonitorInvitesArgs newArgs) {

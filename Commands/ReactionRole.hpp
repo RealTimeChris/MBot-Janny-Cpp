@@ -205,7 +205,7 @@ namespace DiscordCoreAPI {
 					discordGuild.data.roleManager.channelId = newArgs.eventData->getChannelId();
 					discordGuild.data.roleManager.message = theMessage;
 					discordGuild.writeDataToDB();
-					theLoop(discordGuild, newArgs.discordCoreClient);					
+					theLoop(discordGuild, newArgs.discordCoreClient);
 				}
 			} catch (...) {
 				reportException("ReactionRole::execute()");
@@ -252,7 +252,7 @@ namespace DiscordCoreAPI {
 				ButtonCollector buttonCollector{ currentEvent };
 				auto resultValue = buttonCollector.collectButtonData(true, INT32_MAX, 1, "").get();
 				InputEventData inputData = InputEventData{ MessageData{}, resultValue[0].interactionData, InteractionType::Application_Command };
-				startupTheMessagePerGuild(discordGuild, botUser, discordGuild.data.roleManager.message, inputData);				
+				startupTheMessagePerGuild(discordGuild, botUser, discordGuild.data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(
 					{ .channelId = newMessage.channelId, .messageId = newMessage.id, .timeStamp = newMessage.timestamp, .reason = "Deleting!" })
@@ -265,7 +265,7 @@ namespace DiscordCoreAPI {
 				ButtonCollector buttonCollector{ currentEvent };
 				auto resultValue = buttonCollector.collectButtonData(true, INT32_MAX, 1, "").get();
 				InputEventData inputData = InputEventData{ MessageData{}, resultValue[0].interactionData, InteractionType::Application_Command };
-				startupTheMessagePerGuild(discordGuild, botUser, discordGuild.data.roleManager.message, inputData);				
+				startupTheMessagePerGuild(discordGuild, botUser, discordGuild.data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(
 					{ .channelId = newMessage.channelId, .messageId = newMessage.id, .timeStamp = newMessage.timestamp, .reason = "Deleting!" })
@@ -285,7 +285,7 @@ namespace DiscordCoreAPI {
 			if (discordGuild.data.roleManager.messageId == "" || discordGuild.data.roleManager.theRoles.size() == 0) {
 				continue;
 			}
-			theLoop(discordGuild, theClient);			
+			theLoop(discordGuild, theClient);
 		}
 	}
 
