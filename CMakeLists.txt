@@ -63,7 +63,7 @@ set_target_properties(
 	PDB_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Output Files/$<CONFIG>"
 )
 
-if (WIN32)
+if (WIN32 AND NOT VCPKG_ROOT)
 	add_custom_command(TARGET MBot-Janny POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:MBot-Janny> $<TARGET_FILE_DIR:MBot-Janny>
 	  COMMAND_EXPAND_LISTS
