@@ -85,8 +85,8 @@ namespace DiscordCoreAPI {
 				for (int32_t z = 0; z < ( int32_t )messagesToDelete.size(); z += 1) {
 					if (!hasTimeElapsed(messagesToDelete[z].timestamp.getOriginalTimeStamp(), 14, 0, 0) && !messagesToDelete[z].pinned) {
 						totalMessageCount += 1;
-						//purgeVector.push_back(messagesToDelete[z].id);
-						deleteVector.push_back(messagesToDelete[z]);
+						purgeVector.push_back(messagesToDelete[z].id);
+						//deleteVector.push_back(messagesToDelete[z]);
 					} else if (!messagesToDelete[z].pinned) {
 						totalMessageCount += 1;
 						deleteVector.push_back(messagesToDelete[z]);
@@ -210,8 +210,8 @@ namespace DiscordCoreAPI {
 						if ((!hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 14, 0, 0) && !arrayOfMessageArrays[w][z].pinned &&
 								hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 0, 0,
 									discordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted))) {
-							deleteVector.push_back(arrayOfMessageArrays[w][z]);
-							//purgeVector.push_back(arrayOfMessageArrays[w][z].id);
+							//deleteVector.push_back(arrayOfMessageArrays[w][z]);
+							purgeVector.push_back(arrayOfMessageArrays[w][z].id);
 						} else if (!arrayOfMessageArrays[w][z].pinned) {
 							totalMessageCount += 1;
 							deleteVector.push_back(arrayOfMessageArrays[w][z]);
