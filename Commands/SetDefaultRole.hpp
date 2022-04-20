@@ -219,7 +219,7 @@ namespace DiscordCoreAPI {
 						}
 					}
 
-					if (currentRole.position > highestBotRole.position || currentRole.managed) {
+					if (currentRole.position > highestBotRole.position || currentRole.getManaged()) {
 						std::string msgString =
 							"------\n**Sorry, but that is either a managed role or it is higher than my highest role! I cannot use it!**\n------";
 						EmbedData msgEmbed{};
