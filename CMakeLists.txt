@@ -25,14 +25,14 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 include(GenerateProductVersion)
 
 generate_product_version(
-   PRODUCT_INFO
-   NAME "MBot-Janny-Cpp"
-   ICON "${CMAKE_SOURCE_DIR}/Chris 03.ico"
-   ORIGINAL_FILENAME "MBot-Janny-Cpp.exe"
-   VERSION_MAJOR "1"
-   VERSION_MINOR "0"
-   VERSION_PATCH "0"
-   VERSION_REVISION "0"
+	PRODUCT_INFO
+	NAME "MBot-Janny-Cpp"
+	ICON "${CMAKE_SOURCE_DIR}/Chris 03.ico"
+	ORIGINAL_FILENAME "MBot-Janny-Cpp.exe"
+	VERSION_MAJOR "1"
+	VERSION_MINOR "0"
+	VERSION_PATCH "0"
+	VERSION_REVISION "0"
 )
 
 project(MBot-Janny LANGUAGES CXX)
