@@ -25,7 +25,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 include(GenerateProductVersion)
 
 generate_product_version(
-   VERSION_FILES_OUTPUT_VARIABLE
+   PRODUCT_INFO
    NAME "MBot-Janny-Cpp"
    ICON "${CMAKE_SOURCE_DIR}/Chris 03.ico"
    ORIGINAL_FILENAME "MBot-Janny-Cpp.exe"
@@ -40,7 +40,7 @@ project(MBot-Janny LANGUAGES CXX)
 add_executable(
 	MBot-Janny
 	"main.cpp"
-	"${VERSION_FILES_OUTPUT_VARIABLE}"
+	"${PRODUCT_INFO}"
 )
 
 find_package(DiscordCoreAPI CONFIG REQUIRED)
