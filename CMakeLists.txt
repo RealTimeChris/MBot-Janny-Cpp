@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.22)
 # Set this value...
 set(VCPKG_ROOT_DIR "C:/vcpkg")
 # Or this value
-set(CMAKE_CONFIG_FILE_PATH "")
+set(CMAKE_CONFIG_FILE_PATH "C:/Program Files/discordcoreapi_proj/share/discordcoreapi")
 
 set(CMAKE_CONFIGURATION_TYPES "$CACHE{CMAKE_BUILD_TYPE}")
-
+set(LIBRARY_SUFFIX ".lib")
 if (VCPKG_ROOT_DIR)
 	if (WIN32)
 		set(LIBRARY_SUFFIX ".lib")
@@ -49,7 +49,7 @@ add_executable(
 )
 
 find_package(DiscordCoreAPI CONFIG REQUIRED)
-
+set(VCPKG_INSTALLED_DIR "C:/TEMP/vcpkg/installed/x64-windows")
 target_link_libraries(
 	MBot-Janny PUBLIC
 	DiscordCoreAPI::DiscordCoreAPI
