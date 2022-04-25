@@ -1,8 +1,8 @@
 ﻿generate_product_version(
 	PRODUCT_INFO
-	NAME "MBot-Janny-Cpp"
-	ICON "${CMAKE_SOURCE_DIR}/Chris 03.ico"
-	ORIGINAL_FILENAME "MBot-Janny-Cpp.exe"
+	NAME "MBot-GameHouse-Cpp"
+	ICON "${CMAKE_SOURCE_DIR}/Chris 02.ico"
+	ORIGINAL_FILENAME "MBot-GameHouse-Cpp.exe"
 	VERSION_MAJOR "1"
 	VERSION_MINOR "0"
 	VERSION_PATCH "0"
@@ -20,7 +20,7 @@ find_sodium("${SODIUM_RELEASE_ROOT}" "${SODIUM_DEBUG_ROOT}" "${SODIUM_INCLUDE_DI
 find_nlohmann_json("${NLOHMANN_INCLUDE_DIR}")
 
 add_executable(
-	MBot-Janny
+	MBot-GameHouse
 	"../main.cpp"
 	"${PRODUCT_INFO}"
 )
@@ -30,11 +30,11 @@ if (DEFINED ENV{EnableASAN})
 
 	if(ASAN_ENABLED)
 		if(MSVC)
-			target_compile_options(MBot-Janny PUBLIC /fsanitize=address /Zi)
-			target_link_options(MBot-Janny PUBLIC /fsanitize=address /DEBUG)
+			target_compile_options(MBot-GameHouse PUBLIC /fsanitize=address /Zi)
+			target_link_options(MBot-GameHouse PUBLIC /fsanitize=address /DEBUG)
 		else()
-			target_compile_options(MBot-Janny PUBLIC -fsanitize=address <additional-options>)
-			add_compile_definitions(MBot-Janny PUBLIC -fsanitize=address)
+			target_compile_options(MBot-GameHouse PUBLIC -fsanitize=address <additional-options>)
+			add_compile_definitions(MBot-GameHouse PUBLIC -fsanitize=address)
 		endif()
 	endif()
 endif()
@@ -42,7 +42,7 @@ endif()
 find_package(DiscordCoreAPI CONFIG REQUIRED)
 
 target_link_libraries(
-	MBot-Janny PUBLIC
+	MBot-GameHouse PUBLIC
 	DiscordCoreAPI::DiscordCoreAPI
 	"${VCPKG_INSTALLED_DIR}/lib/mongoc-1.0${LIBRARY_SUFFIX}"
 	"${VCPKG_INSTALLED_DIR}/lib/mongocxx${LIBRARY_SUFFIX}"
@@ -50,8 +50,8 @@ target_link_libraries(
 )
 
 set_target_properties(
-	MBot-Janny PROPERTIES 
-	OUTPUT_NAME "MBot-Janny-Cpp"
+	MBot-GameHouse PROPERTIES 
+	OUTPUT_NAME "MBot-GameHouse-Cpp"
 	VS_GLOBAL_VcpkgEnabled true
 	ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Output Files/$<CONFIG>"
 	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Output Files/$<CONFIG>"
@@ -61,8 +61,8 @@ set_target_properties(
 
 if (WIN32 AND NOT VCPKG_ROOT)
 	add_custom_command(
-		TARGET MBot-Janny POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:MBot-Janny> $<TARGET_FILE_DIR:MBot-Janny>
+		TARGET MBot-GameHouse POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:MBot-GameHouse> $<TARGET_FILE_DIR:MBot-GameHouse>
 		COMMAND_EXPAND_LISTS
 	)
 endif()
