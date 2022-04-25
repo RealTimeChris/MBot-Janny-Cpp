@@ -1,7 +1,7 @@
 ﻿generate_product_version(
 	PRODUCT_INFO
 	NAME "MBot-Janny-Cpp"
-	ICON "${CMAKE_SOURCE_DIR}/Chris 02.ico"
+	ICON "${CMAKE_SOURCE_DIR}/Chris 03.ico"
 	ORIGINAL_FILENAME "MBot-Janny-Cpp.exe"
 	VERSION_MAJOR "1"
 	VERSION_MINOR "0"
@@ -62,7 +62,7 @@ set_target_properties(
 if (WIN32 AND NOT VCPKG_ROOT)
 	add_custom_command(
 		TARGET MBot-Janny POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:MBot-Janny> $<TARGET_FILE_DIR:MBot-Janny>
+		COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_RUNTIME_DLLS:MBot-Janny>" "$<TARGET_FILE_DIR:MBot-Janny>"
 		COMMAND_EXPAND_LISTS
 	)
 endif()
