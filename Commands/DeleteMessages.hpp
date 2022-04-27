@@ -419,7 +419,6 @@ namespace DiscordCoreAPI {
 					whatAreWeDoing = convertToLowerCase(newArgs.commandData.subCommandName);
 					howManyBack = 0;
 				}
-				std::cout << "THEIS IS IT: " << convertToLowerCase(newArgs.commandData.subCommandName) << std::endl;
 
 				DeletionChannelData currentDeletionChannel{};
 				currentDeletionChannel.numberOfMessagesToSave = howManyBack;
