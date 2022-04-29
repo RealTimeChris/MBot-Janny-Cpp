@@ -1,8 +1,8 @@
 ﻿generate_product_version(
 	PRODUCT_INFO
-	NAME "MBot-Janny-Cpp"
-	ICON "${CMAKE_SOURCE_DIR}/Chris 03.ico"
-	ORIGINAL_FILENAME "MBot-Janny-Cpp.exe"
+	NAME "MBot-MusicHouse-Cpp"
+	ICON "${CMAKE_SOURCE_DIR}/Chris 01.ico"
+	ORIGINAL_FILENAME "MBot-MusicHouse-Cpp.exe"
 	VERSION_MAJOR "1"
 	VERSION_MINOR "0"
 	VERSION_PATCH "0"
@@ -20,32 +20,32 @@ find_sodium("${SODIUM_RELEASE_ROOT}" "${SODIUM_DEBUG_ROOT}" "${SODIUM_INCLUDE_DI
 find_nlohmann_json("${NLOHMANN_INCLUDE_DIR}")
 
 add_executable(
-	MBot-Janny
+	MBot-MusicHouse
 	"../main.cpp"
 	"${PRODUCT_INFO}"
 )
 
 if (DEFINED ENV{EnableASAN})
 	if(MSVC)
-		target_compile_options(MBot-Janny PUBLIC "/fsanitize=address" "/Zi" "/Debug")
-		target_link_options(MBot-Janny PUBLIC "/DEBUG")
+		target_compile_options(MBot-MusicHouse PUBLIC "/fsanitize=address" "/Zi" "/Debug")
+		target_link_options(MBot-MusicHouse PUBLIC "/DEBUG")
 	else()
-		target_compile_options(MBot-Janny PUBLIC "-fsanitize=address" "/Debug")
-		target_link_options(MBot-Janny PUBLIC "-fsanitize=address" "-libasan-static")
+		target_compile_options(MBot-MusicHouse PUBLIC "-fsanitize=address" "/Debug")
+		target_link_options(MBot-GameHouse PUBLIC "-fsanitize=address" "-libasan-static")
 	endif()
 endif()
 
 find_package(DiscordCoreAPI CONFIG REQUIRED)
 
 target_link_libraries(
-	MBot-Janny PUBLIC
+	MBot-MusicHouse PUBLIC
 	DiscordCoreAPI::DiscordCoreAPI
 	"$<IF:$<CONFIG:Debug>,${VCPKG_INSTALLED_DIR}/debug/lib/mongocxx${LIBRARY_SUFFIX},${VCPKG_INSTALLED_DIR}/lib/mongocxx${LIBRARY_SUFFIX}>"
 )
 
 set_target_properties(
-	MBot-Janny PROPERTIES 
-	OUTPUT_NAME "MBot-Janny-Cpp"
+	MBot-MusicHouse PROPERTIES 
+	OUTPUT_NAME "MBot-MusicHouse-Cpp"
 	VS_GLOBAL_VcpkgEnabled true
 	ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Output Files/$<CONFIG>"
 	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/Output Files/$<CONFIG>"
@@ -61,12 +61,12 @@ if (WIN32 AND NOT EXISTS "${VCPKG_ROOT}")
 	endif()
 
 	add_custom_command(
-		TARGET MBot-Janny POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_RUNTIME_DLLS:MBot-Janny>" "$<TARGET_FILE_DIR:MBot-Janny>"
+		TARGET MBot-MusicHouse POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_RUNTIME_DLLS:MBot-MusicHouse>" "$<TARGET_FILE_DIR:MBot-MusicHouse>"
 		COMMAND_EXPAND_LISTS
 	)
 	add_custom_command(
-		TARGET MBot-Janny POST_BUILD
+		TARGET MBot-MusicHouse POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E copy "$<IF:$<CONFIG:Debug>,${DEBUG_PDB_FILE},${RELEASE_PDB_FILE}>" "${CMAKE_SOURCE_DIR}/Output Files/$<CONFIG>/$<IF:$<CONFIG:Debug>,${DEBUG_PDB_FILE_NAME},${RELEASE_PDB_FILE_NAME}>"
 		COMMAND_EXPAND_LISTS
 	)
