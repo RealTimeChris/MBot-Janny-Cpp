@@ -338,7 +338,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
@@ -453,7 +453,7 @@ namespace DiscordCoreAPI {
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto event01 = InputEvents::respondToEvent(dataPackage);
-					InputEvents::deleteInputEventResponseAsync(std::move(event01), 20000).get();
+					InputEvents::deleteInputEventResponseAsync(event01, 20000).get();
 					return;
 				}
 				if (whatAreWeDoing == "add") {
@@ -468,7 +468,7 @@ namespace DiscordCoreAPI {
 							deletionChannelIndex = x;
 						}
 					}
-					std::unique_ptr<InputEventData> thePtr{ std::make_unique<InputEventData>(newArgs.eventData) };
+					InputEventData thePtr{ InputEventData{ newArgs.eventData } };
 					if (isItFound == true) {
 						std::string msgString = "------\n**This channel has already been added! I will update your number of saved messages though!**\n------";
 						EmbedData msgEmbed{};
@@ -481,7 +481,7 @@ namespace DiscordCoreAPI {
 						dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						thePtr = InputEvents::respondToEvent(dataPackage);
-						InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*thePtr), 20000);
+						InputEvents::deleteInputEventResponseAsync(thePtr, 20000);
 						Message previousMessage =
 							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = currentDeletionChannel.deletionMessageId }).get();
 						if (previousMessage.id != "") {
@@ -504,18 +504,18 @@ namespace DiscordCoreAPI {
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**Channel Message Purging:**__");
 					MessageData pinMessage;
-					if (thePtr->responseType == InputEventResponseType::Interaction_Response) {
-						RespondToInputEventData dataPackage(*thePtr);
+					if (thePtr.responseType == InputEventResponseType::Interaction_Response) {
+						RespondToInputEventData dataPackage(thePtr);
 						dataPackage.setResponseType(InputEventResponseType::Follow_Up_Message);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto event01 = InputEvents::respondToEvent(dataPackage);
-						pinMessage = event01->getMessageData();
+						pinMessage = event01.getMessageData();
 					} else {
-						RespondToInputEventData dataPackage(*thePtr);
+						RespondToInputEventData dataPackage(thePtr);
 						dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto event01 = InputEvents::respondToEvent(dataPackage);
-						pinMessage = event01->getMessageData();
+						pinMessage = event01.getMessageData();
 					}
 					Messages::pinMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .messageId = pinMessage.id }).get();
 					currentDeletionChannel.deletionMessageId = pinMessage.id;
@@ -567,7 +567,7 @@ namespace DiscordCoreAPI {
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto event01 = InputEvents::respondToEvent(dataPackage);
-					InputEvents::deleteInputEventResponseAsync(std::move(event01), 20000).get();
+					InputEvents::deleteInputEventResponseAsync(event01, 20000).get();
 				}
 				return;
 			} catch (...) {

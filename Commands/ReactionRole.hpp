@@ -43,7 +43,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
 
 				Guild guild = Guilds::getGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
@@ -248,7 +248,7 @@ namespace DiscordCoreAPI {
 				discordGuild.data.roleManager.messageId = newMessage.id;
 				discordGuild.data.roleManager.channelId = newMessage.channelId;
 				discordGuild.writeDataToDB();
-				
+
 				currentEvent = InputEventData{ newMessage, interaction, InteractionType::Application_Command };
 
 				ButtonCollector buttonCollector{ currentEvent };
@@ -356,7 +356,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage02(newEvent);
 					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage02.addMessageEmbed(messageEmbeds[0]);
-					newEvent = *InputEvents::respondToEvent(dataPackage02);
+					newEvent = InputEvents::respondToEvent(dataPackage02);
 					isItFirst = false;
 				} else {
 					dataPackages[0] = newEvent;
@@ -365,8 +365,8 @@ namespace DiscordCoreAPI {
 					dataPackages[0].addSelectMenu(
 						false, "role_selection_" + currentPageIndex, theOptions, "Select Roles", static_cast<int32_t>(theOptions.size()), 0);
 				}
-				auto newResult = moveThroughMessagePages(
-					inputData.getAuthorId(), std::make_unique<InputEventData>(newEvent), currentPageIndex, messageEmbeds, false, 120000, true);
+				auto newResult =
+					moveThroughMessagePages(inputData.getAuthorId(), InputEventData(newEvent), currentPageIndex, messageEmbeds, false, 120000, true);
 				std::vector<Role> theRoles{};
 				std::vector<SelectMenuResponseData> returnData{};
 
@@ -376,7 +376,7 @@ namespace DiscordCoreAPI {
 				}
 
 				dataPackages[newResult.currentPageIndex].setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-				newEvent = *InputEvents::respondToEvent(dataPackages[newResult.currentPageIndex]);
+				newEvent = InputEvents::respondToEvent(dataPackages[newResult.currentPageIndex]);
 				collector = std::make_unique<SelectMenuCollector>(newEvent);
 				returnData = collector->collectSelectMenuData(true, 120000, 1, "").get();
 
@@ -415,7 +415,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage02(eventNew);
 							dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
 							dataPackage02.addMessageEmbed(msgEmbed);
-							eventNew = InputEvents::respondToEvent(dataPackage02)->getInteractionData();
+							eventNew = InputEvents::respondToEvent(dataPackage02).getInteractionData();
 						} else {
 							Roles::addGuildMemberRoleAsync(
 								{ .guildId = inputData.getGuildId(), .userId = guildMember.user.id, .roleId = value, .reason = "Role-granting." })
@@ -430,7 +430,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage02(eventNew);
 							dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
 							dataPackage02.addMessageEmbed(msgEmbed);
-							eventNew = InputEvents::respondToEvent(dataPackage02)->getInteractionData();
+							eventNew = InputEvents::respondToEvent(dataPackage02).getInteractionData();
 						}
 					}
 					if (doWeQuit) {

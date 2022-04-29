@@ -31,15 +31,15 @@ namespace DiscordCoreAPI {
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
 				if (channel.type != ChannelType::Dm) {
-					InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
+					InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
 				}
 
 
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild(guild);
 				bool isItFirst{ true };
-				std::unique_ptr<InputEventData> newEvent01{ std::make_unique<InputEventData>(newArgs.eventData) };
-				RespondToInputEventData responseData{ *newEvent01 };
+				InputEventData newEvent01(newArgs.eventData);
+				RespondToInputEventData responseData{ newEvent01 };
 				while (1) {
 					std::vector<std::vector<SelectOptionData>> selectOptions;
 					int32_t counter{ 0 };
@@ -96,7 +96,7 @@ namespace DiscordCoreAPI {
 						" and I'm here to help you out!\n" +
 						"Please, select one of my commands from the drop-down menu below, to gain more information about them! (Or select 'Go Back' to go back "
 						"to the previous menu)\n------";
-					std::unique_ptr<InputEventData> newEvent{ std::make_unique<InputEventData>() };
+					InputEventData newEvent{};
 					std::vector<std::string> numberEmojiNames{
 						"✅",
 						"🍬",
@@ -120,13 +120,13 @@ namespace DiscordCoreAPI {
 						responseData.setResponseType(InputEventResponseType::Edit_Ephemeral_Interaction_Response);
 						InputEvents::respondToEvent(responseData);
 					}
-					ButtonCollector button(*newEvent01);
+					ButtonCollector button(newEvent01);
 					auto buttonData = button.collectButtonData(false, 120000, 1, newArgs.eventData.getRequesterId()).get();
 					int32_t counter03{ 0 };
 					std::vector<RespondToInputEventData> editInteractionResponseData00;
 					for (auto& value: selectOptionsNew) {
 						EmbedData msgEmbed00;
-						msgEmbed00.setAuthor(newEvent01->getUserName(), newEvent01->getAvatarUrl());
+						msgEmbed00.setAuthor(newEvent01.getUserName(), newEvent01.getAvatarUrl());
 						msgEmbed00.setColor(discordGuild.data.borderColor);
 						msgEmbed00.setTimeStamp(getTimeAndDate());
 						msgEmbed00.setDescription(msgString);
@@ -142,7 +142,7 @@ namespace DiscordCoreAPI {
 					if (buttonData.size() > 0) {
 						if (buttonData.at(0).buttonId == "exit" || buttonData.at(0).buttonId == "empty") {
 							EmbedData msgEmbed00;
-							msgEmbed00.setAuthor(newEvent01->getUserName(), newEvent01->getAvatarUrl());
+							msgEmbed00.setAuthor(newEvent01.getUserName(), newEvent01.getAvatarUrl());
 							msgEmbed00.setColor(discordGuild.data.borderColor);
 							msgEmbed00.setTimeStamp(getTimeAndDate());
 							msgEmbed00.setDescription(messageNew);
@@ -165,7 +165,7 @@ namespace DiscordCoreAPI {
 					} else {
 						break;
 					}
-					SelectMenuCollector selectMenu(*newEvent01);
+					SelectMenuCollector selectMenu(newEvent01);
 					auto selectMenuReturnData = selectMenu.collectSelectMenuData(false, 120000, 1, newArgs.eventData.getRequesterId()).get();
 					EmbedData newEmbed{};
 					for (auto& [key, value]: newArgs.discordCoreClient->commandController.getFunctions()) {
@@ -195,7 +195,7 @@ namespace DiscordCoreAPI {
 					responseData02.addButton(false, "back", "Back", ButtonStyle::Success, "🔙");
 					responseData02.addButton(false, "exit", "Exit", ButtonStyle::Success, "❌");
 					newEvent = InputEvents::respondToEvent(responseData02);
-					auto buttonReturnData02 = ButtonCollector{ *newEvent01 }.collectButtonData(false, 120000, 1, newArgs.eventData.getRequesterId()).get();
+					auto buttonReturnData02 = ButtonCollector{ newEvent01 }.collectButtonData(false, 120000, 1, newArgs.eventData.getRequesterId()).get();
 					if (buttonReturnData02.at(0).buttonId == "back") {
 						responseData = RespondToInputEventData{ buttonReturnData02.at(0).interactionData };
 						continue;

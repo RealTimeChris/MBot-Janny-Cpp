@@ -28,10 +28,10 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData));
+				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-				std::unique_ptr<InputEventData> newEvent = std::make_unique<InputEventData>(newArgs.eventData);
+				InputEventData newEvent = newArgs.eventData;
 				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
 					newEvent = InputEvents::respondToEvent(dataPackage);
 				}
@@ -490,7 +490,7 @@ namespace DiscordCoreAPI {
 				msgEmbed.setDescription("------\nNicely done, you've registered some commands!\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**Register Application Commands Complete:**__");
-				RespondToInputEventData dataPackage02(*newEvent);
+				RespondToInputEventData dataPackage02(newEvent);
 				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage02.addMessageEmbed(msgEmbed);
 				auto event = InputEvents::respondToEvent(dataPackage02);

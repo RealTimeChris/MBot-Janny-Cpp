@@ -36,7 +36,7 @@ namespace DiscordCoreAPI {
 				if (areWeInADm) {
 					return;
 				}
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData));
+				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				GuildMember guildMember =
 					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
@@ -151,14 +151,13 @@ namespace DiscordCoreAPI {
 							msgEmbeds.push_back(msgEmbed);
 						}
 					}
-					std::unique_ptr<InputEventData> eventData = std::make_unique<InputEventData>(newArgs.eventData);
+					InputEventData eventData = newArgs.eventData;
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbeds[currentIndex]);
 					eventData = InputEvents::respondToEvent(dataPackage);
 
-					moveThroughMessagePages(
-						newArgs.eventData.getAuthorId(), std::make_unique<InputEventData>(*eventData), currentIndex, msgEmbeds, false, 120000);
+					moveThroughMessagePages(newArgs.eventData.getAuthorId(), eventData, currentIndex, msgEmbeds, false, 120000);
 				}
 				return;
 			} catch (...) {

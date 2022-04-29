@@ -116,7 +116,7 @@ namespace DiscordCoreAPI {
 						deletePinned = false;
 					}
 				}
-				std::unique_ptr<InputEventData> newEvent01{ std::make_unique<InputEventData>() };
+				InputEventData newEvent01{};				
 				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
@@ -142,15 +142,15 @@ namespace DiscordCoreAPI {
 				msgEmbed.setDescription(msgString);
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**Purging Messages:**__");
-				std::unique_ptr<InputEventData> newEvent{ std::make_unique<InputEventData>() };
-				RespondToInputEventData dataPackage(*newEvent01);
+				InputEventData newEvent{};
+				RespondToInputEventData dataPackage(newEvent01);
 				dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
 				newEvent = InputEvents::respondToEvent(dataPackage);
 				std::string msgString2;
 				uint32_t messageLimit = ( uint32_t )std::stoll(digitString);
 				std::vector<std::string> messageIdsToDelete;
-				std::string currentMessageId = newEvent->getMessageId();
+				std::string currentMessageId = newEvent.getMessageId();
 				if (deletePinned) {
 					if (newArgs.commandData.optionsArgs.size() < 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
@@ -272,7 +272,7 @@ namespace DiscordCoreAPI {
 				msgEmbed2.setDescription(msgString2);
 				msgEmbed2.setTimeStamp(getTimeAndDate());
 				msgEmbed2.setTitle("__**Purging Messages:**__");
-				RespondToInputEventData dataPackage02(*newEvent);
+				RespondToInputEventData dataPackage02(newEvent);
 				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage02.addMessageEmbed(msgEmbed2);
 				newEvent = InputEvents::respondToEvent(dataPackage02);

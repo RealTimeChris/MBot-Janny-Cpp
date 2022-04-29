@@ -34,7 +34,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
@@ -47,7 +47,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				std::unique_ptr<InputEventData> newEvent = std::make_unique<InputEventData>(newArgs.eventData);
+				InputEventData newEvent = newArgs.eventData;
 				std::regex userIdRegex("\\d{18}");
 				std::regex digitDaysRegex("\\d{1}");
 				std::string userId;
@@ -64,12 +64,12 @@ namespace DiscordCoreAPI {
 						std::string msgString = "------\n**Please, enter a proper number of days for purging the user's messages (0-7) (!ban = @USERMENTION, "
 												"REASON, #OFDAYSTOPURGE)**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newEvent->getUserName(), newEvent->getAvatarUrl());
+						msgEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setTitle("__**Missing or Invalid Parameters:**__");
 						msgEmbed.setTimeStamp(getTimeAndDate());
-						RespondToInputEventData dataPackage(*newEvent);
+						RespondToInputEventData dataPackage(newEvent);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						newEvent = InputEvents::respondToEvent(dataPackage);
@@ -120,7 +120,7 @@ namespace DiscordCoreAPI {
 
 					CreateGuildBanData dataPackageNew;
 					dataPackageNew.deleteMessageDays = daysDigit;
-					dataPackageNew.guildId = newEvent->getGuildId();
+					dataPackageNew.guildId = newEvent.getGuildId();
 					dataPackageNew.reason = reason;
 					dataPackageNew.guildMemberId = userId;
 
@@ -143,17 +143,17 @@ namespace DiscordCoreAPI {
 					discordGuild.getDataFromDB();
 					bool areWeFound = false;
 					for (auto& value: discordGuild.data.userBanInfo) {
-						if (newEvent->getAuthorId() == value.userId) {
+						if (newEvent.getAuthorId() == value.userId) {
 							areWeFound = true;
 						}
 					}
 					UserBanInfo userBanInfo;
-					userBanInfo.userId = newEvent->getAuthorId();
+					userBanInfo.userId = newEvent.getAuthorId();
 					if (!areWeFound) {
 						discordGuild.data.userBanInfo.push_back(userBanInfo);
 					}
 					for (uint32_t x = 0; x < discordGuild.data.userBanInfo.size(); x += 1) {
-						if (discordGuild.data.userBanInfo[x].userId == newEvent->getAuthorId()) {
+						if (discordGuild.data.userBanInfo[x].userId == newEvent.getAuthorId()) {
 							BanInfoLite newData;
 							auto guildMemberNew = Users::getUserAsync({ .userId = userId }).get();
 							for (auto& value: discordGuild.data.userBanInfo[x].userBans) {
@@ -167,18 +167,18 @@ namespace DiscordCoreAPI {
 							newData.bannedAt = getTimeAndDate();
 							newData.reason = reason;
 							discordGuild.data.userBanInfo[x].userBans.push_back(newData);
-							discordGuild.data.userBanInfo[x].userId = newEvent->getAuthorId();
+							discordGuild.data.userBanInfo[x].userId = newEvent.getAuthorId();
 							discordGuild.writeDataToDB();
 
 							std::string msgString = "------\n**Nicely done! You owned that motherfucker " + guildMemberNew.userName +
 								" good!**\nYour current ban count is: " + std::to_string(discordGuild.data.userBanInfo[x].userBans.size()) + "\n------";
 							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newEvent->getUserName(), newEvent->getAvatarUrl());
+							msgEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 							msgEmbed.setDescription(msgString);
 							msgEmbed.setColor(discordGuild.data.borderColor);
 							msgEmbed.setTitle("__**Succesful Ban:**__");
 							msgEmbed.setTimeStamp(getTimeAndDate());
-							RespondToInputEventData dataPackage03(*newEvent);
+							RespondToInputEventData dataPackage03(newEvent);
 							dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 							dataPackage03.addMessageEmbed(msgEmbed);
 							newEvent = InputEvents::respondToEvent(dataPackage03);
@@ -225,7 +225,7 @@ namespace DiscordCoreAPI {
 						pageStrings[currentPage] += msgString;
 						if (x % membersPerPage == membersPerPage - 1 || x == discordGuild.data.userBanInfo.size() - 1) {
 							pageStrings[currentPage] += "------";
-							pageEmbeds[currentPage].setAuthor(newEvent->getUserName(), newEvent->getAvatarUrl());
+							pageEmbeds[currentPage].setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 							pageEmbeds[currentPage].setDescription(pageStrings[currentPage]);
 							pageEmbeds[currentPage].setTimeStamp(getTimeAndDate());
 							pageEmbeds[currentPage].setTitle(
@@ -237,7 +237,7 @@ namespace DiscordCoreAPI {
 					if (pageEmbeds.size() == 0) {
 						std::string msgString = "------\n**Sorry, but noone has banned anyone yet!**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newEvent->getUserName(), newEvent->getAvatarUrl());
+						msgEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setTitle("__**No Bans:**__");
@@ -246,13 +246,13 @@ namespace DiscordCoreAPI {
 					}
 
 					currentPage = 0;
-					RespondToInputEventData dataPackage(*newEvent);
+					RespondToInputEventData dataPackage(newEvent);
 					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
 					newEvent = InputEvents::respondToEvent(dataPackage);
 					auto returnValue = moveThroughMessagePages(
-						newEvent->getRequesterId(), std::make_unique<InputEventData>(*newEvent), currentPage, pageEmbeds, false, 120000, true);
+						newEvent.getRequesterId(), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
 					if (returnValue.buttonId == "exit" || returnValue.buttonId == "empty") {
-						InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(returnValue.inputEventData));
+						InputEvents::deleteInputEventResponseAsync(InputEventData(returnValue.inputEventData));
 						return;
 					}
 					if (returnValue.buttonId == "select") {
@@ -261,7 +261,7 @@ namespace DiscordCoreAPI {
 							if (value.userId == newArgs.eventData.getAuthorId()) {
 								for (auto& value2: value.userBans) {
 									EmbedData newEmbed;
-									newEmbed.setAuthor(newEvent->getUserName(), newEvent->getAvatarUrl());
+									newEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 									newEmbed.setDescription(
 										"------\n__**Date Banned:**__ " + value2.bannedAt + "\n__**Reason:**__ " + value2.reason + "\n------");
 									newEmbed.setTimeStamp(getTimeAndDate());
@@ -274,7 +274,7 @@ namespace DiscordCoreAPI {
 						}
 						if (msgEmbeds.size() == 0) {
 							EmbedData newEmbed;
-							newEmbed.setAuthor(newEvent->getUserName(), newEvent->getAvatarUrl());
+							newEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
 							newEmbed.setDescription("------\n__**You have not banned anyone yet!**__\n------");
 							newEmbed.setTimeStamp(getTimeAndDate());
 							newEmbed.setTitle("__**Banned Users:**__");
@@ -283,8 +283,8 @@ namespace DiscordCoreAPI {
 							msgEmbeds.push_back(newEmbed);
 						}
 						int32_t currentPageIndex02 = 0;
-						moveThroughMessagePages(newEvent->getRequesterId(), std::make_unique<InputEventData>(returnValue.inputEventData), currentPageIndex02,
-							msgEmbeds, true, 120000, true);
+						moveThroughMessagePages(
+							newEvent.getRequesterId(), InputEventData(returnValue.inputEventData), currentPageIndex02, msgEmbeds, true, 120000, true);
 					}
 				}
 				return;

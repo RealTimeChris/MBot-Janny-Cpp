@@ -56,7 +56,7 @@ namespace DiscordCoreAPI {
 				dataPackage.addMessageEmbed(msgEmbed);
 				auto eventNew = InputEvents::respondToEvent(dataPackage);
 
-				ButtonCollector buttonCollector{ *eventNew };
+				ButtonCollector buttonCollector{ eventNew };
 				auto resultData = buttonCollector.collectButtonData(false, 120000, 1, newArgs.eventData.getAuthorId()).get();
 				if (resultData[0].buttonId == "push_me") {
 					TimeoutGuildMemberData dataPackage02{};
