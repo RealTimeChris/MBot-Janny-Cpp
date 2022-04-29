@@ -37,23 +37,23 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getChannelAsync({ newArgs.eventData->getChannelId() }).get();
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				Channel channel = Channels::getChannelAsync({ newArgs.eventData.getChannelId() }).get();
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getGuildAsync({ newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember sendingGuildMember =
-					GuildMembers::getGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() }).get();
+					GuildMembers::getGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
 				GuildMember botMember = GuildMembers::getGuildMemberAsync(
-					{ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData->getGuildId() })
+					{ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData.getGuildId() })
 											.get();
-				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, sendingGuildMember);
+				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, sendingGuildMember);
 
 				if (!doWeHaveAdminPerms) {
 					return;
@@ -91,13 +91,13 @@ namespace DiscordCoreAPI {
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setTitle("__**Adding Role Issue:**__");
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto eventNew = InputEvents::respondToEvent(dataPackage);
 						return;
 					}
-					auto botRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botMember, .guildId = newArgs.eventData->getGuildId() }).get();
+					auto botRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botMember, .guildId = newArgs.eventData.getGuildId() }).get();
 					std::vector<Role> theRolesNew{};
 					Role highestRole{};
 					for (auto& value: botRoles) {
@@ -105,7 +105,7 @@ namespace DiscordCoreAPI {
 							highestRole = value;
 						}
 					}
-					Role newRole = Roles::getRoleAsync({ .guildId = newArgs.eventData->getGuildId(), .roleId = roleId }).get();
+					Role newRole = Roles::getRoleAsync({ .guildId = newArgs.eventData.getGuildId(), .roleId = roleId }).get();
 					if (newRole.position > highestRole.position) {
 						std::string msgString =
 							"------\n**Sorry, but that role needs to be lowered beneath mine in the list of roles so that I can apply it!**\n------";
@@ -115,7 +115,7 @@ namespace DiscordCoreAPI {
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setTitle("__**Adding Role Issue:**__");
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto eventNew = InputEvents::respondToEvent(dataPackage);
@@ -124,12 +124,12 @@ namespace DiscordCoreAPI {
 					std::string msgString =
 						"------\n**Nicely done! You've added the role <@&" + newRole.id + "> to your list of roles to select from!**\n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**New Role Added:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto eventNew = InputEvents::respondToEvent(dataPackage);
@@ -151,13 +151,13 @@ namespace DiscordCoreAPI {
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setTitle("__**Removing Role Issue:**__");
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto eventNew = InputEvents::respondToEvent(dataPackage);
 						return;
 					}
-					Role newRole = Roles::getRoleAsync({ .guildId = newArgs.eventData->getGuildId(), .roleId = roleId }).get();
+					Role newRole = Roles::getRoleAsync({ .guildId = newArgs.eventData.getGuildId(), .roleId = roleId }).get();
 					for (uint32_t x = 0; x < discordGuild.data.roleManager.theRoles.size(); x += 1) {
 						if (discordGuild.data.roleManager.theRoles[x] == newRole.id) {
 							discordGuild.data.roleManager.theRoles.erase(discordGuild.data.roleManager.theRoles.begin() + x);
@@ -178,19 +178,19 @@ namespace DiscordCoreAPI {
 					std::string msgString =
 						"------\n**Nicely done! You've removed the role <@&" + newRole.id + "> from your list of roles to select from!**\n------";
 					EmbedData msgEmbed02{};
-					msgEmbed02.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed02.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed02.setColor(discordGuild.data.borderColor);
 					msgEmbed02.setDescription(msgString);
 					msgEmbed02.setTimeStamp(getTimeAndDate());
 					msgEmbed02.setTitle("__**Role Removed :**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed02);
 					auto eventNew = InputEvents::respondToEvent(dataPackage);
 					return;
 
 				} else if (whatAreWeDoing == "instantiate") {
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addContent("TEST");
 					auto eventNew = InputEvents::respondToEvent(dataPackage);
@@ -202,7 +202,7 @@ namespace DiscordCoreAPI {
 						discordGuild.writeDataToDB();
 						return;
 					}
-					discordGuild.data.roleManager.channelId = newArgs.eventData->getChannelId();
+					discordGuild.data.roleManager.channelId = newArgs.eventData.getChannelId();
 					discordGuild.data.roleManager.message = theMessage;
 					discordGuild.writeDataToDB();
 					theLoop(discordGuild, newArgs.discordCoreClient);
@@ -237,7 +237,8 @@ namespace DiscordCoreAPI {
 		dataPackage02.addButton(false, "start", "Start", ButtonStyle::Success, "check", "687509905208508640");
 		dataPackage02.addMessageEmbed(msgEmbed02);
 		Message newMessage = Messages::createMessageAsync(dataPackage02).get();
-		InputEventData currentEvent = InputEventData{ newMessage, InteractionData{}, InteractionType::Application_Command };
+		InteractionData interaction{};
+		InputEventData currentEvent = InputEventData{ newMessage, interaction, InteractionType::Application_Command };
 		int32_t counter{ 0 };
 
 		while (true) {
@@ -247,11 +248,12 @@ namespace DiscordCoreAPI {
 				discordGuild.data.roleManager.messageId = newMessage.id;
 				discordGuild.data.roleManager.channelId = newMessage.channelId;
 				discordGuild.writeDataToDB();
-				currentEvent = InputEventData{ newMessage, InteractionData{}, InteractionType::Application_Command };
+				
+				currentEvent = InputEventData{ newMessage, interaction, InteractionType::Application_Command };
 
 				ButtonCollector buttonCollector{ currentEvent };
 				auto resultValue = buttonCollector.collectButtonData(true, INT32_MAX, 1, "").get();
-				InputEventData inputData = InputEventData{ MessageData{}, resultValue[0].interactionData, InteractionType::Application_Command };
+				InputEventData inputData = InputEventData{ message, resultValue[0].interactionData, InteractionType::Application_Command };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild.data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(
@@ -264,7 +266,7 @@ namespace DiscordCoreAPI {
 
 				ButtonCollector buttonCollector{ currentEvent };
 				auto resultValue = buttonCollector.collectButtonData(true, INT32_MAX, 1, "").get();
-				InputEventData inputData = InputEventData{ MessageData{}, resultValue[0].interactionData, InteractionType::Application_Command };
+				InputEventData inputData = InputEventData{ message, resultValue[0].interactionData, InteractionType::Application_Command };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild.data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(

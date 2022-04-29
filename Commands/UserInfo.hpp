@@ -29,23 +29,23 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get();
 
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 
 				DiscordGuild discordGuild{ guild };
 				std::string userID;
 				std::regex userIdRegexp("\\d{18}");
 				if (newArgs.commandData.optionsArgs.size() == 0) {
-					userID = newArgs.eventData->getAuthorId();
+					userID = newArgs.eventData.getAuthorId();
 				} else if (std::regex_search(newArgs.commandData.optionsArgs[0], userIdRegexp)) {
 					std::cmatch userIdMatch{};
 					std::regex_search(newArgs.commandData.optionsArgs[0].c_str(), userIdMatch, userIdRegexp);
@@ -56,18 +56,18 @@ namespace DiscordCoreAPI {
 				if (user.id == "") {
 					std::string msgString = "------\n**Please enter a valid user ID or user mention! (!userinfo = @USERMENTION)**\n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto eventNew = InputEvents::respondToEvent(dataPackage);
 					return;
 				}
-				GuildMember guildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = userID, .guildId = newArgs.eventData->getGuildId() }).get();
+				GuildMember guildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = userID, .guildId = newArgs.eventData.getGuildId() }).get();
 				std::vector<EmbedFieldData> fields;
 				EmbedData msgEmbed{};
 				if (guildMember.joinedAt.getOriginalTimeStamp() != "") {
@@ -142,9 +142,9 @@ namespace DiscordCoreAPI {
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**User Info:**__");
 
-				msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.fields = fields;
-				RespondToInputEventData dataPackage(*newArgs.eventData);
+				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.addMessageEmbed(msgEmbed);
 				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 				auto eventNew = InputEvents::respondToEvent(dataPackage);

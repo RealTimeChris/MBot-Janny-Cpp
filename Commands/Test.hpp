@@ -29,7 +29,7 @@ namespace DiscordCoreAPI {
 				for (uint32_t x = 0; x < 150; x += 1) {
 					CreateMessageData dataPackage{};
 					dataPackage.addContent("TEST MESSAGE: " + std::to_string(x));
-					dataPackage.channelId = newArgs.eventData->getChannelId();
+					dataPackage.channelId = newArgs.eventData.getChannelId();
 					Messages::createMessageAsync(dataPackage);
 				}
 

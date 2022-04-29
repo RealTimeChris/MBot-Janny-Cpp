@@ -330,23 +330,23 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() })
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
 						.get();
-				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, guildMember);
+				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 
 				if (!doWeHaveAdminPerms) {
 					return;
@@ -361,12 +361,12 @@ namespace DiscordCoreAPI {
 						std::string msgString = "------\n**Please enter a valid number of messages back to save! (!setdeletionstatus = add/remove, "
 												"AMOUNTOFMESSAGESTOSAVE, NUMBEROFMINUTESTOWAITUNTILDELETED)**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto event01 = InputEvents::respondToEvent(dataPackage);
@@ -380,12 +380,12 @@ namespace DiscordCoreAPI {
 							std::string msgString = "------\n**Please enter a valid number of minutes to save the messages for! (!setdeletionstatus = "
 													"add/remove, AMOUNTOFMESSAGESTOSAVE, NUMBEROFMINUTESTOWAITUNTILDELETED)**\n------";
 							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+							msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 							msgEmbed.setColor(discordGuild.data.borderColor);
 							msgEmbed.setDescription(msgString);
 							msgEmbed.setTimeStamp(getTimeAndDate());
 							msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-							RespondToInputEventData dataPackage(*newArgs.eventData);
+							RespondToInputEventData dataPackage(newArgs.eventData);
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(msgEmbed);
 							auto event01 = InputEvents::respondToEvent(dataPackage);
@@ -398,12 +398,12 @@ namespace DiscordCoreAPI {
 					std::string msgString = "------\n**Please enter a valid number of minutes to save the messages for! (!setdeletionstatus = add/remove, "
 											"AMOUNTOFMESSAGESTOSAVE, NUMBEROFMINUTESTOWAITUNTILDELETED)**\n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto event01 = InputEvents::respondToEvent(dataPackage);
@@ -422,7 +422,7 @@ namespace DiscordCoreAPI {
 
 				DeletionChannelData currentDeletionChannel{};
 				currentDeletionChannel.numberOfMessagesToSave = howManyBack;
-				currentDeletionChannel.channelId = newArgs.eventData->getChannelId();
+				currentDeletionChannel.channelId = newArgs.eventData.getChannelId();
 				currentDeletionChannel.currentlyBeingDeleted = false;
 				currentDeletionChannel.deletionMessageId = "";
 
@@ -444,12 +444,12 @@ namespace DiscordCoreAPI {
 					msgString += "------";
 
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**Current Deletion Channels:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto event01 = InputEvents::respondToEvent(dataPackage);
@@ -460,7 +460,7 @@ namespace DiscordCoreAPI {
 					bool isItFound = false;
 					int32_t deletionChannelIndex = 0;
 					for (int32_t x = 0; x < discordGuild.data.deletionChannels.size(); x += 1) {
-						if (newArgs.eventData->getChannelId() == discordGuild.data.deletionChannels[x].channelId) {
+						if (newArgs.eventData.getChannelId() == discordGuild.data.deletionChannels[x].channelId) {
 							currentDeletionChannel = discordGuild.data.deletionChannels[x];
 							currentDeletionChannel.currentlyBeingDeleted = false;
 							currentDeletionChannel.numberOfMessagesToSave = howManyBack;
@@ -468,22 +468,22 @@ namespace DiscordCoreAPI {
 							deletionChannelIndex = x;
 						}
 					}
-					std::unique_ptr<InputEventData> thePtr{ std::make_unique<InputEventData>(*newArgs.eventData) };
+					std::unique_ptr<InputEventData> thePtr{ std::make_unique<InputEventData>(newArgs.eventData) };
 					if (isItFound == true) {
 						std::string msgString = "------\n**This channel has already been added! I will update your number of saved messages though!**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setTitle("__**Channel Re-Added:**__");
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						thePtr = InputEvents::respondToEvent(dataPackage);
 						InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*thePtr), 20000);
 						Message previousMessage =
-							Messages::getMessageAsync({ .channelId = newArgs.eventData->getChannelId(), .id = currentDeletionChannel.deletionMessageId }).get();
+							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = currentDeletionChannel.deletionMessageId }).get();
 						if (previousMessage.id != "") {
 							Messages::deleteMessageAsync({ .channelId = previousMessage.channelId,
 															 .messageId = previousMessage.id,
@@ -498,7 +498,7 @@ namespace DiscordCoreAPI {
 						", or messages older than " + std::to_string(currentDeletionChannel.minutesToWaitUntilDeleted) +
 						" minutes are being purged, in this channel.** __\n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
@@ -517,7 +517,7 @@ namespace DiscordCoreAPI {
 						auto event01 = InputEvents::respondToEvent(dataPackage);
 						pinMessage = event01->getMessageData();
 					}
-					Messages::pinMessageAsync({ .channelId = newArgs.eventData->getChannelId(), .messageId = pinMessage.id }).get();
+					Messages::pinMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .messageId = pinMessage.id }).get();
 					currentDeletionChannel.deletionMessageId = pinMessage.id;
 					discordGuild.getDataFromDB();
 					if (isItFound == true) {
@@ -533,7 +533,7 @@ namespace DiscordCoreAPI {
 					bool isItFound = false;
 					int32_t deletionChannelIndex = 0;
 					for (int32_t x = 0; x < discordGuild.data.deletionChannels.size(); x += 1) {
-						if (newArgs.eventData->getChannelId() == discordGuild.data.deletionChannels[x].channelId) {
+						if (newArgs.eventData.getChannelId() == discordGuild.data.deletionChannels[x].channelId) {
 							isItFound = true;
 							deletionChannelIndex = x;
 						}
@@ -542,12 +542,12 @@ namespace DiscordCoreAPI {
 					if (isItFound == false) {
 						std::string msgString = "------\n**Sorry, but this channel could not be found in the list of active deletion channels!**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setTitle("__**Channel Issue:**__");
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto event01 = InputEvents::respondToEvent(dataPackage);
@@ -558,12 +558,12 @@ namespace DiscordCoreAPI {
 
 					std::string msgString = "\n------\n__**Channel Name:**__ <#" + currentDeletionChannel.channelId + "> \n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**Disabled Channel Purging:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto event01 = InputEvents::respondToEvent(dataPackage);

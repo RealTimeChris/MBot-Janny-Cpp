@@ -28,14 +28,14 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData));
-				RespondToInputEventData dataPackage(*newArgs.eventData);
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData));
+				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-				std::unique_ptr<InputEventData> newEvent = std::make_unique<InputEventData>(*newArgs.eventData);
-				if (newArgs.eventData->eventType == InteractionType::Application_Command) {
+				std::unique_ptr<InputEventData> newEvent = std::make_unique<InputEventData>(newArgs.eventData);
+				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
 					newEvent = InputEvents::respondToEvent(dataPackage);
 				}
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 				/*
 				CreateGlobalApplicationCommandData reactionRoleData;
@@ -485,7 +485,7 @@ namespace DiscordCoreAPI {
 				ApplicationCommands::createGlobalApplicationCommandAsync(pushmecommandData).get();
 
 				EmbedData msgEmbed{};
-				msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor(discordGuild.data.borderColor);
 				msgEmbed.setDescription("------\nNicely done, you've registered some commands!\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());

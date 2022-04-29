@@ -28,26 +28,26 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				if (areWeInADM(*newArgs.eventData, channel)) {
+				if (areWeInADM(newArgs.eventData, channel)) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() })
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
 						.get();
 
-				if (!doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, guildMember)) {
+				if (!doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember)) {
 					return;
 				}
 
-				std::unique_ptr<InputEventData> newEvent = std::make_unique<InputEventData>(*newArgs.eventData);
+				std::unique_ptr<InputEventData> newEvent = std::make_unique<InputEventData>(newArgs.eventData);
 				std::regex userIdRegex("\\d{18}");
 				std::regex digitDaysRegex("\\d{1}");
 				std::string userId;
@@ -83,11 +83,11 @@ namespace DiscordCoreAPI {
 				whatAreWeDoing = newArgs.commandData.subCommandName;
 				if (whatAreWeDoing == "add") {
 					GuildMember guildMember01 =
-						GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData->getGuildId() }).get();
+						GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
 					GuildMember botGuildMember = GuildMembers::getCachedGuildMemberAsync(
-						{ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData->getGuildId() })
+						{ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData.getGuildId() })
 													 .get();
-					auto userRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember01, .guildId = newArgs.eventData->getGuildId() }).get();
+					auto userRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember01, .guildId = newArgs.eventData.getGuildId() }).get();
 					int32_t highestUserRolePosition{ 0 };
 
 					for (auto& value: userRoles) {
@@ -97,7 +97,7 @@ namespace DiscordCoreAPI {
 					}
 
 					int32_t highestBotRolePosition{ 0 };
-					auto botRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData->getGuildId() }).get();
+					auto botRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData.getGuildId() }).get();
 					for (auto& value: botRoles) {
 						if (value.position > highestBotRolePosition) {
 							highestBotRolePosition = value.position;
@@ -106,12 +106,12 @@ namespace DiscordCoreAPI {
 					if (highestUserRolePosition >= highestBotRolePosition) {
 						std::string msgString = "------\n**Sorry, but I cannot ban them as their highest role is higher than mine!**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setTitle("__**Missing or Invalid Parameters:**__");
 						msgEmbed.setTimeStamp(getTimeAndDate());
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						newEvent = InputEvents::respondToEvent(dataPackage);
@@ -258,7 +258,7 @@ namespace DiscordCoreAPI {
 					if (returnValue.buttonId == "select") {
 						std::vector<EmbedData> msgEmbeds;
 						for (auto& value: discordGuild.data.userBanInfo) {
-							if (value.userId == newArgs.eventData->getAuthorId()) {
+							if (value.userId == newArgs.eventData.getAuthorId()) {
 								for (auto& value2: value.userBans) {
 									EmbedData newEmbed;
 									newEmbed.setAuthor(newEvent->getUserName(), newEvent->getAvatarUrl());

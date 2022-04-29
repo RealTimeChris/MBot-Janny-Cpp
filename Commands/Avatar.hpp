@@ -28,24 +28,24 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() })
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
 						.get();
 
-				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, guildMember);
+				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 
 				if (!doWeHaveAdminPerms) {
 					return;
@@ -58,16 +58,16 @@ namespace DiscordCoreAPI {
 				std::string userIDOne = userIDMatch.str();
 				userId = userIDOne;
 
-				GuildMember guildMemberGet = GuildMembers::getGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData->getGuildId() }).get();
+				GuildMember guildMemberGet = GuildMembers::getGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
 
 				EmbedData msgEmbed{};
-				msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor(discordGuild.data.borderColor);
 				msgEmbed.setDescription("<@!" + guildMemberGet.user.id + ">'s Avatar");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setImage(guildMemberGet.user.avatar);
 				msgEmbed.setTitle("__**User Avatar:**__");
-				RespondToInputEventData dataPackage(*newArgs.eventData);
+				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
 				auto eventNew = InputEvents::respondToEvent(dataPackage);

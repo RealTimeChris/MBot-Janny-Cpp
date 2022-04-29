@@ -27,7 +27,7 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				auto guilds = Guilds::getAllGuildsAsync().get();
@@ -37,7 +37,7 @@ namespace DiscordCoreAPI {
 				}
 
 				EmbedData messageEmbed;
-				messageEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+				messageEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				messageEmbed.setImage(newArgs.discordCoreClient->getBotUser().avatar);
 				messageEmbed.setColor("FEFEFE");
 				messageEmbed.setTitle("__**Bot Info:**__");
@@ -50,7 +50,7 @@ namespace DiscordCoreAPI {
 				messageEmbed.addField("__Serving Users:__", std::to_string(userCount), true);
 				messageEmbed.addField("__Running On:__", "[DiscordCoreAPI Bot Library](https://discordcoreapi.com)", true);
 				messageEmbed.addField("__Created By:__", "RealTime Chris#3627", true);
-				RespondToInputEventData dataPackage(*newArgs.eventData);
+				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 				dataPackage.addMessageEmbed(messageEmbed);
 				auto eventNew = InputEvents::respondToEvent(dataPackage);

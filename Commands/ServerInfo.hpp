@@ -28,17 +28,17 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getChannelAsync({ newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getChannelAsync({ newArgs.eventData.getChannelId() }).get();
 
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				uint32_t categoryCount = 0;
@@ -83,9 +83,9 @@ namespace DiscordCoreAPI {
 				msgEmbed.setImage(guild.icon);
 				msgEmbed.setTitle("__**Server Info:**__");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor(discordGuild.data.borderColor);
-				RespondToInputEventData dataPackage(*newArgs.eventData);
+				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
 				InputEvents::respondToEvent(dataPackage);

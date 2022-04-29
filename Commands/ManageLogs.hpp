@@ -28,27 +28,27 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember guildMember = GuildMembers::getCachedGuildMemberAsync({
-																					  .guildMemberId = newArgs.eventData->getAuthorId(),
-																					  .guildId = newArgs.eventData->getGuildId(),
+																					  .guildMemberId = newArgs.eventData.getAuthorId(),
+																					  .guildId = newArgs.eventData.getGuildId(),
 																				  })
 											  .get();
 
-				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, guildMember);
+				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 
 				if (!doWeHaveAdminPerms) {
 					return;
@@ -87,7 +87,7 @@ namespace DiscordCoreAPI {
 											"= <enable/disable>, <logname>\nFor example, '!managelogs = "
 											"enable, guildbanadd'.**'";
 					EmbedData msgEmbed = EmbedData()
-											 .setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl())
+											 .setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl())
 											 .setColor(discordGuild.data.borderColor)
 											 .setDescription(msgString)
 											 .setTimeStamp(getTimeAndDate())
@@ -95,7 +95,7 @@ namespace DiscordCoreAPI {
 					for (auto value: fields) {
 						msgEmbed.addField(value.name, value.value, value.Inline);
 					}
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					InputEvents::respondToEvent(dataPackage);
@@ -107,12 +107,12 @@ namespace DiscordCoreAPI {
 					std::string msgString = "------\n**Please, enter enable or disable for the first argument of this command! (!managelogs = "
 											"<enable/disable>, <logname>)**\n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					InputEvents::respondToEvent(dataPackage);
@@ -120,12 +120,12 @@ namespace DiscordCoreAPI {
 				} else if (newArgs.commandData.optionsArgs[1] == "") {
 					std::string msgString = "------\n**Please, enter a log name to disable or enable as the second argument of this command!";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					InputEvents::respondToEvent(dataPackage);
@@ -136,7 +136,7 @@ namespace DiscordCoreAPI {
 						for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
 							if (convertToLowerCase(newArgs.commandData.optionsArgs[1]) == discordGuild.data.logs[x].nameSmall) {
 								isItFound = true;
-								Channel channelNew = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
+								Channel channelNew = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 								discordGuild.data.logs[x].loggingChannelId = channelNew.id;
 								discordGuild.data.logs[x].loggingChannelName = channelNew.name;
 								discordGuild.data.logs[x].enabled = true;
@@ -144,12 +144,12 @@ namespace DiscordCoreAPI {
 								EmbedData msgEmbed{};
 								std::string msgString = "------\n**Nicely done! You've enabled logging for " + discordGuild.data.logs[x].name +
 									".\nIn channel <#" + discordGuild.data.logs[x].loggingChannelId + ">.** \n------";
-								msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+								msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 								msgEmbed.setColor(discordGuild.data.borderColor);
 								msgEmbed.setDescription(msgString);
 								msgEmbed.setTimeStamp(getTimeAndDate());
 								msgEmbed.setTitle("__**Manage Logs Enabled:**__");
-								RespondToInputEventData dataPackage(*newArgs.eventData);
+								RespondToInputEventData dataPackage(newArgs.eventData);
 								dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 								dataPackage.addMessageEmbed(msgEmbed);
 								InputEvents::respondToEvent(dataPackage);
@@ -159,12 +159,12 @@ namespace DiscordCoreAPI {
 						if (!isItFound) {
 							std::string msgString = "Please enter a proper log name!";
 							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+							msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 							msgEmbed.setColor(discordGuild.data.borderColor);
 							msgEmbed.setDescription(msgString);
 							msgEmbed.setTimeStamp(getTimeAndDate());
 							msgEmbed.setTitle("__**Manage Logs Issue:**__");
-							RespondToInputEventData dataPackage(*newArgs.eventData);
+							RespondToInputEventData dataPackage(newArgs.eventData);
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(msgEmbed);
 							InputEvents::respondToEvent(dataPackage);
@@ -174,19 +174,19 @@ namespace DiscordCoreAPI {
 						for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
 							if (convertToLowerCase(newArgs.commandData.optionsArgs[1]) == discordGuild.data.logs[x].nameSmall) {
 								isItFound = true;
-								Channel channelNew = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
+								Channel channelNew = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 								discordGuild.data.logs[x].loggingChannelId = "";
 								discordGuild.data.logs[x].loggingChannelName = "";
 								discordGuild.data.logs[x].enabled = false;
 								discordGuild.writeDataToDB();
 								EmbedData msgEmbed{};
 								std::string msgString = "------\n**Nicely done! You've disabled logging for " + discordGuild.data.logs[x].name + ".**\n------";
-								msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+								msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 								msgEmbed.setColor(discordGuild.data.borderColor);
 								msgEmbed.setDescription(msgString);
 								msgEmbed.setTimeStamp(getTimeAndDate());
 								msgEmbed.setTitle("__**Manage Logs Disabled:**__");
-								RespondToInputEventData dataPackage(*newArgs.eventData);
+								RespondToInputEventData dataPackage(newArgs.eventData);
 								dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 								dataPackage.addMessageEmbed(msgEmbed);
 								InputEvents::respondToEvent(dataPackage);
@@ -196,12 +196,12 @@ namespace DiscordCoreAPI {
 						if (!isItFound) {
 							std::string msgString = "Please enter a proper log name!";
 							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+							msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 							msgEmbed.setColor(discordGuild.data.borderColor);
 							msgEmbed.setDescription(msgString);
 							msgEmbed.setTimeStamp(getTimeAndDate());
 							msgEmbed.setTitle("__**Manage Logs Issue:**__");
-							RespondToInputEventData dataPackage(*newArgs.eventData);
+							RespondToInputEventData dataPackage(newArgs.eventData);
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(msgEmbed);
 							InputEvents::respondToEvent(dataPackage);

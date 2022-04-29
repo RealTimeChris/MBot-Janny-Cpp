@@ -28,21 +28,21 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData->getChannelId() }).get();
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get();
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData->getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember sendingGuildMember =
-					GuildMembers::getGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() }).get();
+					GuildMembers::getGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
 
-				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, sendingGuildMember);
+				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, sendingGuildMember);
 
 				if (!doWeHaveAdminPerms) {
 					return;
@@ -55,7 +55,7 @@ namespace DiscordCoreAPI {
 				std::string userId;
 				if (newArgs.commandData.subCommandName == "view") {
 					whatAreWeDoing = "viewing";
-					userId = newArgs.eventData->getAuthorId();
+					userId = newArgs.eventData.getAuthorId();
 				}
 				if (newArgs.commandData.optionsArgs.size() > 0 && newArgs.commandData.subCommandName == "add") {
 					whatAreWeDoing = "add";
@@ -75,16 +75,16 @@ namespace DiscordCoreAPI {
 					userId = userIDOne;
 				}
 
-				InputEventData newEvent01 = *newArgs.eventData;
+				InputEventData newEvent01 = newArgs.eventData;
 
 				GuildMember targetGuildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData->getGuildId() }).get();
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuildMember discordGuildMember(targetGuildMember);
 
 				if (whatAreWeDoing == "add") {
 					TimeoutGuildMemberData modifyData{};
 					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::Week;
-					modifyData.guildId = newArgs.eventData->getGuildId();
+					modifyData.guildId = newArgs.eventData.getGuildId();
 					modifyData.guildMemberId = targetGuildMember.user.id;
 					modifyData.reason = ghostReason;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
@@ -143,7 +143,7 @@ namespace DiscordCoreAPI {
 					msgString += "------";
 
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
@@ -165,7 +165,7 @@ namespace DiscordCoreAPI {
 					}
 					TimeoutGuildMemberData modifyData{};
 					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::None;
-					modifyData.guildId = newArgs.eventData->getGuildId();
+					modifyData.guildId = newArgs.eventData.getGuildId();
 					modifyData.reason = ghostReason;
 					modifyData.guildMemberId = targetGuildMember.user.id;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();

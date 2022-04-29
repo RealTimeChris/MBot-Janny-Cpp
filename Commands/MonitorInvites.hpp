@@ -30,37 +30,37 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 
 				if (areWeInADm) {
 					return;
 				}
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData));
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData));
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() })
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
 						.get();
 				DiscordGuild discordGuild{ guild };
 
-				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, guildMember);
+				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 
 				if (!doWeHaveAdminPerms) {
 					return;
 				}
 
 				if (newArgs.commandData.optionsArgs[0] == "add") {
-					discordGuild.data.inviteReportingChannelId = newArgs.eventData->getChannelId();
+					discordGuild.data.inviteReportingChannelId = newArgs.eventData.getChannelId();
 					discordGuild.writeDataToDB();
-					std::string msgString = "**------\nNice! You've activated invite tracking by adding the channel <#" + newArgs.eventData->getChannelId() +
+					std::string msgString = "**------\nNice! You've activated invite tracking by adding the channel <#" + newArgs.eventData.getChannelId() +
 						"> as the tracking channel for the invites!\n------** ";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTitle("__**Invite Tracking Channel Added:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					InputEvents::respondToEvent(dataPackage);
@@ -69,14 +69,14 @@ namespace DiscordCoreAPI {
 					discordGuild.data.inviteReportingChannelId = "";
 					discordGuild.writeDataToDB();
 					std::string msgString = "**------\nNice! You've de-activated invite tracking by removing the channel <#" +
-						newArgs.eventData->getChannelId() + "> as the tracking channel for the invites!\n------** ";
+						newArgs.eventData.getChannelId() + "> as the tracking channel for the invites!\n------** ";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTitle("__**Invite Tracking Channel Disabled:**__");
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					InputEvents::respondToEvent(dataPackage);
@@ -117,7 +117,7 @@ namespace DiscordCoreAPI {
 						discordGuildMembers.at(x) = std::move(discordGuildMembers.at(maxIdx));
 						discordGuildMembers.at(maxIdx) = std::move(tempMember);
 					}
-					InviteData vanityInvite = Guilds::getGuildVanityInviteAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+					InviteData vanityInvite = Guilds::getGuildVanityInviteAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 					msgString01 += "__**The vanity Url's Invite Count:**__ " + std::to_string(vanityInvite.uses) + "\n";
 					for (uint32_t x = 0; x < discordGuildMembers.size(); x += 1) {
 						std::string currentString = "__**<@!" + discordGuildMembers[x].data.guildMemberId + ">'s Invite Count:**__ " +
@@ -133,7 +133,7 @@ namespace DiscordCoreAPI {
 					if (descriptionStrings.size() == 0) {
 						std::string msgString = "**------\nLooks like there's no stored invites!\n------**";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setDescription(msgString);
 						msgEmbed.setColor(discordGuild.data.borderColor);
@@ -142,7 +142,7 @@ namespace DiscordCoreAPI {
 					} else {
 						for (uint32_t x = 0; x < descriptionStrings.size(); x += 1) {
 							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+							msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 							msgEmbed.setTimeStamp(getTimeAndDate());
 							msgEmbed.setDescription(descriptionStrings[x]);
 							msgEmbed.setColor(discordGuild.data.borderColor);
@@ -151,14 +151,14 @@ namespace DiscordCoreAPI {
 							msgEmbeds.push_back(msgEmbed);
 						}
 					}
-					std::unique_ptr<InputEventData> eventData = std::make_unique<InputEventData>(*newArgs.eventData);
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					std::unique_ptr<InputEventData> eventData = std::make_unique<InputEventData>(newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbeds[currentIndex]);
 					eventData = InputEvents::respondToEvent(dataPackage);
 
 					moveThroughMessagePages(
-						newArgs.eventData->getAuthorId(), std::make_unique<InputEventData>(*eventData), currentIndex, msgEmbeds, false, 120000);
+						newArgs.eventData.getAuthorId(), std::make_unique<InputEventData>(*eventData), currentIndex, msgEmbeds, false, 120000);
 				}
 				return;
 			} catch (...) {

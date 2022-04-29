@@ -28,22 +28,22 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
-				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData->getGuildId() }).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
+				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() })
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
 						.get();
-				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, guildMember);
+				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 				if (!doWeHaveAdminPermission) {
 					return;
 				}
 
 				uint32_t currentCount = 0;
 				std::vector<Guild> theCache = Guilds::getAllGuildsAsync().get();
-				std::unique_ptr<InputEventData> inputEvent = std::make_unique<InputEventData>(*newArgs.eventData);
+				std::unique_ptr<InputEventData> inputEvent = std::make_unique<InputEventData>(newArgs.eventData);
 				for (auto& value: theCache) {
 					std::string msgString = "__Guild Name:__ " + value.name + "\n";
 					msgString += "__Guild ID:__ " + value.id + "\n";
@@ -55,7 +55,7 @@ namespace DiscordCoreAPI {
 					msgString += "__Created At:__ " + value.createdAt;
 
 					EmbedData messageEmbed;
-					messageEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					messageEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					messageEmbed.setColor("FEFEFE");
 					messageEmbed.setThumbnail(value.icon);
 					messageEmbed.setTitle("__**Guild Data " + std::to_string(currentCount + 1) + " of " + std::to_string(theCache.size()) + "**__");
@@ -63,16 +63,16 @@ namespace DiscordCoreAPI {
 					messageEmbed.setDescription(msgString);
 
 					if (currentCount == 0) {
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 						dataPackage.addMessageEmbed(messageEmbed);
 						inputEvent = InputEvents::respondToEvent(dataPackage);
-						RespondToInputEventData dataPackage02(*newArgs.eventData);
+						RespondToInputEventData dataPackage02(newArgs.eventData);
 						dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 						dataPackage02.addMessageEmbed(messageEmbed);
 						inputEvent = InputEvents::respondToEvent(dataPackage02);
 					} else {
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Follow_Up_Message);
 						dataPackage.addMessageEmbed(messageEmbed);
 						InputEvents::respondToEvent(dataPackage);

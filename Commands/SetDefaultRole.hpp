@@ -67,24 +67,24 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getChannelAsync({ newArgs.eventData->getChannelId() }).get();
+				Channel channel = Channels::getChannelAsync({ newArgs.eventData.getChannelId() }).get();
 
-				bool areWeInADm = areWeInADM(*newArgs.eventData, channel);
+				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
 
 				if (areWeInADm) {
 					return;
 				}
 
-				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(*newArgs.eventData)).get();
+				InputEvents::deleteInputEventResponseAsync(std::make_unique<InputEventData>(newArgs.eventData)).get();
 
-				DiscordCoreAPI::Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				DiscordCoreAPI::Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData->getAuthorId(), .guildId = newArgs.eventData->getGuildId() })
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
 						.get();
 
-				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, *newArgs.eventData, discordGuild, channel, guildMember);
+				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 
 				if (!doWeHaveAdminPerms) {
 					return;
@@ -107,7 +107,7 @@ namespace DiscordCoreAPI {
 					std::cout << "THE ROLE ID: " << newArgs.commandData.optionsArgs[0] << std::endl;
 				}
 
-				std::vector<Role> roleArray = Roles::getGuildRolesAsync({ .guildId = newArgs.eventData->getGuildId() }).get();
+				std::vector<Role> roleArray = Roles::getGuildRolesAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 
 				std::vector<bool> isItFoundReal;
 				for (int32_t x = 0; x < discordGuild.data.defaultRoleIds.size(); x += 1) {
@@ -150,19 +150,19 @@ namespace DiscordCoreAPI {
 					}
 
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTitle("__**Default Roles:**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto newEvent = InputEvents::respondToEvent(dataPackage);
 					return;
 				}
 
-				Role currentRole = Roles::getRoleAsync({ .guildId = newArgs.eventData->getGuildId(), .roleId = roleId }).get();
+				Role currentRole = Roles::getRoleAsync({ .guildId = newArgs.eventData.getGuildId(), .roleId = roleId }).get();
 
 				bool isItFound = false;
 				for (auto& value: roleArray) {
@@ -175,12 +175,12 @@ namespace DiscordCoreAPI {
 				if (!isItFound) {
 					std::string msgString = "------\n**Sorry, but the role you entered could not be found! Check spelling and case!**\n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTitle("__**Role Issue:**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto newEvent = InputEvents::respondToEvent(dataPackage);
@@ -192,12 +192,12 @@ namespace DiscordCoreAPI {
 						if (currentRole.id == discordGuild.data.defaultRoleIds[x]) {
 							std::string msgString = "------\n**Hey! It looks like you've already added that role!**\n------";
 							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+							msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 							msgEmbed.setColor(discordGuild.data.borderColor);
 							msgEmbed.setTitle("__**Role Issue:**__");
 							msgEmbed.setTimeStamp(getTimeAndDate());
 							msgEmbed.setDescription(msgString);
-							RespondToInputEventData dataPackage(*newArgs.eventData);
+							RespondToInputEventData dataPackage(newArgs.eventData);
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(msgEmbed);
 							auto newEvent = InputEvents::respondToEvent(dataPackage);
@@ -206,10 +206,10 @@ namespace DiscordCoreAPI {
 					}
 
 					GuildMember botGuildMember = GuildMembers::getCachedGuildMemberAsync(
-						{ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData->getGuildId() })
+						{ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData.getGuildId() })
 													 .get();
 					std::vector<Role> highestBotRoles =
-						Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData->getGuildId() }).get();
+						Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData.getGuildId() }).get();
 					RoleData highestBotRole;
 					int32_t currentPosition = 0;
 					for (auto& value: highestBotRoles) {
@@ -223,12 +223,12 @@ namespace DiscordCoreAPI {
 						std::string msgString =
 							"------\n**Sorry, but that is either a managed role or it is higher than my highest role! I cannot use it!**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setTitle("__**Role Issue:**__");
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setDescription(msgString);
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto newEvent = InputEvents::respondToEvent(dataPackage);
@@ -240,12 +240,12 @@ namespace DiscordCoreAPI {
 
 					std::string msgString = "\n------\n__**Role:**__ <@&" + currentRole.id + "> \n------";
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTitle("__**New Default Role Added:**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto newEvent = InputEvents::respondToEvent(dataPackage);
@@ -265,12 +265,12 @@ namespace DiscordCoreAPI {
 					if (!isItFound) {
 						std::string msgString = "------\n**Sorry, but the role you entered could not be found! Check spelling and case!**\n------";
 						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed.setColor(discordGuild.data.borderColor);
 						msgEmbed.setTitle("__**Missing/Invalud Arguments:**__");
 						msgEmbed.setTimeStamp(getTimeAndDate());
 						msgEmbed.setDescription(msgString);
-						RespondToInputEventData dataPackage(*newArgs.eventData);
+						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(msgEmbed);
 						auto newEvent = InputEvents::respondToEvent(dataPackage);
@@ -280,12 +280,12 @@ namespace DiscordCoreAPI {
 					std::string msgString = "\n------\n__**Role**__: <@&" + currentRole.id + ">\n------";
 
 					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData->getUserName(), newArgs.eventData->getAvatarUrl());
+					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTitle("__**Default Role removed:**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);
-					RespondToInputEventData dataPackage(*newArgs.eventData);
+					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto newEvent = InputEvents::respondToEvent(dataPackage);
