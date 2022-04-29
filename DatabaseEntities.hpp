@@ -36,7 +36,6 @@ namespace DiscordCoreAPI {
 	struct DiscordUserData {
 		std::vector<std::string> botCommanders{ "", "", "" };
 		std::string userName{ "" };
-		std::string prefix{ "!" };
 		std::string userId{ "" };
 	};
 
@@ -190,7 +189,6 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("_id", discordUserData.userId));
 				buildDoc.append(kvp("userId", discordUserData.userId));
 				buildDoc.append(kvp("userName", discordUserData.userName));
-				buildDoc.append(kvp("prefix", discordUserData.prefix));
 				buildDoc.append(kvp("botCommanders", [discordUserData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordUserData.botCommanders) {
 						subArray.append(value);
@@ -207,7 +205,6 @@ namespace DiscordCoreAPI {
 			DiscordUserData userData{};
 			try {
 				userData.userName = docValue.view()["userName"].get_utf8().value.to_string();
-				userData.userName = docValue.view()["prefix"].get_utf8().value.to_string();
 				userData.userId = docValue.view()["userId"].get_utf8().value.to_string();
 				auto botCommandersArray = docValue.view()["botCommanders"].get_array();
 				std::vector<std::string> newVector;
