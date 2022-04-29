@@ -471,6 +471,9 @@ namespace DiscordCoreAPI {
 	  public:
 		static void initialize(std::string botUserIdNew) {
 			DatabaseManagerAgent::botUserId = botUserIdNew;
+			auto newClient = DatabaseManagerAgent::getClient();
+			mongocxx::database newDataBase = (*newClient)[DatabaseManagerAgent::botUserId];
+			mongocxx::collection newCollection = newDataBase[DatabaseManagerAgent::botUserId];
 		}
 
 		static mongocxx::pool::entry getClient() {
