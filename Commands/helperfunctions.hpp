@@ -14,16 +14,16 @@ namespace DiscordCoreAPI {
 		if (currentChannelType == ChannelType::Dm) {
 			if (displayResponse) {
 				std::string msgString = "------\n**Sorry, but we can't do that in a direct message!**\n------";
-				std::unique_ptr<EmbedData> msgEmbed(new EmbedData());
-				msgEmbed->setAuthor(eventData.getMessageData().interaction.user.userName, eventData.getMessageData().author.avatar);
-				msgEmbed->setColor("FEFEFE");
-				msgEmbed->setDescription(msgString);
-				msgEmbed->setTimeStamp(getTimeAndDate());
-				msgEmbed->setTitle("__**Direct Message Issue:**__");
-				std::unique_ptr<RespondToInputEventData> responseData(new RespondToInputEventData(eventData));
-				responseData->setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-				responseData->addMessageEmbed(*msgEmbed);
-				auto event01 = InputEvents::respondToEvent(*responseData);
+				EmbedData msgEmbed{};
+				msgEmbed.setAuthor(eventData.getMessageData().interaction.user.userName, eventData.getMessageData().author.avatar);
+				msgEmbed.setColor("FEFEFE");
+				msgEmbed.setDescription(msgString);
+				msgEmbed.setTimeStamp(getTimeAndDate());
+				msgEmbed.setTitle("__**Direct Message Issue:**__");
+				RespondToInputEventData responseData{ eventData };
+				responseData.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+				responseData.addMessageEmbed(msgEmbed);
+				auto event01 = InputEvents::respondToEvent(responseData);
 			}
 			return true;
 		}
@@ -58,16 +58,16 @@ namespace DiscordCoreAPI {
 
 		if (displayResponse) {
 			std::string msgString = "------\n**Sorry, but you don't have the permissions required for that!**\n------";
-			std::unique_ptr<EmbedData> msgEmbed(new EmbedData());
-			msgEmbed->setAuthor(guildMember.user.userName, guildMember.user.avatar);
-			msgEmbed->setColor(discordGuild.data.borderColor);
-			msgEmbed->setDescription(msgString);
-			msgEmbed->setTimeStamp(getTimeAndDate());
-			msgEmbed->setTitle("__**Permissions Issue:**__");
-			std::unique_ptr<RespondToInputEventData> dataPackage(new RespondToInputEventData(eventData));
-			dataPackage->addMessageEmbed(*msgEmbed);
-			dataPackage->setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-			InputEvents::respondToEvent(*dataPackage);
+			EmbedData msgEmbed{};
+			msgEmbed.setAuthor(guildMember.user.userName, guildMember.user.avatar);
+			msgEmbed.setColor(discordGuild.data.borderColor);
+			msgEmbed.setDescription(msgString);
+			msgEmbed.setTimeStamp(getTimeAndDate());
+			msgEmbed.setTitle("__**Permissions Issue:**__");
+			RespondToInputEventData dataPackage{ eventData };
+			dataPackage.addMessageEmbed(msgEmbed);
+			dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+			InputEvents::respondToEvent(dataPackage);
 		}
 		return false;
 	}
