@@ -51,9 +51,11 @@ namespace DiscordCoreAPI {
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setDescription(msgString);
 				msgEmbed.setColor(discordGuild.data.borderColor);
-				RespondToInputEventData dataPackage{ textChannel.id };
-				dataPackage.addMessageEmbed(msgEmbed);
-				InputEvents::respondToEvent(dataPackage);
+				CreateMessageData dataPackage01{};
+				dataPackage01.addContent(msgString);
+				dataPackage01.channelId = textChannel.id;
+				dataPackage01.addMessageEmbed(msgEmbed);
+				Messages::createMessageAsync(dataPackage01).get();
 			}
 		} catch (...) {
 			reportException("onRoleCreationToBeWrapped Error: ");

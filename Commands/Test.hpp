@@ -32,6 +32,17 @@ namespace DiscordCoreAPI {
 					dataPackage.channelId = newArgs.eventData.getChannelId();
 					Messages::createMessageAsync(dataPackage);
 				}
+				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
+				std ::vector<CoRoutine<GuildMember>> theMembers{};
+				for (auto& [key, value]: guild.members) {
+					auto newGuildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = value.user.id, .guildId = newArgs.eventData.getGuildId() });
+					theMembers.push_back(std::move(newGuildMember));
+					std::cout << "WERE HERE THIS IS IT" << std::endl;
+				}
+
+				for (auto& value: theMembers) {
+					std::cout << "WERE HERE THIS IS IT" << value.get().user.userName << std::endl;
+				}
 
 
 				return;
