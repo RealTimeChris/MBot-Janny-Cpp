@@ -226,8 +226,8 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("_id", discordGuildData.guildId.c_str()));
 				buildDoc.append(kvp("guildId", discordGuildData.guildId.c_str()));
 				buildDoc.append(kvp("guildName", discordGuildData.guildName.c_str()));
-				buildDoc.append(kvp("memberCount", bsoncxx::types::b_int32(discordGuildData.memberCount)));
-				buildDoc.append(kvp("vanityInviteUses", bsoncxx::types::b_int32(discordGuildData.vanityInviteUses)));
+				buildDoc.append(kvp("memberCount", discordGuildData.memberCount));
+				buildDoc.append(kvp("vanityInviteUses", discordGuildData.vanityInviteUses));
 				buildDoc.append(kvp("borderColor", discordGuildData.borderColor.c_str()));
 				buildDoc.append(kvp("roleManager", [discordGuildData](bsoncxx::builder::basic::sub_document sub_document01) {
 					sub_document01.append(kvp("theRoles", [discordGuildData](bsoncxx::builder::basic::sub_array sub_array01) {
@@ -392,13 +392,12 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("globalId", discordGuildMemberData.globalId.c_str()));
 				buildDoc.append(kvp("userName", discordGuildMemberData.userName.c_str()));
 				buildDoc.append(kvp("displayName", discordGuildMemberData.displayName.c_str()));
-				buildDoc.append(kvp("totalInvites", bsoncxx::types::b_int32(discordGuildMemberData.totalInvites)));
+				buildDoc.append(kvp("totalInvites", discordGuildMemberData.totalInvites));
 				buildDoc.append(kvp("previousPermissionOverwrites", [discordGuildMemberData](bsoncxx::builder::basic::sub_array subArray) {
 					for (PermissionOverWriteData value: discordGuildMemberData.previousPermissionOverwrites) {
 						subArray.append([value](bsoncxx::builder::basic::sub_document subDocument) {
-							subDocument.append(kvp("allow", bsoncxx::types::b_utf8(static_cast<std::string>(value.allow.c_str()))),
-								kvp("type", bsoncxx::types::b_int64(( int64_t )value.type)),
-								kvp("deny", bsoncxx::types::b_utf8(static_cast<std::string>(value.deny.c_str()))), kvp("id", value.id.c_str()));
+							subDocument.append(kvp("allow", value.allow.c_str()), kvp("type", bsoncxx::types::b_int64(static_cast<int64_t>(value.type))),
+								kvp("deny", value.deny.c_str()), kvp("id", value.id.c_str()));
 						});
 					}
 				}));
@@ -415,8 +414,7 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("invites", [discordGuildMemberData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildMemberData.invites) {
 						subArray.append([value](bsoncxx::builder::basic::sub_document subDocument) {
-							subDocument.append(kvp("inviteCode", value.inviteCode), kvp("invitesUsed", bsoncxx::types::b_int32(value.invitesUsed)),
-								kvp("maxInvites", bsoncxx::types::b_int32(value.maxInvites)));
+							subDocument.append(kvp("inviteCode", value.inviteCode), kvp("invitesUsed", value.invitesUsed), kvp("maxInvites", value.maxInvites));
 						});
 					}
 				}));
