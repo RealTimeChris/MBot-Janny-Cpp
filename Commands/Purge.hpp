@@ -116,7 +116,7 @@ namespace DiscordCoreAPI {
 						deletePinned = false;
 					}
 				}
-				InputEventData newEvent01{};				
+				InputEventData newEvent01{};
 				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
