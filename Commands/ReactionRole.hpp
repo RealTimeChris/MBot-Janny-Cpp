@@ -255,7 +255,7 @@ namespace DiscordCoreAPI {
 
 				std::unique_ptr<ButtonCollector> buttonCollector{ std::make_unique<ButtonCollector>(currentEvent) };
 				auto resultValue = buttonCollector->collectButtonData(true, INT32_MAX, 1, "").get();
-				InputEventData inputData = InputEventData{ *message, resultValue[0].interactionData, InteractionType::Application_Command };
+				InputEventData inputData = InputEventData{ *message, *resultValue[0].interactionData, InteractionType::Application_Command };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(
@@ -268,7 +268,7 @@ namespace DiscordCoreAPI {
 
 				std::unique_ptr<ButtonCollector> buttonCollector{ std::make_unique<ButtonCollector>(currentEvent) };
 				auto resultValue = buttonCollector->collectButtonData(true, INT32_MAX, 1, "").get();
-				InputEventData inputData = InputEventData{ *message, resultValue[0].interactionData, InteractionType::Application_Command };
+				InputEventData inputData = InputEventData{ *message, *resultValue[0].interactionData, InteractionType::Application_Command };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(
@@ -383,9 +383,9 @@ namespace DiscordCoreAPI {
 				returnData = collector->collectSelectMenuData(true, 120000, 1, "").get();
 
 				if (returnData.size() > 0 && returnData[0].values[0] != "empty") {
-					InteractionData eventNew = returnData[0].interactionData;
+					InteractionData eventNew = *returnData[0].interactionData;
 					GuildMember guildMember = GuildMembers::getGuildMemberAsync(
-						{ .guildMemberId = returnData[0].interactionData.member.user.id, .guildId = discordGuild->data.guildId })
+						{ .guildMemberId = returnData[0].interactionData->member.user.id, .guildId = discordGuild->data.guildId })
 												  .get();
 					theRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember, .guildId = discordGuild->data.guildId }).get();
 

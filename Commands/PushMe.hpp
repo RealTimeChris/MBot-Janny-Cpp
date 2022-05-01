@@ -67,7 +67,7 @@ namespace DiscordCoreAPI {
 					GuildMembers::timeoutGuildMemberAsync(dataPackage02).get();
 				}
 
-				RespondToInputEventData dataPackage03{ resultData[0].interactionData };
+				RespondToInputEventData dataPackage03{ *resultData[0].interactionData };
 				dataPackage03.addMessageEmbed(msgEmbed);
 				dataPackage03.setResponseType(InputEventResponseType::Edit_Ephemeral_Interaction_Response);
 				InputEvents::respondToEvent(dataPackage03);
