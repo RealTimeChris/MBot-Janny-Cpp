@@ -9,11 +9,11 @@
 
 namespace DiscordCoreAPI {
 
-	CoRoutine<void> startupTheMessagePerGuild(DiscordCoreAPI::DiscordGuild discordGuild, BotUser botUser, std::string theMessage, InputEventData inputData);
+	CoRoutine<void> startupTheMessagePerGuild(DiscordCoreAPI::DiscordGuild* discordGuild, BotUser botUser, std::string theMessage, InputEventData inputData);
 
 	void startupToWrapTwo(DiscordCoreAPI::DiscordCoreClient* theClient);
 
-	CoRoutine<void> theLoop(DiscordGuild discordGuild, DiscordCoreAPI::DiscordCoreClient* theClient);
+	CoRoutine<void> theLoop(DiscordGuild* discordGuild, DiscordCoreAPI::DiscordCoreClient* theClient);
 
 	class ReactionRole : public BaseFunction {
 	  public:
@@ -206,7 +206,7 @@ namespace DiscordCoreAPI {
 					discordGuild->data.roleManager.channelId = newArgs.eventData.getChannelId();
 					discordGuild->data.roleManager.message = theMessage;
 					discordGuild->writeDataToDB();
-					theLoop(*discordGuild, newArgs.discordCoreClient);
+					theLoop(discordGuild.get(), newArgs.discordCoreClient);
 				}
 			} catch (...) {
 				reportException("ReactionRole::execute()");
@@ -256,7 +256,7 @@ namespace DiscordCoreAPI {
 				std::unique_ptr<ButtonCollector> buttonCollector{ std::make_unique<ButtonCollector>(currentEvent) };
 				auto resultValue = buttonCollector->collectButtonData(true, INT32_MAX, 1, "").get();
 				InputEventData inputData = InputEventData{ *message, resultValue[0].interactionData, InteractionType::Application_Command };
-				startupTheMessagePerGuild(*discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
+				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(
 					{ .channelId = newMessage->channelId, .messageId = newMessage->id, .timeStamp = newMessage->timestamp, .reason = "Deleting!" })
@@ -269,7 +269,7 @@ namespace DiscordCoreAPI {
 				std::unique_ptr<ButtonCollector> buttonCollector{ std::make_unique<ButtonCollector>(currentEvent) };
 				auto resultValue = buttonCollector->collectButtonData(true, INT32_MAX, 1, "").get();
 				InputEventData inputData = InputEventData{ *message, resultValue[0].interactionData, InteractionType::Application_Command };
-				startupTheMessagePerGuild(*discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
+				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync(
 					{ .channelId = newMessage->channelId, .messageId = newMessage->id, .timeStamp = newMessage->timestamp, .reason = "Deleting!" })
@@ -289,7 +289,7 @@ namespace DiscordCoreAPI {
 			if (discordGuild.data.roleManager.messageId == "" || discordGuild.data.roleManager.theRoles.size() == 0) {
 				continue;
 			}
-			theLoop(discordGuild, theClient);
+			theLoop(&discordGuild, theClient);
 		}
 	}
 
