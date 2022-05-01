@@ -84,8 +84,8 @@ namespace DiscordCoreAPI {
 				for (int32_t z = 0; z < ( int32_t )messagesToDelete.size(); z += 1) {
 					if (!hasTimeElapsed(messagesToDelete[z].timestamp.getOriginalTimeStamp(), 14, 0, 0) && !messagesToDelete[z].pinned) {
 						totalMessageCount += 1;
-						//purgeVector.push_back(messagesToDelete[z].id);
-						deleteVector.push_back(messagesToDelete[z]);
+						purgeVector.push_back(messagesToDelete[z].id);
+						//deleteVector.push_back(messagesToDelete[z]);
 					} else if (!messagesToDelete[z].pinned) {
 						totalMessageCount += 1;
 						deleteVector.push_back(messagesToDelete[z]);
@@ -209,8 +209,8 @@ namespace DiscordCoreAPI {
 						if ((!hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 14, 0, 0) && !arrayOfMessageArrays[w][z].pinned &&
 								hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 0, 0,
 									discordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted))) {
-							deleteVector.push_back(arrayOfMessageArrays[w][z]);
-							//purgeVector.push_back(arrayOfMessageArrays[w][z].id);
+							//deleteVector.push_back(arrayOfMessageArrays[w][z]);
+							purgeVector.push_back(arrayOfMessageArrays[w][z].id);
 						} else if (!arrayOfMessageArrays[w][z].pinned) {
 							totalMessageCount += 1;
 							deleteVector.push_back(arrayOfMessageArrays[w][z]);
@@ -246,8 +246,8 @@ namespace DiscordCoreAPI {
 					}
 				} else {
 					for (auto& value: purgeVector) {
-						Message message = Messages::getMessageAsync({ .channelId = channelId, .id = value }).get();
-						deleteVector.push_back(message);
+						std::unique_ptr<Message> message{ std::make_unique<Message>(Messages::getMessageAsync({ .channelId = channelId, .id = value }).get()) };
+						deleteVector.push_back(*message);
 					}
 				}
 				if (deleteVector.size() > 0) {
@@ -481,12 +481,13 @@ namespace DiscordCoreAPI {
 						dataPackage.addMessageEmbed(*msgEmbed);
 						thePtr = InputEvents::respondToEvent(dataPackage);
 						InputEvents::deleteInputEventResponseAsync(thePtr, 20000);
-						Message previousMessage =
-							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = currentDeletionChannel->deletionMessageId }).get();
-						if (previousMessage.id != "") {
-							Messages::deleteMessageAsync({ .channelId = previousMessage.channelId,
-															 .messageId = previousMessage.id,
-															 .timeStamp = previousMessage.timestamp,
+						std::unique_ptr<Message> previousMessage{ std::make_unique<Message>(
+							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = currentDeletionChannel->deletionMessageId })
+								.get()) };
+						if (previousMessage->id != "") {
+							Messages::deleteMessageAsync({ .channelId = previousMessage->channelId,
+															 .messageId = previousMessage->id,
+															 .timeStamp = previousMessage->timestamp,
 															 .reason = "Deleting for the next one!" })
 								.get();
 						}

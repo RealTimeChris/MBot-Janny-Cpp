@@ -91,15 +91,15 @@ namespace DiscordCoreAPI {
 
 					if (targetGuildMember.user.id == "") {
 						std::string msgString = "------\n**Hello! There was an error while trying to ghost <@!" + userId + ">**\n------\n";
-						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
-						msgEmbed.setColor(discordGuild.data.borderColor);
-						msgEmbed.setDescription(msgString);
-						msgEmbed.setTimeStamp(getTimeAndDate());
-						msgEmbed.setTitle("__**Ghosting Error:**__");
+						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
+						msgEmbed->setColor(discordGuild.data.borderColor);
+						msgEmbed->setDescription(msgString);
+						msgEmbed->setTimeStamp(getTimeAndDate());
+						msgEmbed->setTitle("__**Ghosting Error:**__");
 						RespondToInputEventData dataPackage(newEvent01);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-						dataPackage.addMessageEmbed(msgEmbed);
+						dataPackage.addMessageEmbed(*msgEmbed);
 						auto eventNew = InputEvents::respondToEvent(dataPackage);
 						return;
 					}
@@ -109,16 +109,16 @@ namespace DiscordCoreAPI {
 
 					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name +
 						" for the following reason(s): " + ghostReason + "\n Please, contact a moderator or admin to clear this issue up! Thanks!**\n------";
-					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**You\'ve been ghosted:**__");
+					std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+					msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
+					msgEmbed->setColor(discordGuild.data.borderColor);
+					msgEmbed->setDescription(msgString);
+					msgEmbed->setTimeStamp(getTimeAndDate());
+					msgEmbed->setTitle("__**You\'ve been ghosted:**__");
 
 					auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
 					CreateMessageData dataPackage{ DmChannel.id };
-					dataPackage.addMessageEmbed(msgEmbed);
+					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
 					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@!" + targetGuildMember.user.id + "> (" +
@@ -142,15 +142,15 @@ namespace DiscordCoreAPI {
 
 					msgString += "------";
 
-					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**Currently Ghosted Members:**__");
+					std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+					msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+					msgEmbed->setColor(discordGuild.data.borderColor);
+					msgEmbed->setDescription(msgString);
+					msgEmbed->setTimeStamp(getTimeAndDate());
+					msgEmbed->setTitle("__**Currently Ghosted Members:**__");
 					RespondToInputEventData dataPackage(newEvent01);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-					dataPackage.addMessageEmbed(msgEmbed);
+					dataPackage.addMessageEmbed(*msgEmbed);
 					auto eventNew = InputEvents::respondToEvent(dataPackage);
 					return;
 				} else if (whatAreWeDoing == "remove") {
@@ -172,15 +172,15 @@ namespace DiscordCoreAPI {
 
 					if (targetGuildMember.user.id == "" || !isItThere) {
 						std::string msgString = "------\n**Hello! There was an error while trying to un-ghost <@!" + userId + ">**\n------\n";
-						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
-						msgEmbed.setColor(discordGuild.data.borderColor);
-						msgEmbed.setDescription(msgString);
-						msgEmbed.setTimeStamp(getTimeAndDate());
-						msgEmbed.setTitle("__**Un-Ghosting Error:**__");
+						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
+						msgEmbed->setColor(discordGuild.data.borderColor);
+						msgEmbed->setDescription(msgString);
+						msgEmbed->setTimeStamp(getTimeAndDate());
+						msgEmbed->setTitle("__**Un-Ghosting Error:**__");
 						RespondToInputEventData dataPackage(newEvent01);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-						dataPackage.addMessageEmbed(msgEmbed);
+						dataPackage.addMessageEmbed(*msgEmbed);
 						auto eventNew = InputEvents::respondToEvent(dataPackage);
 						return;
 					}
@@ -188,16 +188,16 @@ namespace DiscordCoreAPI {
 					discordGuild.data.ghostedIds.erase(discordGuild.data.ghostedIds.begin() + index);
 					discordGuild.writeDataToDB();
 					std::string msgString = "------\n**Hello! You\'ve had your redacted status removed! Have a great day!**\n------";
-					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**You\'ve been un-ghosted:**__");
+					std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+					msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
+					msgEmbed->setColor(discordGuild.data.borderColor);
+					msgEmbed->setDescription(msgString);
+					msgEmbed->setTimeStamp(getTimeAndDate());
+					msgEmbed->setTitle("__**You\'ve been un-ghosted:**__");
 
 					auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
 					CreateMessageData dataPackage{ DmChannel.id };
-					dataPackage.addMessageEmbed(msgEmbed);
+					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
 					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@!" + targetGuildMember.user.id + "> (" +

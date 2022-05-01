@@ -54,15 +54,15 @@ namespace DiscordCoreAPI {
 					discordGuild.writeDataToDB();
 					std::string msgString = "**------\nNice! You've activated invite tracking by adding the channel <#" + newArgs.eventData.getChannelId() +
 						"> as the tracking channel for the invites!\n------** ";
-					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setTitle("__**Invite Tracking Channel Added:**__");
+					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
+					msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+					msgEmbed->setTimeStamp(getTimeAndDate());
+					msgEmbed->setDescription(msgString);
+					msgEmbed->setColor(discordGuild.data.borderColor);
+					msgEmbed->setTitle("__**Invite Tracking Channel Added:**__");
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-					dataPackage.addMessageEmbed(msgEmbed);
+					dataPackage.addMessageEmbed(*msgEmbed);
 					InputEvents::respondToEvent(dataPackage);
 					return;
 				} else if (newArgs.commandData.optionsArgs[0] == "remove") {
@@ -70,15 +70,15 @@ namespace DiscordCoreAPI {
 					discordGuild.writeDataToDB();
 					std::string msgString = "**------\nNice! You've de-activated invite tracking by removing the channel <#" +
 						newArgs.eventData.getChannelId() + "> as the tracking channel for the invites!\n------** ";
-					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setTitle("__**Invite Tracking Channel Disabled:**__");
+					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
+					msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+					msgEmbed->setTimeStamp(getTimeAndDate());
+					msgEmbed->setDescription(msgString);
+					msgEmbed->setColor(discordGuild.data.borderColor);
+					msgEmbed->setTitle("__**Invite Tracking Channel Disabled:**__");
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-					dataPackage.addMessageEmbed(msgEmbed);
+					dataPackage.addMessageEmbed(*msgEmbed);
 					InputEvents::respondToEvent(dataPackage);
 					return;
 				} else if (newArgs.commandData.optionsArgs[0] == "view") {
@@ -132,23 +132,23 @@ namespace DiscordCoreAPI {
 					std::vector<EmbedData> msgEmbeds;
 					if (descriptionStrings.size() == 0) {
 						std::string msgString = "**------\nLooks like there's no stored invites!\n------**";
-						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-						msgEmbed.setTimeStamp(getTimeAndDate());
-						msgEmbed.setDescription(msgString);
-						msgEmbed.setColor(discordGuild.data.borderColor);
-						msgEmbed.setTitle("__**User Invite Counts 0 of 0:**__");
-						msgEmbeds.push_back(msgEmbed);
+						std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
+						msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+						msgEmbed->setTimeStamp(getTimeAndDate());
+						msgEmbed->setDescription(msgString);
+						msgEmbed->setColor(discordGuild.data.borderColor);
+						msgEmbed->setTitle("__**User Invite Counts 0 of 0:**__");
+						msgEmbeds.push_back(*msgEmbed);
 					} else {
 						for (uint32_t x = 0; x < descriptionStrings.size(); x += 1) {
-							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-							msgEmbed.setTimeStamp(getTimeAndDate());
-							msgEmbed.setDescription(descriptionStrings[x]);
-							msgEmbed.setColor(discordGuild.data.borderColor);
-							msgEmbed.setTitle(
+							std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
+							msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+							msgEmbed->setTimeStamp(getTimeAndDate());
+							msgEmbed->setDescription(descriptionStrings[x]);
+							msgEmbed->setColor(discordGuild.data.borderColor);
+							msgEmbed->setTitle(
 								"__**User Invite Counts (" + std::to_string((x + 1)) + " of " + std::to_string(descriptionStrings.size()) + "):**__");
-							msgEmbeds.push_back(msgEmbed);
+							msgEmbeds.push_back(*msgEmbed);
 						}
 					}
 					InputEventData eventData = newArgs.eventData;

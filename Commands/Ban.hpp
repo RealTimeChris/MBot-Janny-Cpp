@@ -63,15 +63,15 @@ namespace DiscordCoreAPI {
 						std::stoll(newArgs.commandData.optionsArgs[3]) < 0) {
 						std::string msgString = "------\n**Please, enter a proper number of days for purging the user's messages (0-7) (!ban = @USERMENTION, "
 												"REASON, #OFDAYSTOPURGE)**\n------";
-						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
-						msgEmbed.setDescription(msgString);
-						msgEmbed.setColor(discordGuild.data.borderColor);
-						msgEmbed.setTitle("__**Missing or Invalid Parameters:**__");
-						msgEmbed.setTimeStamp(getTimeAndDate());
+						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+						msgEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
+						msgEmbed->setDescription(msgString);
+						msgEmbed->setColor(discordGuild.data.borderColor);
+						msgEmbed->setTitle("__**Missing or Invalid Parameters:**__");
+						msgEmbed->setTimeStamp(getTimeAndDate());
 						RespondToInputEventData dataPackage(newEvent);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-						dataPackage.addMessageEmbed(msgEmbed);
+						dataPackage.addMessageEmbed(*msgEmbed);
 						newEvent = InputEvents::respondToEvent(dataPackage);
 						return;
 					} else {
@@ -105,15 +105,15 @@ namespace DiscordCoreAPI {
 					}
 					if (highestUserRolePosition >= highestBotRolePosition) {
 						std::string msgString = "------\n**Sorry, but I cannot ban them as their highest role is higher than mine!**\n------";
-						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-						msgEmbed.setDescription(msgString);
-						msgEmbed.setColor(discordGuild.data.borderColor);
-						msgEmbed.setTitle("__**Missing or Invalid Parameters:**__");
-						msgEmbed.setTimeStamp(getTimeAndDate());
+						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+						msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
+						msgEmbed->setDescription(msgString);
+						msgEmbed->setColor(discordGuild.data.borderColor);
+						msgEmbed->setTitle("__**Missing or Invalid Parameters:**__");
+						msgEmbed->setTimeStamp(getTimeAndDate());
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-						dataPackage.addMessageEmbed(msgEmbed);
+						dataPackage.addMessageEmbed(*msgEmbed);
 						newEvent = InputEvents::respondToEvent(dataPackage);
 						return;
 					}
@@ -127,15 +127,15 @@ namespace DiscordCoreAPI {
 					if (reason != "") {
 						std::string msgString01 = "------\n**Hello! You have been REDACTED from the server " + guild.name + " for the following reason:** " +
 							reason + "\nHave a great day!\n------";
-						EmbedData msgEmbed01;
-						msgEmbed01.setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
-						msgEmbed01.setTimeStamp(getTimeAndDate());
-						msgEmbed01.setDescription(msgString01);
-						msgEmbed01.setColor(discordGuild.data.borderColor);
-						msgEmbed01.setTitle("__**You've been REDACTED:**__");
+						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
+						msgEmbed->setTimeStamp(getTimeAndDate());
+						msgEmbed->setDescription(msgString01);
+						msgEmbed->setColor(discordGuild.data.borderColor);
+						msgEmbed->setTitle("__**You've been REDACTED:**__");
 						auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
 						CreateMessageData dataPackage{ DmChannel.id };
-						dataPackage.addMessageEmbed(msgEmbed01);
+						dataPackage.addMessageEmbed(*msgEmbed);
 						Messages::createMessageAsync(dataPackage).get();
 					}
 
@@ -172,15 +172,15 @@ namespace DiscordCoreAPI {
 
 							std::string msgString = "------\n**Nicely done! You owned that motherfucker " + guildMemberNew.userName +
 								" good!**\nYour current ban count is: " + std::to_string(discordGuild.data.userBanInfo[x].userBans.size()) + "\n------";
-							EmbedData msgEmbed{};
-							msgEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
-							msgEmbed.setDescription(msgString);
-							msgEmbed.setColor(discordGuild.data.borderColor);
-							msgEmbed.setTitle("__**Succesful Ban:**__");
-							msgEmbed.setTimeStamp(getTimeAndDate());
+							std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+							msgEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
+							msgEmbed->setDescription(msgString);
+							msgEmbed->setColor(discordGuild.data.borderColor);
+							msgEmbed->setTitle("__**Succesful Ban:**__");
+							msgEmbed->setTimeStamp(getTimeAndDate());
 							RespondToInputEventData dataPackage03(newEvent);
 							dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-							dataPackage03.addMessageEmbed(msgEmbed);
+							dataPackage03.addMessageEmbed(*msgEmbed);
 							newEvent = InputEvents::respondToEvent(dataPackage03);
 							return;
 						}
@@ -236,13 +236,13 @@ namespace DiscordCoreAPI {
 					}
 					if (pageEmbeds.size() == 0) {
 						std::string msgString = "------\n**Sorry, but noone has banned anyone yet!**\n------";
-						EmbedData msgEmbed{};
-						msgEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
-						msgEmbed.setDescription(msgString);
-						msgEmbed.setColor(discordGuild.data.borderColor);
-						msgEmbed.setTitle("__**No Bans:**__");
-						msgEmbed.setTimeStamp(getTimeAndDate());
-						pageEmbeds.push_back(msgEmbed);
+						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+						msgEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
+						msgEmbed->setDescription(msgString);
+						msgEmbed->setColor(discordGuild.data.borderColor);
+						msgEmbed->setTitle("__**No Bans:**__");
+						msgEmbed->setTimeStamp(getTimeAndDate());
+						pageEmbeds.push_back(*msgEmbed);
 					}
 
 					currentPage = 0;
@@ -260,27 +260,27 @@ namespace DiscordCoreAPI {
 						for (auto& value: discordGuild.data.userBanInfo) {
 							if (value.userId == newArgs.eventData.getAuthorId()) {
 								for (auto& value2: value.userBans) {
-									EmbedData newEmbed;
-									newEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
-									newEmbed.setDescription(
+									std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+									msgEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
+									msgEmbed->setDescription(
 										"------\n__**Date Banned:**__ " + value2.bannedAt + "\n__**Reason:**__ " + value2.reason + "\n------");
-									newEmbed.setTimeStamp(getTimeAndDate());
-									newEmbed.setTitle("__**Banned User: " + value2.userName + "**__");
-									newEmbed.setImage(value2.avatarUrl);
-									newEmbed.setColor(discordGuild.data.borderColor);
-									msgEmbeds.push_back(newEmbed);
+									msgEmbed->setTimeStamp(getTimeAndDate());
+									msgEmbed->setTitle("__**Banned User: " + value2.userName + "**__");
+									msgEmbed->setImage(value2.avatarUrl);
+									msgEmbed->setColor(discordGuild.data.borderColor);
+									msgEmbeds.push_back(*msgEmbed);
 								}
 							}
 						}
 						if (msgEmbeds.size() == 0) {
-							EmbedData newEmbed;
-							newEmbed.setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
-							newEmbed.setDescription("------\n__**You have not banned anyone yet!**__\n------");
-							newEmbed.setTimeStamp(getTimeAndDate());
-							newEmbed.setTitle("__**Banned Users:**__");
-							newEmbed.setTimeStamp(getTimeAndDate());
-							newEmbed.setColor(discordGuild.data.borderColor);
-							msgEmbeds.push_back(newEmbed);
+							std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+							newEmbed->setAuthor(newEvent.getUserName(), newEvent.getAvatarUrl());
+							newEmbed->setDescription("------\n__**You have not banned anyone yet!**__\n------");
+							newEmbed->setTimeStamp(getTimeAndDate());
+							newEmbed->setTitle("__**Banned Users:**__");
+							newEmbed->setTimeStamp(getTimeAndDate());
+							newEmbed->setColor(discordGuild.data.borderColor);
+							msgEmbeds.push_back(*newEmbed);
 						}
 						int32_t currentPageIndex02 = 0;
 						moveThroughMessagePages(

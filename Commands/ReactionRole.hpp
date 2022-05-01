@@ -9,7 +9,7 @@
 
 namespace DiscordCoreAPI {
 
-	CoRoutine<void> startupTheMessagePerGuild(DiscordCoreAPI::DiscordGuild* discordGuild, BotUser botUser, std::string theMessage, InputEventData inputData);
+	CoRoutine<void> startupTheMessagePerGuild(DiscordCoreAPI::DiscordGuild* discordGuild, BotUser botUser, std::string theMessage, InputEventData& inputData);
 
 	void startupToWrapTwo(DiscordCoreAPI::DiscordCoreClient* theClient);
 
@@ -165,11 +165,11 @@ namespace DiscordCoreAPI {
 						}
 					}
 					if (discordGuild->data.roleManager.theRoles.size() == 0) {
-						Message messageNew =
+						std::unique_ptr<Message> messageNew{ std::make_unique<Message>(
 							Messages::getMessageAsync({ .channelId = discordGuild->data.roleManager.channelId, .id = discordGuild->data.roleManager.messageId })
-								.get();
+								.get()) };
 						Messages::deleteMessageAsync(
-							{ .channelId = messageNew.channelId, .messageId = messageNew.id, .timeStamp = messageNew.timestamp, .reason = "Deleting!" })
+							{ .channelId = messageNew->channelId, .messageId = messageNew->id, .timeStamp = messageNew->timestamp, .reason = "Deleting!" })
 							.get();
 						discordGuild->data.roleManager.channelId = "";
 						discordGuild->data.roleManager.messageId = "";
@@ -293,7 +293,7 @@ namespace DiscordCoreAPI {
 		}
 	}
 
-	CoRoutine<void> startupTheMessagePerGuild(DiscordCoreAPI::DiscordGuild* discordGuild, BotUser botUser, std::string theMessage, InputEventData inputData) {
+	CoRoutine<void> startupTheMessagePerGuild(DiscordCoreAPI::DiscordGuild* discordGuild, BotUser botUser, std::string theMessage, InputEventData& inputData) {
 		co_await NewThreadAwaitable<void>();
 		if (discordGuild->data.roleManager.theRoles.size() != 0) {
 			std::vector<RespondToInputEventData> dataPackages{};
@@ -310,31 +310,31 @@ namespace DiscordCoreAPI {
 
 					Role roleNew{};
 					for (int32_t y = currentPageIndex * 25; y < currentPageIndex * 25 + 25 && y < discordGuild->data.roleManager.theRoles.size(); y += 1) {
-						SelectOptionData newOption{};
+						std::unique_ptr<SelectOptionData> newOption{ std::make_unique<SelectOptionData>() };
 						roleNew = Roles::getRoleAsync({ .guildId = discordGuild->data.guildId, .roleId = discordGuild->data.roleManager.theRoles[y] }).get();
-						newOption.emoji.name = roleNew.unicodeEmoji;
-						newOption.description = roleNew.name;
-						newOption.label = roleNew.name;
-						newOption.value = roleNew.id;
+						newOption->emoji.name = roleNew.unicodeEmoji;
+						newOption->description = roleNew.name;
+						newOption->label = roleNew.name;
+						newOption->value = roleNew.id;
 						if (roleNew.name != "") {
-							theOptions.push_back(newOption);
+							theOptions.push_back(*newOption);
 						}
 					}
 
 					if (theOptions.size() == 0) {
-						SelectOptionData newOption{};
-						newOption.emoji.name = "❌";
-						newOption.description = "There's no roles to display.";
-						newOption.label = "Empty";
-						newOption.value = "empty";
-						theOptions.push_back(newOption);
+						std::unique_ptr<SelectOptionData> newOption{ std::make_unique<SelectOptionData>() };
+						newOption->emoji.name = "❌";
+						newOption->description = "There's no roles to display.";
+						newOption->label = "Empty";
+						newOption->value = "empty";
+						theOptions.push_back(*newOption);
 					} else {
-						SelectOptionData newOption{};
-						newOption.emoji.name = "❌";
-						newOption.description = "Exit this menu.";
-						newOption.label = "Exit";
-						newOption.value = "exit";
-						theOptions.push_back(newOption);
+						std::unique_ptr<SelectOptionData> newOption{ std::make_unique<SelectOptionData>() };
+						newOption->emoji.name = "❌";
+						newOption->description = "Exit this menu.";
+						newOption->label = "Exit";
+						newOption->value = "exit";
+						theOptions.push_back(*newOption);
 					}
 					messageEmbeds[currentPageIndex]
 						.setDescription(discordGuild->data.roleManager.message)

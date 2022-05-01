@@ -26,7 +26,7 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				for (uint32_t x = 0; x < 150; x += 1) {
+				for (uint32_t x = 0; x < 50; x += 1) {
 					CreateMessageData dataPackage{};
 					dataPackage.addContent("TEST MESSAGE: " + std::to_string(x));
 					dataPackage.channelId = newArgs.eventData.getChannelId();
@@ -34,10 +34,17 @@ namespace DiscordCoreAPI {
 				}
 				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				std ::vector<CoRoutine<GuildMember>> theMembers{};
+				auto x = 0;
+				//guild.members.size();
+				
 				for (auto& [key, value]: guild.members) {
+					x += 1;
 					auto newGuildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = value.user.id, .guildId = newArgs.eventData.getGuildId() });
 					theMembers.push_back(std::move(newGuildMember));
 					std::cout << "WERE HERE THIS IS IT" << std::endl;
+					if (x >= guild.members.size() / 10) {
+						break;
+					}
 				}
 
 				for (auto& value: theMembers) {
