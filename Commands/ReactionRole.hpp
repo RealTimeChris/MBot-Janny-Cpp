@@ -38,7 +38,7 @@ namespace DiscordCoreAPI {
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
 				std::unique_ptr<Channel> channel{ std::make_unique<Channel>(Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get()) };
-				
+
 				bool areWeInADm = areWeInADM(newArgs.eventData, *channel);
 				if (areWeInADm) {
 					return;
@@ -221,7 +221,7 @@ namespace DiscordCoreAPI {
 		discordGuild->getDataFromDB();
 		std::unique_ptr<Message> message{ std::make_unique<Message>(
 			Messages::getMessageAsync({ .channelId = discordGuild->data.roleManager.channelId, .id = discordGuild->data.roleManager.messageId }).get()) };
-			
+
 		if (message->id != "") {
 			Messages::deleteMessageAsync({ .channelId = message->channelId, .messageId = message->id, .timeStamp = message->timestamp, .reason = "Deleting!" })
 				.get();

@@ -95,8 +95,8 @@ namespace DiscordCoreAPI {
 				purgeVector.shrink_to_fit();
 				deleteVector.shrink_to_fit();
 				std::cout << shiftToBrightGreen()
-						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " +
-						discordGuild.data.guildName + ".\n\n"
+						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + discordGuild.data.guildName +
+						".\n\n"
 						  << reset();
 				if (purgeVector.size() >= 2) {
 					std::vector<std::vector<std::string>> newVector{};
@@ -220,8 +220,8 @@ namespace DiscordCoreAPI {
 				purgeVector.shrink_to_fit();
 				deleteVector.shrink_to_fit();
 				std::cout << shiftToBrightGreen()
-						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " +
-						discordGuild.data.guildName + ".\n\n"
+						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + discordGuild.data.guildName +
+						".\n\n"
 						  << reset();
 				if (purgeVector.size() >= 2) {
 					std::vector<std::vector<std::string>> newVector{};

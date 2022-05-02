@@ -36,7 +36,7 @@ namespace DiscordCoreAPI {
 				std ::vector<CoRoutine<GuildMember>> theMembers{};
 				auto x = 0;
 				//guild.members.size();
-				
+
 				for (auto& [key, value]: guild.members) {
 					x += 1;
 					auto newGuildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = value.user.id, .guildId = newArgs.eventData.getGuildId() });
