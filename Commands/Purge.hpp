@@ -71,7 +71,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
-					auto eventNew = InputEvents::respondToEvent(dataPackage);
+					auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				} else if (newArgs.commandData.optionsArgs.size() > 1 && !std::regex_search(newArgs.commandData.optionsArgs[1], userIdRegex)) {
 					std::string msgString = "------\n**Please, enter a proper user mention! (/purge = #OFMESSAGESTODELETE, @USERMENTION, TRUE/FALSE or /purge "
@@ -86,7 +86,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
-					auto eventNew = InputEvents::respondToEvent(dataPackage);
+					auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				}
 				if (newArgs.commandData.optionsArgs.size() > 2) {
@@ -120,7 +120,7 @@ namespace DiscordCoreAPI {
 				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-					newEvent01 = InputEvents::respondToEvent(dataPackage);
+					newEvent01 = InputEvents::respondToEventAsync(dataPackage).get();
 				}
 
 				if (newArgs.commandData.optionsArgs.size() > 1) {
@@ -146,7 +146,7 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData dataPackage(newEvent01);
 				dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
-				newEvent = InputEvents::respondToEvent(dataPackage);
+				newEvent = InputEvents::respondToEventAsync(dataPackage).get();
 				std::string msgString2;
 				uint32_t messageLimit = ( uint32_t )std::stoll(digitString);
 				std::vector<std::string> messageIdsToDelete;
@@ -275,7 +275,7 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData dataPackage02(newEvent);
 				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage02.addMessageEmbed(msgEmbed2);
-				newEvent = InputEvents::respondToEvent(dataPackage02);
+				newEvent = InputEvents::respondToEventAsync(dataPackage02).get();
 				InputEvents::deleteInputEventResponseAsync(std::move(newEvent), 20000);
 				return;
 			} catch (...) {

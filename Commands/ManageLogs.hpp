@@ -99,7 +99,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					InputEvents::respondToEvent(dataPackage);
+					InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				}
 
@@ -116,7 +116,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					InputEvents::respondToEvent(dataPackage);
+					InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				} else if (newArgs.commandData.optionsArgs[1] == "") {
 					std::string msgString = "------\n**Please, enter a log name to disable or enable as the second argument of this command!";
@@ -129,7 +129,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					InputEvents::respondToEvent(dataPackage);
+					InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				} else {
 					if (convertToLowerCase(newArgs.commandData.optionsArgs[0]) == "enable") {
@@ -153,7 +153,7 @@ namespace DiscordCoreAPI {
 								RespondToInputEventData dataPackage(newArgs.eventData);
 								dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 								dataPackage.addMessageEmbed(*msgEmbed);
-								InputEvents::respondToEvent(dataPackage);
+								InputEvents::respondToEventAsync(dataPackage).get();
 								break;
 							}
 						}
@@ -168,7 +168,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage(newArgs.eventData);
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(*msgEmbed);
-							InputEvents::respondToEvent(dataPackage);
+							InputEvents::respondToEventAsync(dataPackage).get();
 						}
 					} else if (convertToLowerCase(newArgs.commandData.optionsArgs[0]) == "disable") {
 						bool isItFound{ false };
@@ -190,7 +190,7 @@ namespace DiscordCoreAPI {
 								RespondToInputEventData dataPackage(newArgs.eventData);
 								dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 								dataPackage.addMessageEmbed(*msgEmbed);
-								InputEvents::respondToEvent(dataPackage);
+								InputEvents::respondToEventAsync(dataPackage).get();
 								break;
 							}
 						}
@@ -205,7 +205,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage(newArgs.eventData);
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(*msgEmbed);
-							InputEvents::respondToEvent(dataPackage);
+							InputEvents::respondToEventAsync(dataPackage).get();
 						}
 					}
 				}

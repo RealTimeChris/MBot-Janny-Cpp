@@ -23,7 +23,7 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData responseData{ eventData };
 				responseData.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 				responseData.addMessageEmbed(msgEmbed);
-				auto event01 = InputEvents::respondToEvent(responseData);
+				auto event01 = InputEvents::respondToEventAsync(responseData).get();
 			}
 			return true;
 		}
@@ -67,7 +67,7 @@ namespace DiscordCoreAPI {
 			RespondToInputEventData dataPackage{ eventData };
 			dataPackage.addMessageEmbed(msgEmbed);
 			dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-			InputEvents::respondToEvent(dataPackage);
+			InputEvents::respondToEventAsync(dataPackage).get();
 		}
 		return false;
 	}

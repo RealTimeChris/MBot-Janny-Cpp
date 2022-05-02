@@ -54,7 +54,7 @@ namespace DiscordCoreAPI {
 				dataPackage.addButton(false, "push_me", "Press-Me", ButtonStyle::Success, "✅");
 				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
-				auto eventNew = InputEvents::respondToEvent(dataPackage);
+				auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
 
 				ButtonCollector buttonCollector{ eventNew };
 				auto resultData = buttonCollector.collectButtonData(false, 120000, 1, newArgs.eventData.getAuthorId()).get();
@@ -70,7 +70,7 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData dataPackage03{ *resultData[0].interactionData };
 				dataPackage03.addMessageEmbed(msgEmbed);
 				dataPackage03.setResponseType(InputEventResponseType::Edit_Ephemeral_Interaction_Response);
-				InputEvents::respondToEvent(dataPackage03);
+				InputEvents::respondToEventAsync(dataPackage03).get();
 
 				return;
 

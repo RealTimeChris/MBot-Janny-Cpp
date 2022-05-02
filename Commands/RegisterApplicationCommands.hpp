@@ -33,7 +33,7 @@ namespace DiscordCoreAPI {
 				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
 				InputEventData newEvent = newArgs.eventData;
 				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
-					newEvent = InputEvents::respondToEvent(dataPackage);
+					newEvent = InputEvents::respondToEventAsync(dataPackage).get();
 				}
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
@@ -493,7 +493,7 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData dataPackage02(newEvent);
 				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage02.addMessageEmbed(msgEmbed);
-				auto event = InputEvents::respondToEvent(dataPackage02);
+				auto event = InputEvents::respondToEventAsync(dataPackage02).get();
 				return;
 			} catch (...) {
 				reportException("RegisterApplicationCommands::execute()");

@@ -63,7 +63,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					InputEvents::respondToEvent(dataPackage);
+					InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				} else if (newArgs.commandData.optionsArgs[0] == "remove") {
 					discordGuild.data.inviteReportingChannelId = "";
@@ -79,7 +79,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					InputEvents::respondToEvent(dataPackage);
+					InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				} else if (newArgs.commandData.optionsArgs[0] == "view") {
 					std::vector<std::string> descriptionStrings;
@@ -155,7 +155,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbeds[currentIndex]);
-					eventData = InputEvents::respondToEvent(dataPackage);
+					eventData = InputEvents::respondToEventAsync(dataPackage).get();
 
 					moveThroughMessagePages(newArgs.eventData.getAuthorId(), eventData, currentIndex, msgEmbeds, false, 120000);
 				}

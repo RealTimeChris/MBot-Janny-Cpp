@@ -368,7 +368,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto event01 = InputEvents::respondToEvent(dataPackage);
+						auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 						return;
 					}
 				}
@@ -387,7 +387,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage(newArgs.eventData);
 							dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 							dataPackage.addMessageEmbed(*msgEmbed);
-							auto event01 = InputEvents::respondToEvent(dataPackage);
+							auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 							return;
 						} else {
 							numberOfMinutesToWait = stoll(newArgs.commandData.optionsArgs[1]);
@@ -405,7 +405,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto event01 = InputEvents::respondToEvent(dataPackage);
+					auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				}
 
@@ -451,7 +451,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto event01 = InputEvents::respondToEvent(dataPackage);
+					auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 					InputEvents::deleteInputEventResponseAsync(event01, 20000).get();
 					return;
 				}
@@ -479,7 +479,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						thePtr = InputEvents::respondToEvent(dataPackage);
+						thePtr = InputEvents::respondToEventAsync(dataPackage).get();
 						InputEvents::deleteInputEventResponseAsync(thePtr, 20000);
 						std::unique_ptr<Message> previousMessage{ std::make_unique<Message>(
 							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = currentDeletionChannel->deletionMessageId })
@@ -508,13 +508,13 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(thePtr);
 						dataPackage.setResponseType(InputEventResponseType::Follow_Up_Message);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto event01 = InputEvents::respondToEvent(dataPackage);
+						auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 						*pinMessage = event01.getMessageData();
 					} else {
 						RespondToInputEventData dataPackage(thePtr);
 						dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto event01 = InputEvents::respondToEvent(dataPackage);
+						auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 						*pinMessage = event01.getMessageData();
 					}
 					Messages::pinMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .messageId = pinMessage->id }).get();
@@ -550,7 +550,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto event01 = InputEvents::respondToEvent(dataPackage);
+						auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 						return;
 					}
 					discordGuild.data.deletionChannels.erase(discordGuild.data.deletionChannels.begin() + deletionChannelIndex);
@@ -566,7 +566,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto event01 = InputEvents::respondToEvent(dataPackage);
+					auto event01 = InputEvents::respondToEventAsync(dataPackage).get();
 					InputEvents::deleteInputEventResponseAsync(event01, 20000).get();
 				}
 				return;
