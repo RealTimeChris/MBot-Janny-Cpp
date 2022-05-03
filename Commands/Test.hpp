@@ -48,7 +48,6 @@ namespace DiscordCoreAPI {
 					x += 1;
 					auto newGuildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = value.user.id, .guildId = newArgs.eventData.getGuildId() });
 					theMembers.push_back(std::move(newGuildMember));
-					std::cout << "WERE HERE THIS IS IT" << std::endl;
 					if (x >= guild.members.size() / 10) {
 						break;
 					}
