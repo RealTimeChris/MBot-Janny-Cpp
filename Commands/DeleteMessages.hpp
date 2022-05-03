@@ -11,28 +11,29 @@ namespace DiscordCoreAPI {
 
 	CoRoutine<void> deleteMessagesToBeWrapped(DiscordGuild discordGuild, int32_t channelIndex) {
 		co_await NewThreadAwaitable<void>();
+		DiscordGuild newDiscordGuild{ discordGuild };
 		try {
 			const int32_t numberOfMessagesToSave = discordGuild.data.deletionChannels[channelIndex].numberOfMessagesToSave;
-			std::string channelId = discordGuild.data.deletionChannels[channelIndex].channelId;
+			std::string channelId = newDiscordGuild.data.deletionChannels[channelIndex].channelId;
 			std::unique_ptr<Channel> channel{ std::make_unique<Channel>(Channels::getCachedChannelAsync({ channelId }).get()) };
 			if (channel->id == "") {
-				discordGuild.data.deletionChannels.erase(discordGuild.data.deletionChannels.begin() + channelIndex);
+				newDiscordGuild.data.deletionChannels.erase(newDiscordGuild.data.deletionChannels.begin() + channelIndex);
 				std::cout << shiftToBrightBlue() << "Removing an 'unknown channel' from list of deletion channels!" << std::endl << std::endl << reset();
-				discordGuild.writeDataToDB();
+				newDiscordGuild.writeDataToDB();
 				co_return;
 			}
 
-			if (discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == true) {
-				std::cout << shiftToBrightGreen() << "Nope! Still being deleted! Channel: " + channel->name + " of server " + discordGuild.data.guildName + "\n"
+			if (newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == true) {
+				std::cout << shiftToBrightGreen() << "Nope! Still being deleted! Channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + "\n"
 						  << reset();
 				co_return;
 			}
 
 			std::cout << shiftToBrightBlue()
-					  << "Checking for messages to delete in channel: " + channel->name + " of server " + discordGuild.data.guildName + "\n"
+					  << "Checking for messages to delete in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + "\n"
 					  << reset();
-			discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = true;
-			discordGuild.writeDataToDB();
+			newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = true;
+			newDiscordGuild.writeDataToDB();
 			if (numberOfMessagesToSave > 0) {
 				std::unique_ptr<MessageData> startingMessage{ std::make_unique<MessageData>() };
 				int64_t totalMessagesReturned{ 1 };
@@ -57,10 +58,10 @@ namespace DiscordCoreAPI {
 				for (uint64_t x = 0; x < originalMessagesArray.size(); x += 1) {
 					if (!originalMessagesArray[x].pinned &&
 						hasTimeElapsed(originalMessagesArray[x].timestamp.getOriginalTimeStamp(), 0, 0,
-							discordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
+							newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
 						messagesToDelete.push_back(originalMessagesArray[x]);
 					} else if (!hasTimeElapsed(
-								   originalMessagesArray[x].timestamp, 0, 0, discordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted) &&
+								   originalMessagesArray[x].timestamp, 0, 0, newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted) &&
 						!originalMessagesArray[x].pinned) {
 						messagesSaved += 1;
 					} else if (originalMessagesArray[x].pinned) {
@@ -95,7 +96,7 @@ namespace DiscordCoreAPI {
 				purgeVector.shrink_to_fit();
 				deleteVector.shrink_to_fit();
 				std::cout << shiftToBrightGreen()
-						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + discordGuild.data.guildName +
+						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName +
 						".\n\n"
 						  << reset();
 				if (purgeVector.size() >= 2) {
@@ -114,7 +115,7 @@ namespace DiscordCoreAPI {
 						totalDeletedAfter += ( int32_t )value.size();
 						std::cout << shiftToBrightBlue()
 								  << "Deleting message numbers " + std::to_string(totalDeletedBefore + 1) + " to " + std::to_string(totalDeletedAfter) +
-								", in channel " + channel->name + " of server " + discordGuild.data.guildName + ".\n"
+								", in channel " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n"
 								  << reset();
 						Messages::deleteMessagesBulkAsync({ .messageIds = value, .channelId = channelId, .reason = "Purging the channel!" }).get();
 						totalDeletedBefore += ( int32_t )value.size();
@@ -128,15 +129,15 @@ namespace DiscordCoreAPI {
 				if (deleteVector.size() > 0) {
 					int32_t currentValue{ 0 };
 					for (auto& value: deleteVector) {
-						if (discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == false) {
-							discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
-							discordGuild.writeDataToDB();
+						if (newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == false) {
+							newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
+							newDiscordGuild.writeDataToDB();
 							co_return;
 						}
 						currentValue += 1;
 						std::cout << shiftToBrightBlue()
 								  << "Deleting message number " + std::to_string(currentValue) + " of " + std::to_string(deleteVector.size()) +
-								", in channel " + channel->name + " of server " + discordGuild.data.guildName + ".\n"
+								", in channel " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n"
 								  << reset();
 						DeleteMessageData deleteData{};
 						deleteData.channelId = value.channelId;
@@ -163,7 +164,7 @@ namespace DiscordCoreAPI {
 								x = ( int32_t )arrayOfMessages.size();
 								if (x > 0 &&
 									hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 0, 0,
-										discordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
+										newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
 									arrayOfMessagesToDelete.push_back(value);
 									y += 1;
 								}
@@ -183,7 +184,7 @@ namespace DiscordCoreAPI {
 							x = ( int32_t )arrayOfMessages.size();
 							if (x > 0 &&
 								hasTimeElapsed(
-									value.timestamp.getOriginalTimeStamp(), 0, 0, discordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
+									value.timestamp.getOriginalTimeStamp(), 0, 0, newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
 								arrayOfMessagesToDelete.push_back(value);
 								y += 1;
 							}
@@ -194,10 +195,10 @@ namespace DiscordCoreAPI {
 					}
 				}
 				if (arrayOfMessageArrays.size() == 0) {
-					discordGuild.getDataFromDB();
-					discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
-					discordGuild.writeDataToDB();
-					std::cout << shiftToBrightGreen() << "Total of 0 in channel: " + channel->name + " of server " + discordGuild.data.guildName + ".\n\n"
+					newDiscordGuild.getDataFromDB();
+					newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
+					newDiscordGuild.writeDataToDB();
+					std::cout << shiftToBrightGreen() << "Total of 0 in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n\n"
 							  << reset();
 					co_return;
 				}
@@ -208,7 +209,7 @@ namespace DiscordCoreAPI {
 					for (int32_t z = 0; z < ( int32_t )arrayOfMessageArrays[w].size(); z += 1) {
 						if ((!hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 14, 0, 0) && !arrayOfMessageArrays[w][z].pinned &&
 								hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 0, 0,
-									discordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted))) {
+									newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted))) {
 							//deleteVector.push_back(arrayOfMessageArrays[w][z]);
 							purgeVector.push_back(arrayOfMessageArrays[w][z].id);
 						} else if (!arrayOfMessageArrays[w][z].pinned) {
@@ -220,7 +221,7 @@ namespace DiscordCoreAPI {
 				purgeVector.shrink_to_fit();
 				deleteVector.shrink_to_fit();
 				std::cout << shiftToBrightGreen()
-						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + discordGuild.data.guildName +
+						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName +
 						".\n\n"
 						  << reset();
 				if (purgeVector.size() >= 2) {
@@ -239,7 +240,7 @@ namespace DiscordCoreAPI {
 						totalDeletedAfter += ( int32_t )value.size();
 						std::cout << shiftToBrightBlue()
 								  << "Deleting message numbers " + std::to_string(totalDeletedBefore + 1) + " to " + std::to_string(totalDeletedAfter) +
-								", in channel " + channel->name + " of server " + discordGuild.data.guildName + ".\n"
+								", in channel " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n"
 								  << reset();
 						Messages::deleteMessagesBulkAsync({ .messageIds = value, .channelId = channelId, .reason = "Purging the channel!" }).get();
 						totalDeletedBefore += ( int32_t )value.size();
@@ -253,16 +254,16 @@ namespace DiscordCoreAPI {
 				if (deleteVector.size() > 0) {
 					int32_t currentValue{ 0 };
 					for (auto& value: deleteVector) {
-						discordGuild.getDataFromDB();
-						if (discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == false) {
-							discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
-							discordGuild.writeDataToDB();
+						newDiscordGuild.getDataFromDB();
+						if (newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == false) {
+							newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
+							newDiscordGuild.writeDataToDB();
 							co_return;
 						}
 						currentValue += 1;
 						std::cout << shiftToBrightBlue()
 								  << "Deleting message number " + std::to_string(currentValue) + " of " + std::to_string(deleteVector.size()) +
-								", in channel " + channel->name + " of server " + discordGuild.data.guildName + ".\n"
+								", in channel " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n"
 								  << reset();
 						DeleteMessageData deleteData{};
 						deleteData.channelId = value.channelId;
@@ -273,18 +274,18 @@ namespace DiscordCoreAPI {
 					}
 				}
 			}
-			discordGuild.getDataFromDB();
-			discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
-			discordGuild.writeDataToDB();
+			newDiscordGuild.getDataFromDB();
+			newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
+			newDiscordGuild.writeDataToDB();
 			co_return;
 		} catch (...) {
 			reportException("deleteMessagesToBeWrapped Error: ");
-			discordGuild.getDataFromDB();
-			discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
-			discordGuild.writeDataToDB();
+			newDiscordGuild.getDataFromDB();
+			newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
+			newDiscordGuild.writeDataToDB();
 		}
-		discordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
-		discordGuild.writeDataToDB();
+		newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
+		newDiscordGuild.writeDataToDB();
 		co_return;
 	}
 
