@@ -63,7 +63,7 @@ namespace DiscordCoreAPI {
 				fields.push_back(field2);
 				EmbedFieldData field3 = { .value = std::to_string(guild.memberCount), .name = "__Server Member Count:__ ", .Inline = true };
 				fields.push_back(field3);
-				EmbedFieldData field4 = { .value = "<@!" + guild.ownerId + ">", .name = "__Server Owner:__ ", .Inline = true };
+				EmbedFieldData field4 = { .value = "<@" + guild.ownerId + ">", .name = "__Server Owner:__ ", .Inline = true };
 				fields.push_back(field4);
 				EmbedFieldData field5 = { .value = guild.ownerId, .name = "__Server Owner ID:__ ", .Inline = true };
 				fields.push_back(field5);

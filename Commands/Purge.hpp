@@ -133,7 +133,7 @@ namespace DiscordCoreAPI {
 				if (newArgs.commandData.optionsArgs.size() < 2) {
 					msgString = "------\n**Deleting " + std::to_string(stol(digitString)) + " messages.**\n------";
 				} else if (newArgs.commandData.optionsArgs.size() >= 2) {
-					msgString = "------\n**Deleting " + std::to_string(stol(digitString)) + " messages, from user <@!" + userId + ">.**\n------";
+					msgString = "------\n**Deleting " + std::to_string(stol(digitString)) + " messages, from user <@" + userId + ">.**\n------";
 				}
 
 				EmbedData msgEmbed{};
@@ -257,10 +257,10 @@ namespace DiscordCoreAPI {
 					}
 				} else if (newArgs.commandData.optionsArgs.size() >= 2) {
 					if (messageIdsToDelete.size() < 2) {
-						msgString2 = "------\n**Deleted " + std::to_string(0) + " messages, from the user <@!" + userId + ">.**\n------";
+						msgString2 = "------\n**Deleted " + std::to_string(0) + " messages, from the user <@" + userId + ">.**\n------";
 					} else {
 						msgString2 =
-							"------\n**Deleted " + std::to_string(messageIdsToDelete.size()) + " messages, from the user <@!" + userId + ">.**\n------";
+							"------\n**Deleted " + std::to_string(messageIdsToDelete.size()) + " messages, from the user <@" + userId + ">.**\n------";
 					}
 				}
 

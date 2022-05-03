@@ -51,7 +51,7 @@ namespace DiscordCoreAPI {
 
 					msgString += "__Joined At:__ " + value.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime) + "\n";
 					User owner = Users::getUserAsync({ value.ownerId }).get();
-					msgString += "__Guild Owner:__ <@!" + value.ownerId + "> " + owner.userName + "#" + owner.discriminator + "\n";
+					msgString += "__Guild Owner:__ <@" + value.ownerId + "> " + owner.userName + "#" + owner.discriminator + "\n";
 					msgString += "__Created At:__ " + value.createdAt;
 
 					EmbedData messageEmbed;

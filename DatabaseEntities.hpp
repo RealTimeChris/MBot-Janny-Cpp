@@ -654,7 +654,7 @@ namespace DiscordCoreAPI {
 				this->data.guildMemberMention = "<@" + this->data.guildMemberId + ">";
 			} else {
 				this->data.displayName = guildMemberData.nick;
-				this->data.guildMemberMention = "<@!" + this->data.guildMemberId + ">";
+				this->data.guildMemberMention = "<@" + this->data.guildMemberId + ">";
 			}
 			this->data.userName = guildMemberData.user.userName;
 			this->writeDataToDB();

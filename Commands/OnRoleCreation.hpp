@@ -44,7 +44,7 @@ namespace DiscordCoreAPI {
 				std::string msgString{};
 				msgString = "__**New Role:**__ <@&" + newRole.id + ">(" + newRole.name + ")\n";
 				User user = Users::getUserAsync({ .userId = auditLogEntry.userId }).get();
-				msgString += "__**Created By:**__ <@!" + user.id + ">(" + user.userName + "#" + user.discriminator + ")\n";
+				msgString += "__**Created By:**__ <@" + user.id + ">(" + user.userName + "#" + user.discriminator + ")\n";
 				msgString += "__**Role Count:**__ " + std::to_string(guild.roles.size());
 
 				msgEmbed.setTitle("__**Role Created:**__");

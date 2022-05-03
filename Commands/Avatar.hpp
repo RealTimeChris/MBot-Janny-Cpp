@@ -63,7 +63,7 @@ namespace DiscordCoreAPI {
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor(discordGuild.data.borderColor);
-				msgEmbed.setDescription("<@!" + guildMemberGet.user.id + ">'s Avatar");
+				msgEmbed.setDescription("<@" + guildMemberGet.user.id + ">'s Avatar");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setImage(guildMemberGet.user.avatar);
 				msgEmbed.setTitle("__**User Avatar:**__");

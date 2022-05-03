@@ -82,6 +82,9 @@ namespace DiscordCoreAPI {
 					InputEvents::respondToEventAsync(dataPackage).get();
 					return;
 				} else if (newArgs.commandData.optionsArgs[0] == "view") {
+					RespondToInputEventData dataPackage(newArgs.eventData);
+					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+					auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
 					std::vector<std::string> descriptionStrings;
 					std::string msgString01;
 					std::vector<DiscordGuildMember> discordGuildMembers;
@@ -120,7 +123,7 @@ namespace DiscordCoreAPI {
 					InviteData vanityInvite = Guilds::getGuildVanityInviteAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 					msgString01 += "__**The vanity Url's Invite Count:**__ " + std::to_string(vanityInvite.uses) + "\n";
 					for (uint32_t x = 0; x < discordGuildMembers.size(); x += 1) {
-						std::string currentString = "__**<@!" + discordGuildMembers[x].data.guildMemberId + ">'s Invite Count:**__ " +
+						std::string currentString = "__**<@" + discordGuildMembers[x].data.guildMemberId + ">'s Invite Count:**__ " +
 							std::to_string(discordGuildMembers[x].data.totalInvites) + "\n";
 						msgString01 += currentString;
 						if (msgString01.size() + currentString.size() > 2048 || x == discordGuildMembers.size() - 1) {
@@ -151,13 +154,8 @@ namespace DiscordCoreAPI {
 							msgEmbeds.push_back(*msgEmbed);
 						}
 					}
-					InputEventData eventData = newArgs.eventData;
-					RespondToInputEventData dataPackage(newArgs.eventData);
-					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
-					dataPackage.addMessageEmbed(msgEmbeds[currentIndex]);
-					eventData = InputEvents::respondToEventAsync(dataPackage).get();
 
-					moveThroughMessagePages(newArgs.eventData.getAuthorId(), eventData, currentIndex, msgEmbeds, false, 120000);
+					moveThroughMessagePages(newArgs.eventData.getAuthorId(), newEvent, currentIndex, msgEmbeds, false, 120000);
 				}
 				return;
 			} catch (...) {
@@ -314,16 +312,16 @@ namespace DiscordCoreAPI {
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					if (guildMemberInviterData.user.id != "") {
-						msgEmbed.setDescription("**------\nIt appears as though the server member <@!" + newArgs.guildMemberData.user.id + ">, (" +
-							newArgs.guildMemberData.user.userName + ") was invited by the server member <@!" + guildMemberInviterData.user.id + ">, (" +
+						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + newArgs.guildMemberData.user.id + ">, (" +
+							newArgs.guildMemberData.user.userName + ") was invited by the server member <@" + guildMemberInviterData.user.id + ">, (" +
 							guildMemberInviterData.user.userName + "), who now has " + std::to_string(currengGuildMemberInvitesCount) + " invites!\n------**");
 					} else if (discordGuild.data.vanityInviteUses <= vanityInvite.uses - 1 && vanityInvite.code != "") {
-						msgEmbed.setDescription("**------\nIt appears as though the server member <@!" + newArgs.guildMemberData.user.id + ">, (" +
+						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + newArgs.guildMemberData.user.id + ">, (" +
 							newArgs.guildMemberData.user.userName + ") was invited using the vanity Url code: " + guild.vanityUrlCode + ".\n------**");
 						discordGuild.data.vanityInviteUses = vanityInvite.uses;
 						discordGuild.writeDataToDB();
 					} else {
-						msgEmbed.setDescription("**------\nIt appears as though the server member <@!" + newArgs.guildMemberData.user.id + ">, (" +
+						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + newArgs.guildMemberData.user.id + ">, (" +
 							newArgs.guildMemberData.user.userName + ") was invited by an unknown server member!\n------**");
 					}
 					msgEmbed.setTitle("__**Inviter Status:**__");

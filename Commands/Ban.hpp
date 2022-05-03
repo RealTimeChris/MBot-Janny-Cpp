@@ -218,7 +218,7 @@ namespace DiscordCoreAPI {
 							pageStrings.push_back("------\n__**Enter 'Select' to view your trophy case!**__\n");
 						}
 
-						std::string msgString = "__**#" + std::to_string(currentPage * membersPerPage + ((x % membersPerPage) + 1)) + " | Name:**__ <@!" +
+						std::string msgString = "__**#" + std::to_string(currentPage * membersPerPage + ((x % membersPerPage) + 1)) + " | Name:**__ <@" +
 							discordGuild.data.userBanInfo[x].userId + "> __**| Ban Count:**__ " +
 							std::to_string(discordGuild.data.userBanInfo[x].userBans.size()) + "\n";
 

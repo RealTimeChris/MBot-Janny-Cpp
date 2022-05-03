@@ -26,12 +26,14 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
+				
 				RespondToInputEventData dataPackage{ newArgs.eventData };
 				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
 				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
 				RespondToInputEventData dataPackage02{ newEvent };
 				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-				dataPackage02.addContent("TEST MESSAGE: TEST");
+				dataPackage02.addContent("<t:" +
+					std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
 				InputEvents::respondToEventAsync(dataPackage02);
 				for (uint32_t x = 0; x < 50; x += 1) {
 					RespondToInputEventData dataPackage02{ newEvent };
@@ -50,14 +52,16 @@ namespace DiscordCoreAPI {
 					theMembers.push_back(std::move(newGuildMember));
 					if (x >= guild.members.size() / 10) {
 						break;
+
 					}
+					std::cout << "WERE HERE THIS IS IT" << std::endl;
 				}
 
 				for (auto& value: theMembers) {
 					std::cout << "WERE HERE THIS IS IT" << value.get().user.userName << std::endl;
 				}
 
-
+				
 				return;
 			} catch (...) {
 				reportException("Test::execute()");

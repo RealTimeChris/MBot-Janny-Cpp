@@ -49,7 +49,7 @@ namespace DiscordCoreAPI {
 				}
 
 				std::string whatAreWeDoing;
-				std::regex userMentionRegex("<@!\\d{18}>");
+				std::regex userMentionRegex("<@\\d{18}>");
 				std::regex userIdRegexp("\\d{18}");
 				std::string ghostReason;
 				std::string userId;
@@ -90,7 +90,7 @@ namespace DiscordCoreAPI {
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
 
 					if (targetGuildMember.user.id == "") {
-						std::string msgString = "------\n**Hello! There was an error while trying to ghost <@!" + userId + ">**\n------\n";
+						std::string msgString = "------\n**Hello! There was an error while trying to ghost <@" + userId + ">**\n------\n";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
 						msgEmbed->setColor(discordGuild.data.borderColor);
@@ -121,7 +121,7 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@!" + targetGuildMember.user.id + "> (" +
+					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
 						targetGuildMember.user.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
@@ -137,7 +137,7 @@ namespace DiscordCoreAPI {
 					std::string msgString = "------\n";
 
 					for (auto& value: discordGuild.data.ghostedIds) {
-						msgString += "<@!" + value + ">\n";
+						msgString += "<@" + value + ">\n";
 					}
 
 					msgString += "------";
@@ -171,7 +171,7 @@ namespace DiscordCoreAPI {
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
 
 					if (targetGuildMember.user.id == "" || !isItThere) {
-						std::string msgString = "------\n**Hello! There was an error while trying to un-ghost <@!" + userId + ">**\n------\n";
+						std::string msgString = "------\n**Hello! There was an error while trying to un-ghost <@" + userId + ">**\n------\n";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
 						msgEmbed->setColor(discordGuild.data.borderColor);
@@ -200,7 +200,7 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@!" + targetGuildMember.user.id + "> (" +
+					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
 						targetGuildMember.user.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
