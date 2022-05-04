@@ -17,7 +17,6 @@ namespace DiscordCoreAPI {
 
 	class ReactionRole : public BaseFunction {
 	  public:
-		CoRoutine<void> theTask{};
 
 		ReactionRole() {
 			this->commandName = "reactionrole";
