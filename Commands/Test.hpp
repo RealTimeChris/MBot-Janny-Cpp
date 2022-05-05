@@ -27,41 +27,18 @@ namespace DiscordCoreAPI {
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
 				
+				File theFile{};
+				theFile.fileName = "RTCHRISSANTAHAT.png";
+				theFile.data = loadFileContents("C:/Users/Chris/Downloads/RTCHRISSANTAHAT.png");
 				RespondToInputEventData dataPackage{ newArgs.eventData };
-				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
-				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
-				RespondToInputEventData dataPackage02{ newEvent };
-				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-				dataPackage02.addContent("<t:" +
-					std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
-				InputEvents::respondToEventAsync(dataPackage02);
-				for (uint32_t x = 0; x < 50; x += 1) {
-					RespondToInputEventData dataPackage02{ newEvent };
-					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
-					InputEvents::respondToEventAsync(dataPackage02);
-				}
-				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
-				std ::vector<CoRoutine<GuildMember>> theMembers{};
-				auto x = 0;
-				//guild.members.size();
-
-				for (auto& [key, value]: guild.members) {
-					x += 1;
-					auto newGuildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = value.user.id, .guildId = newArgs.eventData.getGuildId() });
-					theMembers.push_back(std::move(newGuildMember));
-					if (x >= guild.members.size() / 10) {
-						break;
-
-					}
-					std::cout << "WERE HERE THIS IS IT" << std::endl;
-				}
-
-				for (auto& value: theMembers) {
-					std::cout << "WERE HERE THIS IS IT" << value.get().user.userName << std::endl;
-				}
-
-				
+				dataPackage.addFile(theFile);
+				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+				EmbedData package02{};
+				package02.setDescription("TESTING DESCRIPTION");
+				package02.setImage("attachment://meth01.jpg");
+				dataPackage.addMessageEmbed(package02);
+				dataPackage.addContent("TEESTING");
+				InputEvents::respondToEventAsync(dataPackage).get();
 				return;
 			} catch (...) {
 				reportException("Test::execute()");
