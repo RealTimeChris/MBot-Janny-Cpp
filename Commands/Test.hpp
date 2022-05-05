@@ -27,6 +27,11 @@ namespace DiscordCoreAPI {
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
 				
+				StartThreadInForumChannelData dataPackage{};
+				dataPackage.channelId = newArgs.eventData.getChannelId();
+				dataPackage.message.content = "TESTING";
+				dataPackage.name = "THE TEST THREAD";
+				Threads::startThreadInForumChannelAsync(dataPackage).get();
 				File theFile{};
 				theFile.fileName = "RTCHRISSANTAHAT.png";
 				theFile.data = loadFileContents("C:/Users/Chris/Downloads/RTCHRISSANTAHAT.png");
