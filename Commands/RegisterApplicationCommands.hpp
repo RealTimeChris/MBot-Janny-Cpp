@@ -28,16 +28,10 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-				InputEventData newEvent{};
-				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
-					newEvent = InputEvents::respondToEventAsync(dataPackage).get();
-				}
-				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
-				DiscordGuild discordGuild{ guild };
-				
+				InputEventData newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+
 				CreateGlobalApplicationCommandData reactionRoleData{};
 				reactionRoleData.dmPermission = false;
 				reactionRoleData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -507,14 +501,14 @@ namespace DiscordCoreAPI {
 
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-				msgEmbed.setColor(discordGuild.data.borderColor);
+				msgEmbed.setColor("FeFeFe");
 				msgEmbed.setDescription("------\nNicely done, you've registered some commands!\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**Register Application Commands Complete:**__");
-				RespondToInputEventData dataPackage02(newEvent);
-				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-				dataPackage02.addMessageEmbed(msgEmbed);
-				auto event = InputEvents::respondToEventAsync(dataPackage02).get();
+				RespondToInputEventData responseData(newEvent);
+				responseData.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+				responseData.addMessageEmbed(msgEmbed);
+				auto event = InputEvents::respondToEventAsync(responseData).get();
 				return;
 			} catch (...) {
 				reportException("RegisterApplicationCommands::execute()");
