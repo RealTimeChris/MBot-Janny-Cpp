@@ -37,7 +37,7 @@ namespace DiscordCoreAPI {
 				}
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-				/*
+				
 				CreateGlobalApplicationCommandData reactionRoleData{};
 				reactionRoleData.dmPermission = false;
 				reactionRoleData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -187,8 +187,6 @@ namespace DiscordCoreAPI {
 				createPurgeOptionOne.type = ApplicationCommandOptionType::Integer;
 				createPurgeOptionOne.name = "amount";
 				createPurgeOptionOne.required = true;
-				createPurgeOptionOne.minValue = 2;
-				createPurgeOptionOne.maxValue = 100;
 				createPurgeOptionOne.description = "The quantity of messages to delete.";
 				registerPurgeCommandData.options.push_back(createPurgeOptionOne);
 				ApplicationCommandOptionData createPurgeOptionTwo;
@@ -213,6 +211,7 @@ namespace DiscordCoreAPI {
 				registerServerInfoCommandData.name = "serverinfo";
 				registerServerInfoCommandData.type = ApplicationCommandType::Chat_Input;
 				auto theResult = ApplicationCommands::createGlobalApplicationCommandAsync(registerServerInfoCommandData).get();
+				std::cout << "ALLOWED IN DM: " << theResult.dmPermission << std::endl;
 
 				CreateGlobalApplicationCommandData createSetBorderColorCommandData{};
 				createSetBorderColorCommandData.dmPermission = false;
@@ -341,13 +340,11 @@ namespace DiscordCoreAPI {
 				createBanOptionOneThree.type = ApplicationCommandOptionType::Integer;
 				createBanOptionOneThree.name = "numberofdaystopurge";
 				createBanOptionOneThree.description = "The number of days of the user's messages to purge.";
-				createBanOptionOneThree.minValue = 1;
-				createBanOptionOneThree.maxValue = 7;
 				createBanOptionOneThree.required = false;
 				createBanOptionOne.options.push_back(createBanOptionOneThree);
 				createBanCommandData.options.push_back(createBanOptionOne);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createBanCommandData).get();
-				*/
+
 				CreateGlobalApplicationCommandData createSetDeletionStatusCommandData{};
 				createSetDeletionStatusCommandData.dmPermission = false;
 				createSetDeletionStatusCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -363,17 +360,13 @@ namespace DiscordCoreAPI {
 				ApplicationCommandOptionData createSetDeletionStatusOptionOneTwo;
 				createSetDeletionStatusOptionOneTwo.type = ApplicationCommandOptionType::Integer;
 				createSetDeletionStatusOptionOneTwo.name = "quantity";
-				createSetDeletionStatusOptionOneTwo.minValue = 0;
-				createSetDeletionStatusOptionOneTwo.maxValue = 100000;
 				createSetDeletionStatusOptionOneTwo.description = "The number of messages to save in the channel.";
 				createSetDeletionStatusOptionOneTwo.required = true;
 				createSetDeletionStatusOptionOne.options.push_back(createSetDeletionStatusOptionOneTwo);
 
 				ApplicationCommandOptionData createSetDeletionStatusOptionOneThree;
 				createSetDeletionStatusOptionOneThree.type = ApplicationCommandOptionType::Integer;
-				createSetDeletionStatusOptionOneThree.minValue = 0;
 				createSetDeletionStatusOptionOneThree.name = "minutestosave";
-				createSetDeletionStatusOptionOneThree.maxValue = 100000;
 				createSetDeletionStatusOptionOneThree.description = "The number of minutes to save the messages before deleting them.";
 				createSetDeletionStatusOptionOneThree.required = true;
 				createSetDeletionStatusOptionOne.options.push_back(createSetDeletionStatusOptionOneThree);
@@ -409,6 +402,7 @@ namespace DiscordCoreAPI {
 				RegisterApplicationCommandsCommandData.description = "Register the programmatically designated slash commands.";
 				RegisterApplicationCommandsCommandData.name = "registerapplicationcommands";
 				auto theResult02 = ApplicationCommands::createGlobalApplicationCommandAsync(RegisterApplicationCommandsCommandData).get();
+				std::cout << "ALLOWED IN DM: " << theResult02.dmPermission << std::endl;
 
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.dmPermission = true;

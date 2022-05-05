@@ -28,15 +28,18 @@ namespace DiscordCoreAPI {
 			try {
 				
 				RespondToInputEventData dataPackage{ newArgs.eventData };
-				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
 				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
-				InputEvents::deleteInputEventResponseAsync(newEvent);
+				RespondToInputEventData dataPackage02{ newEvent };
+				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+				dataPackage02.addContent("<t:" +
+					std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
+				InputEvents::respondToEventAsync(dataPackage02);
 				for (uint32_t x = 0; x < 50; x += 1) {
-					CreateMessageData dataPackage03{};
-					dataPackage03.channelId = newArgs.eventData.getChannelId();
-					dataPackage03.addContent("MESSAGE #: " + std::to_string(x) + "\n<t:" +
-						std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
-					Messages::createMessageAsync(dataPackage03);
+					RespondToInputEventData dataPackage02{ newEvent };
+					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
+					InputEvents::respondToEventAsync(dataPackage02);
 				}
 				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				std ::vector<CoRoutine<GuildMember>> theMembers{};
