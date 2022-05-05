@@ -28,9 +28,12 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
+				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-				InputEventData newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
+				DiscordGuild discordGuild{ guild };
 
 				CreateGlobalApplicationCommandData reactionRoleData{};
 				reactionRoleData.dmPermission = false;
@@ -205,7 +208,6 @@ namespace DiscordCoreAPI {
 				registerServerInfoCommandData.name = "serverinfo";
 				registerServerInfoCommandData.type = ApplicationCommandType::Chat_Input;
 				auto theResult = ApplicationCommands::createGlobalApplicationCommandAsync(registerServerInfoCommandData).get();
-				std::cout << "ALLOWED IN DM: " << theResult.dmPermission << std::endl;
 
 				CreateGlobalApplicationCommandData createSetBorderColorCommandData{};
 				createSetBorderColorCommandData.dmPermission = false;
@@ -389,14 +391,13 @@ namespace DiscordCoreAPI {
 				ApplicationCommands::createGlobalApplicationCommandAsync(createUserInfoData).get();
 
 				CreateGlobalApplicationCommandData RegisterApplicationCommandsCommandData{};
-				RegisterApplicationCommandsCommandData.dmPermission = true;
+				RegisterApplicationCommandsCommandData.dmPermission = false;
 				RegisterApplicationCommandsCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				RegisterApplicationCommandsCommandData.type = ApplicationCommandType::Chat_Input;
 				RegisterApplicationCommandsCommandData.defaultPermission = true;
 				RegisterApplicationCommandsCommandData.description = "Register the programmatically designated slash commands.";
 				RegisterApplicationCommandsCommandData.name = "registerapplicationcommands";
 				auto theResult02 = ApplicationCommands::createGlobalApplicationCommandAsync(RegisterApplicationCommandsCommandData).get();
-				std::cout << "ALLOWED IN DM: " << theResult02.dmPermission << std::endl;
 
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.dmPermission = true;
