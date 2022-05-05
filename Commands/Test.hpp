@@ -26,24 +26,26 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				
+				RespondToInputEventData dataPackage00{ newArgs.eventData };
+				dataPackage00.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
+				for (auto& [key, value]: newArgs.eventData.getInteractionData().data.applicationCommanddata.resolved.attachments) {
+					std::cout << "THE KEY: " << key << "\nTHE VALUES: " << value.contentType << "\n" << value.filename << std::endl;
+					std::cout << value.url << std::endl;
+				}
+				std::cout << "THE SIZE: " << newArgs.eventData.getInteractionData().data.applicationCommanddata.resolved.attachments.size() << std::endl;
+				auto newEvent = InputEvents::respondToEventAsync(dataPackage00).get();
 				StartThreadInForumChannelData dataPackage{};
 				dataPackage.channelId = newArgs.eventData.getChannelId();
 				dataPackage.message.content = "TESTING";
 				dataPackage.name = "THE TEST THREAD";
 				Threads::startThreadInForumChannelAsync(dataPackage).get();
-				File theFile{};
-				theFile.fileName = "RTCHRISSANTAHAT.png";
-				theFile.data = loadFileContents("C:/Users/Chris/Downloads/RTCHRISSANTAHAT.png");
-				RespondToInputEventData dataPackage{ newArgs.eventData };
-				dataPackage.addFile(theFile);
-				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+				RespondToInputEventData dataPackage02{ newEvent };
+				dataPackage02.setResponseType(InputEventResponseType::Edit_Ephemeral_Interaction_Response);
 				EmbedData package02{};
 				package02.setDescription("TESTING DESCRIPTION");
-				package02.setImage("attachment://meth01.jpg");
-				dataPackage.addMessageEmbed(package02);
-				dataPackage.addContent("TEESTING");
-				InputEvents::respondToEventAsync(dataPackage).get();
+				dataPackage02.addMessageEmbed(package02);
+				dataPackage02.addContent("TEESTING");
+				InputEvents::respondToEventAsync(dataPackage02).get();
 				return;
 			} catch (...) {
 				reportException("Test::execute()");

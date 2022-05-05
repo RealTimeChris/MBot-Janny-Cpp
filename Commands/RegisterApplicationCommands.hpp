@@ -30,11 +30,11 @@ namespace DiscordCoreAPI {
 			try {
 				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				RespondToInputEventData dataPackage(newArgs.eventData);
-				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
 				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-
+				/*
 				CreateGlobalApplicationCommandData reactionRoleData{};
 				reactionRoleData.dmPermission = false;
 				reactionRoleData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -172,7 +172,7 @@ namespace DiscordCoreAPI {
 				createGhostOptionThree.options.push_back(createGhostOptionThreeTwo);
 				registerGhostCommandData.options.push_back(createGhostOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(registerGhostCommandData).get();
-
+				
 				CreateGlobalApplicationCommandData registerPurgeCommandData{};
 				registerPurgeCommandData.dmPermission = false;
 				registerPurgeCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -183,6 +183,8 @@ namespace DiscordCoreAPI {
 				ApplicationCommandOptionData createPurgeOptionOne;
 				createPurgeOptionOne.type = ApplicationCommandOptionType::Integer;
 				createPurgeOptionOne.name = "amount";
+				createPurgeOptionOne.minValue = 2;
+				createPurgeOptionOne.maxValue = 100;
 				createPurgeOptionOne.required = true;
 				createPurgeOptionOne.description = "The quantity of messages to delete.";
 				registerPurgeCommandData.options.push_back(createPurgeOptionOne);
@@ -199,7 +201,7 @@ namespace DiscordCoreAPI {
 				createPurgeOptionThree.description = "Do we delete pinned messages?";
 				registerPurgeCommandData.options.push_back(createPurgeOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(registerPurgeCommandData).get();
-
+				
 				CreateGlobalApplicationCommandData registerServerInfoCommandData{};
 				registerServerInfoCommandData.dmPermission = false;
 				registerServerInfoCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -303,7 +305,7 @@ namespace DiscordCoreAPI {
 				createSetInvitesChannelOptionThree.options.push_back(createSetInvitesChannelOptionThreeOne);
 				createSetInvitesChannelCommandData.options.push_back(createSetInvitesChannelOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createSetInvitesChannelCommandData).get();
-
+				
 				CreateGlobalApplicationCommandData createBanCommandData{};
 				createBanCommandData.dmPermission = false;
 				createBanCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -334,6 +336,8 @@ namespace DiscordCoreAPI {
 				createBanOptionOne.options.push_back(createBanOptionOneTwo);
 				ApplicationCommandOptionData createBanOptionOneThree;
 				createBanOptionOneThree.type = ApplicationCommandOptionType::Integer;
+				createBanOptionOneThree.minValue = 1;
+				createBanOptionOneThree.maxValue = 7;
 				createBanOptionOneThree.name = "numberofdaystopurge";
 				createBanOptionOneThree.description = "The number of days of the user's messages to purge.";
 				createBanOptionOneThree.required = false;
@@ -356,12 +360,16 @@ namespace DiscordCoreAPI {
 				ApplicationCommandOptionData createSetDeletionStatusOptionOneTwo;
 				createSetDeletionStatusOptionOneTwo.type = ApplicationCommandOptionType::Integer;
 				createSetDeletionStatusOptionOneTwo.name = "quantity";
+				createSetDeletionStatusOptionOneTwo.minValue = 0;
+				createSetDeletionStatusOptionOneTwo.maxValue = 100000;
 				createSetDeletionStatusOptionOneTwo.description = "The number of messages to save in the channel.";
 				createSetDeletionStatusOptionOneTwo.required = true;
 				createSetDeletionStatusOptionOne.options.push_back(createSetDeletionStatusOptionOneTwo);
 
 				ApplicationCommandOptionData createSetDeletionStatusOptionOneThree;
 				createSetDeletionStatusOptionOneThree.type = ApplicationCommandOptionType::Integer;
+				createSetDeletionStatusOptionOneThree.minValue = 0;
+				createSetDeletionStatusOptionOneThree.maxValue = 100000;
 				createSetDeletionStatusOptionOneThree.name = "minutestosave";
 				createSetDeletionStatusOptionOneThree.description = "The number of minutes to save the messages before deleting them.";
 				createSetDeletionStatusOptionOneThree.required = true;
@@ -381,7 +389,7 @@ namespace DiscordCoreAPI {
 
 				createSetDeletionStatusCommandData.options.push_back(createSetDeletionStatusOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createSetDeletionStatusCommandData).get();
-
+				
 				CreateGlobalApplicationCommandData createUserInfoData{};
 				createUserInfoData.dmPermission = false;
 				createUserInfoData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -398,7 +406,7 @@ namespace DiscordCoreAPI {
 				RegisterApplicationCommandsCommandData.description = "Register the programmatically designated slash commands.";
 				RegisterApplicationCommandsCommandData.name = "registerapplicationcommands";
 				auto theResult02 = ApplicationCommands::createGlobalApplicationCommandAsync(RegisterApplicationCommandsCommandData).get();
-
+				
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.dmPermission = true;
 				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -406,8 +414,14 @@ namespace DiscordCoreAPI {
 				createTestData.name = "test";
 				createTestData.defaultPermission = true;
 				createTestData.description = "Test command.";
+				ApplicationCommandOptionData testOptionOne{};
+				testOptionOne.type = ApplicationCommandOptionType::Attachment;
+				testOptionOne.name = "attachment";
+				testOptionOne.required = false;
+				testOptionOne.description = "Test Attachment!";
+				createTestData.options.push_back(testOptionOne);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createTestData).get();
-
+				
 				CreateGlobalApplicationCommandData createManageLogsData{};
 				createManageLogsData.dmPermission = false;
 				createManageLogsData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -499,7 +513,7 @@ namespace DiscordCoreAPI {
 				pushmecommandData.description = "Push me to find out!";
 				pushmecommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				ApplicationCommands::createGlobalApplicationCommandAsync(pushmecommandData).get();
-
+				*/
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor("FeFeFe");
