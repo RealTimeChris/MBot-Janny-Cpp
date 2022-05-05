@@ -31,11 +31,6 @@ namespace DiscordCoreAPI {
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
-				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
-
-				if (areWeInADm) {
-					return;
-				}
 				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				GuildMember guildMember =

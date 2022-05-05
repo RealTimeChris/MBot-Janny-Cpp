@@ -30,12 +30,6 @@ namespace DiscordCoreAPI {
 			try {
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 
-				bool areWeInADm = areWeInADM(newArgs.eventData, channel);
-
-				if (areWeInADm) {
-					return;
-				}
-
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
