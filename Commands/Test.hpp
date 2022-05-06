@@ -34,11 +34,13 @@ namespace DiscordCoreAPI {
 				dataPackage02.addContent("<t:" +
 					std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
 				InputEvents::respondToEventAsync(dataPackage02);
+				std::vector<CoRoutine<InputEventData>> theResponses{};
 				for (uint32_t x = 0; x < 50; x += 1) {
 					RespondToInputEventData dataPackage02{ newEvent };
 					dataPackage02.setResponseType(InputEventResponseType::Follow_Up_Message);
 					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
-					InputEvents::respondToEventAsync(dataPackage02);
+					theResponses.push_back(InputEvents::respondToEventAsync(dataPackage02));
+					std::cout << "WERE HERE THIS IS REALLY IT 01010101" + x << std::endl;
 				}
 				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				std ::vector<CoRoutine<GuildMember>> theMembers{};
