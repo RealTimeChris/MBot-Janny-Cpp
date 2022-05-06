@@ -27,7 +27,7 @@ namespace DiscordCoreAPI {
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
 				RespondToInputEventData dataPackage{ newArgs.eventData };
-				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
+				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
 				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
 				RespondToInputEventData dataPackage02{ newEvent };
 				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
@@ -36,7 +36,7 @@ namespace DiscordCoreAPI {
 				InputEvents::respondToEventAsync(dataPackage02);
 				for (uint32_t x = 0; x < 50; x += 1) {
 					RespondToInputEventData dataPackage02{ newEvent };
-					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+					dataPackage02.setResponseType(InputEventResponseType::Follow_Up_Message);
 					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
 					InputEvents::respondToEventAsync(dataPackage02);
 				}
