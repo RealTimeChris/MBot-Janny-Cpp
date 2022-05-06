@@ -26,26 +26,39 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				RespondToInputEventData dataPackage00{ newArgs.eventData };
-				dataPackage00.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
-				for (auto& [key, value]: newArgs.eventData.getInteractionData().data.applicationCommanddata.resolved.attachments) {
-					std::cout << "THE KEY: " << key << "\nTHE VALUES: " << value.contentType << "\n" << value.filename << std::endl;
-					std::cout << value.url << std::endl;
-				}
-				std::cout << "THE SIZE: " << newArgs.eventData.getInteractionData().data.applicationCommanddata.resolved.attachments.size() << std::endl;
-				auto newEvent = InputEvents::respondToEventAsync(dataPackage00).get();
-				StartThreadInForumChannelData dataPackage{};
-				dataPackage.channelId = newArgs.eventData.getChannelId();
-				dataPackage.message.content = "TESTING";
-				dataPackage.name = "THE TEST THREAD";
-				Threads::startThreadInForumChannelAsync(dataPackage).get();
+				RespondToInputEventData dataPackage{ newArgs.eventData };
+				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
+				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
 				RespondToInputEventData dataPackage02{ newEvent };
-				dataPackage02.setResponseType(InputEventResponseType::Edit_Ephemeral_Interaction_Response);
-				EmbedData package02{};
-				package02.setDescription("TESTING DESCRIPTION");
-				dataPackage02.addMessageEmbed(package02);
-				dataPackage02.addContent("TEESTING");
-				InputEvents::respondToEventAsync(dataPackage02).get();
+				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+				dataPackage02.addContent("<t:" +
+					std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
+				InputEvents::respondToEventAsync(dataPackage02);
+				for (uint32_t x = 0; x < 50; x += 1) {
+					RespondToInputEventData dataPackage02{ newEvent };
+					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
+					InputEvents::respondToEventAsync(dataPackage02);
+				}
+				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
+				std ::vector<CoRoutine<GuildMember>> theMembers{};
+				auto x = 0;
+				//guild.members.size();
+
+				for (auto& [key, value]: guild.members) {
+					x += 1;
+					auto newGuildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = value.user.id, .guildId = newArgs.eventData.getGuildId() });
+					theMembers.push_back(std::move(newGuildMember));
+					if (x >= guild.members.size() / 10) {
+						break;
+					}
+					std::cout << "WERE HERE THIS IS IT" << std::endl;
+				}
+
+				for (auto& value: theMembers) {
+					std::cout << "WERE HERE THIS IS IT" << value.get().user.userName << std::endl;
+				}
+
 				return;
 			} catch (...) {
 				reportException("Test::execute()");
