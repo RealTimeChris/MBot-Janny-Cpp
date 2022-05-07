@@ -57,10 +57,6 @@ namespace DiscordCoreAPI {
 					std::cout << "WERE HERE THIS IS IT" << std::endl;
 				}
 
-				for (auto& value: theMembers) {
-					std::cout << "WERE HERE THIS IS IT" << value.get().user.userName << std::endl;
-				}
-
 				return;
 			} catch (...) {
 				reportException("Test::execute()");
