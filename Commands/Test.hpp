@@ -39,8 +39,8 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage02{ newEvent };
 					dataPackage02.setResponseType(InputEventResponseType::Follow_Up_Message);
 					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
-					theResponses.push_back(InputEvents::respondToEventAsync(dataPackage02));
-					std::cout << "WERE HERE THIS IS REALLY IT 01010101" + x << std::endl;
+					InputEvents::respondToEventAsync(dataPackage02);
+					std::cout << "WERE HERE THIS IS REALLY IT 01010101" + std::to_string(x) << std::endl;
 				}
 				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				std ::vector<CoRoutine<GuildMember>> theMembers{};
