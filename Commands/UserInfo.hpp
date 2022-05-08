@@ -58,7 +58,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
-					auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
 				GuildMember guildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = userID, .guildId = newArgs.eventData.getGuildId() }).get();
@@ -141,7 +141,7 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.addMessageEmbed(msgEmbed);
 				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
-				auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+				auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 
 				return;
 			} catch (...) {

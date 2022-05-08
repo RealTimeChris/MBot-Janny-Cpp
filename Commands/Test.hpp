@@ -26,20 +26,17 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-				RespondToInputEventData dataPackage{ newArgs.eventData };
-				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-				auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
-				RespondToInputEventData dataPackage02{ newEvent };
-				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+				RespondToInputEventData dataPackage02{ newArgs.eventData };
+				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 				dataPackage02.addContent("<t:" +
 					std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
-				InputEvents::respondToEventAsync(dataPackage02);
+				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage02).get();
 				std::vector<CoRoutine<InputEventData>> theResponses{};
 				for (uint32_t x = 0; x < 50; x += 1) {
 					RespondToInputEventData dataPackage02{ newEvent };
 					dataPackage02.setResponseType(InputEventResponseType::Follow_Up_Message);
 					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
-					theResponses.push_back(InputEvents::respondToEventAsync(dataPackage02));
+					theResponses.push_back(InputEvents::respondToInputEventAsync(dataPackage02));
 					std::cout << "WERE HERE THIS IS REALLY IT 01010101" + std::to_string(x) << std::endl;
 				}
 				auto guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();

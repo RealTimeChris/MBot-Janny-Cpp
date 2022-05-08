@@ -55,7 +55,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
-					auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else {
 					borderColor = newArgs.commandData.optionsArgs[0];
@@ -73,7 +73,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
-					auto newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
 			} catch (...) {

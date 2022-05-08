@@ -68,7 +68,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newEvent);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+						newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
 					} else {
 						std::cmatch dayDigitMatch;
@@ -110,7 +110,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+						newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 
@@ -177,7 +177,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage03(newEvent);
 							dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 							dataPackage03.addMessageEmbed(*msgEmbed);
-							newEvent = InputEvents::respondToEventAsync(dataPackage03).get();
+							newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
 							return;
 						}
 					}
@@ -244,7 +244,7 @@ namespace DiscordCoreAPI {
 					currentPage = 0;
 					RespondToInputEventData dataPackage(newEvent);
 					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-					newEvent = InputEvents::respondToEventAsync(dataPackage).get();
+					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					auto returnValue =
 						moveThroughMessagePages(newEvent.getRequesterId(), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
 					if (returnValue.buttonId == "exit" || returnValue.buttonId == "empty") {

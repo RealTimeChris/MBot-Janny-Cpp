@@ -46,7 +46,7 @@ namespace DiscordCoreAPI {
 			RespondToInputEventData dataPackage{ eventData };
 			dataPackage.addMessageEmbed(msgEmbed);
 			dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-			InputEvents::respondToEventAsync(dataPackage).get();
+			InputEvents::respondToInputEventAsync(dataPackage).get();
 		}
 		return false;
 	}

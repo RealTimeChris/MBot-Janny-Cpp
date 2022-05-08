@@ -96,7 +96,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newEvent01);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 
@@ -128,7 +128,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage02(newEvent01);
 					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed2);
-					auto eventNew = InputEvents::respondToEventAsync(dataPackage02).get();
+					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
 				} else if (whatAreWeDoing == "viewing") {
 					std::string msgString = "------\n";
 
@@ -147,7 +147,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newEvent01);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else if (whatAreWeDoing == "remove") {
 					bool isItThere{ false };
@@ -177,7 +177,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newEvent01);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 
@@ -207,7 +207,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage02(newEvent01);
 					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed2);
-					auto eventNew = InputEvents::respondToEventAsync(dataPackage02).get();
+					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
 					return;
 				}
 				return;

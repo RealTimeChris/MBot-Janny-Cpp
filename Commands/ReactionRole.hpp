@@ -89,7 +89,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 					auto botRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botMember, .guildId = newArgs.eventData.getGuildId() }).get();
@@ -113,7 +113,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 					std::string msgString =
@@ -127,7 +127,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					discordGuild->data.roleManager.theRoles.push_back(newRole.id);
 					discordGuild->writeDataToDB();
 				} else if (whatAreWeDoing == "remove") {
@@ -149,7 +149,7 @@ namespace DiscordCoreAPI {
 						RespondToInputEventData dataPackage(newArgs.eventData);
 						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 					Role newRole = Roles::getRoleAsync({ .guildId = newArgs.eventData.getGuildId(), .roleId = roleId }).get();
@@ -181,14 +181,14 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed02);
-					auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 
 				} else if (whatAreWeDoing == "instantiate") {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addContent("TEST");
-					auto eventNew = InputEvents::respondToEventAsync(dataPackage).get();
+					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					InputEvents::deleteInputEventResponseAsync(std::move(eventNew)).get();
 					if (discordGuild->data.roleManager.theRoles.size() == 0) {
 						discordGuild->data.roleManager.channelId = "";
@@ -352,7 +352,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage02(newEvent);
 					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackage02.addMessageEmbed(messageEmbeds[0]);
-					newEvent = InputEvents::respondToEventAsync(dataPackage02).get();
+					newEvent = InputEvents::respondToInputEventAsync(dataPackage02).get();
 					isItFirst = false;
 				} else {
 					dataPackages[0] = newEvent;
@@ -372,7 +372,7 @@ namespace DiscordCoreAPI {
 				}
 
 				dataPackages[newResult.currentPageIndex].setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-				newEvent = InputEvents::respondToEventAsync(dataPackages[newResult.currentPageIndex]).get();
+				newEvent = InputEvents::respondToInputEventAsync(dataPackages[newResult.currentPageIndex]).get();
 				collector = std::make_unique<SelectMenuCollector>(newEvent);
 				returnData = collector->collectSelectMenuData(true, 120000, 1, "").get();
 
@@ -388,9 +388,9 @@ namespace DiscordCoreAPI {
 						if (value == "exit") {
 							doWeQuit = true;
 							RespondToInputEventData dataPackage03(newEvent);
-							dataPackage03.setResponseType(InputEventResponseType::Edit_Ephemeral_Follow_Up_Message);
+							dataPackage03.setResponseType(InputEventResponseType::Edit_Follow_Up_Message);
 							dataPackage03.addMessageEmbed(messageEmbeds[currentPageIndex]);
-							InputEvents::respondToEventAsync(dataPackage03).get();
+							InputEvents::respondToInputEventAsync(dataPackage03).get();
 							continue;
 						}
 						for (auto& value02: theRoles) {
@@ -411,7 +411,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage02(eventNew);
 							dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
 							dataPackage02.addMessageEmbed(*msgEmbed);
-							eventNew = InputEvents::respondToEventAsync(dataPackage02).get().getInteractionData();
+							eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
 						} else {
 							Roles::addGuildMemberRoleAsync(
 								{ .guildId = inputData.getGuildId(), .userId = guildMember.user.id, .roleId = value, .reason = "Role-granting." })
@@ -426,7 +426,7 @@ namespace DiscordCoreAPI {
 							RespondToInputEventData dataPackage02(eventNew);
 							dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
 							dataPackage02.addMessageEmbed(*msgEmbed);
-							eventNew = InputEvents::respondToEventAsync(dataPackage02).get().getInteractionData();
+							eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
 						}
 					}
 					if (doWeQuit) {
