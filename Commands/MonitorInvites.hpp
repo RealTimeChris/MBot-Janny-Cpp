@@ -171,13 +171,11 @@ namespace DiscordCoreAPI {
 
 	class MonitorInvites {
 	  public:
-		static std::mutex acccessMutex;
 
 		MonitorInvites(){};
 
 		static CoRoutine<void> updateInvitesDataBaseToWrap(std::string guildId) {
 			co_await NewThreadAwaitable<void>();
-			std::lock_guard<std::mutex> accessLock{ acccessMutex };
 			try {
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = guildId }).get();
 				DiscordGuild discordGuild{ guild };
@@ -332,5 +330,4 @@ namespace DiscordCoreAPI {
 		}
 		virtual ~MonitorInvites(){};
 	};
-	std::mutex MonitorInvites::acccessMutex{};
 }
