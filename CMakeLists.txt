@@ -21,7 +21,13 @@ set(SODIUM_RELEASE_ROOT "")
 set(SODIUM_DEBUG_ROOT "")
 
 cmake_minimum_required(VERSION 3.20)
-project(MBot-Janny VERSION 1.00 LANGUAGES CXX)
+project(
+	MBot-Janny
+	VERSION "1.0.0.9"
+	LANGUAGES CXX
+	HOMEPAGE_URL "https://discordcoreapi.com"
+	DESCRIPTION "A Discord bot, written in C++ using custom asynchronous coroutines."
+)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake;${CMAKE_SOURCE_DIR}/CMake/Find-Scripts")
 set(CMAKE_CONFIGURATION_TYPES "${CMAKE_BUILD_TYPE}")
 cmake_path(GET CMAKE_INSTALL_PREFIX ROOT_PATH ROOT_DRIVE)
