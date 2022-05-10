@@ -97,8 +97,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				else if (convertToLowerCase(newArgs.commandData.optionsArgs[0]) != "enable" &&
-					convertToLowerCase(newArgs.commandData.optionsArgs[0]) != "disable") {
+				else if (convertToLowerCase(newArgs.commandData.optionsArgs[0]) != "enable" && convertToLowerCase(newArgs.commandData.optionsArgs[0]) != "disable") {
 					std::string msgString = "------\n**Please, enter enable or disable for the first argument of this command! (!managelogs = "
 											"<enable/disable>, <logname>)**\n------";
 					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
@@ -137,8 +136,8 @@ namespace DiscordCoreAPI {
 								discordGuild.data.logs[x].enabled = true;
 								discordGuild.writeDataToDB();
 								std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
-								std::string msgString = "------\n**Nicely done! You've enabled logging for " + discordGuild.data.logs[x].name +
-									".\nIn channel <#" + discordGuild.data.logs[x].loggingChannelId + ">.** \n------";
+								std::string msgString = "------\n**Nicely done! You've enabled logging for " + discordGuild.data.logs[x].name + ".\nIn channel <#" +
+									discordGuild.data.logs[x].loggingChannelId + ">.** \n------";
 								msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 								msgEmbed->setColor(discordGuild.data.borderColor);
 								msgEmbed->setDescription(msgString);

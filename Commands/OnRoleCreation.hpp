@@ -30,8 +30,7 @@ namespace DiscordCoreAPI {
 				Channel textChannel = Channels::getCachedChannelAsync({ .channelId = log.loggingChannelId }).get();
 
 				AuditLogData auditLogs =
-					Guilds::getGuildAuditLogsAsync({ .actionType = AuditLogEvent::Role_Create, .guildId = dataPackageNew.guildId, .userId = "", .limit = 1 })
-						.get();
+					Guilds::getGuildAuditLogsAsync({ .actionType = AuditLogEvent::Role_Create, .guildId = dataPackageNew.guildId, .userId = "", .limit = 1 }).get();
 				int64_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				AuditLogEntryData auditLogEntry{};
 				for (auto& value: auditLogs.auditLogEntries) {

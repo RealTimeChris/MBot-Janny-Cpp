@@ -36,8 +36,7 @@ namespace DiscordCoreAPI {
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
-						.get();
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
 
 				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 
@@ -52,10 +51,9 @@ namespace DiscordCoreAPI {
 				std::regex_search(newArgs.commandData.optionsArgs[0].c_str(), digitMatch, digitRegex);
 				std::string digitString = digitMatch.str();
 				if (stol(digitString) < 2 || stol(digitString) > 100) {
-					std::string msgString =
-						"------\n**Please, enter a proper amount of messages to delete! (2-100) (/purge = #OFMESSAGESTODELETE, @USERMENTION, TRUE/FALSE or "
-						"/purge #OFMESSAGESTODELETE, @USERMENTION, "
-						"TRUE/FALSE, where @USERMENTION is optional - select it to only delete messages from that particular user.**\n------";
+					std::string msgString = "------\n**Please, enter a proper amount of messages to delete! (2-100) (/purge = #OFMESSAGESTODELETE, @USERMENTION, TRUE/FALSE or "
+											"/purge #OFMESSAGESTODELETE, @USERMENTION, "
+											"TRUE/FALSE, where @USERMENTION is optional - select it to only delete messages from that particular user.**\n------";
 					EmbedData msgEmbed{};
 					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed.setColor(discordGuild.data.borderColor);
@@ -173,8 +171,7 @@ namespace DiscordCoreAPI {
 					} else if (newArgs.commandData.optionsArgs.size() >= 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::optional<std::vector<Message>> messageArray =
-								Messages::getMessagesAsync({ .beforeThisId = currentMessageId, .channelId = newArgs.eventData.getChannelId(), .limit = 100 })
-									.get();
+								Messages::getMessagesAsync({ .beforeThisId = currentMessageId, .channelId = newArgs.eventData.getChannelId(), .limit = 100 }).get();
 							if (!messageArray.has_value()) {
 								break;
 							}
@@ -253,8 +250,7 @@ namespace DiscordCoreAPI {
 					if (messageIdsToDelete.size() < 2) {
 						msgString2 = "------\n**Deleted " + std::to_string(0) + " messages, from the user <@" + userId + ">.**\n------";
 					} else {
-						msgString2 =
-							"------\n**Deleted " + std::to_string(messageIdsToDelete.size()) + " messages, from the user <@" + userId + ">.**\n------";
+						msgString2 = "------\n**Deleted " + std::to_string(messageIdsToDelete.size()) + " messages, from the user <@" + userId + ">.**\n------";
 					}
 				}
 

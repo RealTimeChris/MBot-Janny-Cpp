@@ -15,8 +15,7 @@ namespace DiscordCoreAPI {
 			this->commandName = "userinfo";
 			this->helpDescription = "Displays some info about a chosen user.";
 			EmbedData msgEmbed{};
-			msgEmbed.setDescription(
-				"------\nEnter /userinfo to display your own info!\nOr /userinfo @USERMENTION, to display the info of another user.\n------");
+			msgEmbed.setDescription("------\nEnter /userinfo to display your own info!\nOr /userinfo @USERMENTION, to display the info of another user.\n------");
 			msgEmbed.setTitle("__**User Info Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
 			msgEmbed.setColor("FeFeFe");

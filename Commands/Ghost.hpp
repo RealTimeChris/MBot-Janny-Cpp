@@ -73,8 +73,7 @@ namespace DiscordCoreAPI {
 
 				InputEventData newEvent01 = newArgs.eventData;
 
-				GuildMember targetGuildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
+				GuildMember targetGuildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuildMember discordGuildMember(targetGuildMember);
 
 				if (whatAreWeDoing == "add") {
@@ -103,8 +102,8 @@ namespace DiscordCoreAPI {
 					discordGuild.data.ghostedIds.push_back(targetGuildMember.user.id);
 					discordGuild.writeDataToDB();
 
-					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name +
-						" for the following reason(s): " + ghostReason + "\n Please, contact a moderator or admin to clear this issue up! Thanks!**\n------";
+					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name + " for the following reason(s): " + ghostReason +
+						"\n Please, contact a moderator or admin to clear this issue up! Thanks!**\n------";
 					std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 					msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
 					msgEmbed->setColor(discordGuild.data.borderColor);
@@ -117,8 +116,8 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
-						targetGuildMember.user.userName + ")\n------";
+					std::string msgString2 =
+						"------\n**Hello! You've ghosted the following member:** <@" + targetGuildMember.user.id + "> (" + targetGuildMember.user.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);
@@ -196,8 +195,8 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
-						targetGuildMember.user.userName + ")\n------";
+					std::string msgString2 =
+						"------\n**Hello! You've un-ghosted the following member:** <@" + targetGuildMember.user.id + "> (" + targetGuildMember.user.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);

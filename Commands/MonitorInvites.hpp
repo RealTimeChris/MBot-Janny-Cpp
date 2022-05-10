@@ -34,8 +34,7 @@ namespace DiscordCoreAPI {
 				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
-						.get();
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
 
 				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
@@ -63,8 +62,8 @@ namespace DiscordCoreAPI {
 				} else if (newArgs.commandData.optionsArgs[0] == "remove") {
 					discordGuild.data.inviteReportingChannelId = "";
 					discordGuild.writeDataToDB();
-					std::string msgString = "**------\nNice! You've de-activated invite tracking by removing the channel <#" +
-						newArgs.eventData.getChannelId() + "> as the tracking channel for the invites!\n------** ";
+					std::string msgString = "**------\nNice! You've de-activated invite tracking by removing the channel <#" + newArgs.eventData.getChannelId() +
+						"> as the tracking channel for the invites!\n------** ";
 					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
 					msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -118,8 +117,8 @@ namespace DiscordCoreAPI {
 					InviteData vanityInvite = Guilds::getGuildVanityInviteAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 					msgString01 += "__**The vanity Url's Invite Count:**__ " + std::to_string(vanityInvite.uses) + "\n";
 					for (uint32_t x = 0; x < discordGuildMembers.size(); x += 1) {
-						std::string currentString = "__**<@" + discordGuildMembers[x].data.guildMemberId + ">'s Invite Count:**__ " +
-							std::to_string(discordGuildMembers[x].data.totalInvites) + "\n";
+						std::string currentString =
+							"__**<@" + discordGuildMembers[x].data.guildMemberId + ">'s Invite Count:**__ " + std::to_string(discordGuildMembers[x].data.totalInvites) + "\n";
 						msgString01 += currentString;
 						if (msgString01.size() + currentString.size() > 2048 || x == discordGuildMembers.size() - 1) {
 							descriptionStrings.push_back(msgString01);
@@ -144,8 +143,7 @@ namespace DiscordCoreAPI {
 							msgEmbed->setTimeStamp(getTimeAndDate());
 							msgEmbed->setDescription(descriptionStrings[x]);
 							msgEmbed->setColor(discordGuild.data.borderColor);
-							msgEmbed->setTitle(
-								"__**User Invite Counts (" + std::to_string((x + 1)) + " of " + std::to_string(descriptionStrings.size()) + "):**__");
+							msgEmbed->setTitle("__**User Invite Counts (" + std::to_string((x + 1)) + " of " + std::to_string(descriptionStrings.size()) + "):**__");
 							msgEmbeds.push_back(*msgEmbed);
 						}
 					}
@@ -171,7 +169,6 @@ namespace DiscordCoreAPI {
 
 	class MonitorInvites {
 	  public:
-
 		MonitorInvites(){};
 
 		static void updateInvitesDataBaseToWrap(std::string guildId) {
@@ -186,6 +183,7 @@ namespace DiscordCoreAPI {
 				}
 				std::vector<InviteData> invites = Guilds::getGuildInvitesAsync({ .guildId = guild.id }).get();
 				for (uint32_t x = 0; x < invites.size(); x += 1) {
+					std::cout << "WERE HERE THIS IS IT!" << std::endl;
 					for (auto& [key, value2]: guild.members) {
 						DiscordGuildMember discordGuildMember(value2);
 						if (invites[x].inviter.id == discordGuildMember.data.guildMemberId) {
@@ -201,7 +199,6 @@ namespace DiscordCoreAPI {
 							inviteData.maxInvites = invites[x].maxUses;
 							inviteData.invitesUsed = invites[x].uses;
 							discordGuildMember.data.invites.push_back(inviteData);
-							discordGuildMember.writeDataToDB();
 						}
 						for (uint32_t y = 0; y < discordGuildMember.data.invites.size(); y += 1) {
 							bool isItFound02 = false;
@@ -212,9 +209,9 @@ namespace DiscordCoreAPI {
 							}
 							if (!isItFound02) {
 								discordGuildMember.data.invites.erase(discordGuildMember.data.invites.begin() + y);
-								discordGuildMember.writeDataToDB();
 							}
 						}
+						discordGuildMember.writeDataToDB();
 					}
 				}
 				return;

@@ -75,8 +75,7 @@ namespace DiscordCoreAPI {
 				DiscordGuild discordGuild{ guild };
 
 				GuildMember guildMember =
-					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() })
-						.get();
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
 
 				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember);
 
@@ -199,11 +198,9 @@ namespace DiscordCoreAPI {
 						}
 					}
 
-					GuildMember botGuildMember = GuildMembers::getCachedGuildMemberAsync(
-						{ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData.getGuildId() })
-													 .get();
-					std::vector<Role> highestBotRoles =
-						Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData.getGuildId() }).get();
+					GuildMember botGuildMember =
+						GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData.getGuildId() }).get();
+					std::vector<Role> highestBotRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData.getGuildId() }).get();
 					RoleData highestBotRole;
 					int32_t currentPosition = 0;
 					for (auto& value: highestBotRoles) {
@@ -214,8 +211,7 @@ namespace DiscordCoreAPI {
 					}
 
 					if (currentRole.position > highestBotRole.position || currentRole.getManaged()) {
-						std::string msgString =
-							"------\n**Sorry, but that is either a managed role or it is higher than my highest role! I cannot use it!**\n------";
+						std::string msgString = "------\n**Sorry, but that is either a managed role or it is higher than my highest role! I cannot use it!**\n------";
 						std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
 						msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 						msgEmbed->setColor(discordGuild.data.borderColor);
@@ -249,8 +245,7 @@ namespace DiscordCoreAPI {
 					isItFound = false;
 					for (int32_t x = 0; x < discordGuild.data.defaultRoleIds.size(); x += 1) {
 						if (currentRole.id == discordGuild.data.defaultRoleIds[x]) {
-							discordGuild.data.defaultRoleIds.erase(
-								discordGuild.data.defaultRoleIds.begin() + x, discordGuild.data.defaultRoleIds.begin() + x + 1);
+							discordGuild.data.defaultRoleIds.erase(discordGuild.data.defaultRoleIds.begin() + x, discordGuild.data.defaultRoleIds.begin() + x + 1);
 							discordGuild.writeDataToDB();
 							isItFound = true;
 						}

@@ -28,8 +28,8 @@ namespace DiscordCoreAPI {
 			try {
 				RespondToInputEventData dataPackage02{ newArgs.eventData };
 				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-				dataPackage02.addContent("<t:" +
-					std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
+				dataPackage02.addContent(
+					"<t:" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
 				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage02).get();
 				std::vector<CoRoutine<InputEventData>> theResponses{};
 				for (uint32_t x = 0; x < 50; x += 1) {
