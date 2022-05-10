@@ -9,8 +9,7 @@
 
 namespace DiscordCoreAPI {
 
-	CoRoutine<void> deleteMessagesToBeWrapped(DiscordGuild discordGuild, int32_t channelIndex) {
-		co_await NewThreadAwaitable<void>();
+	void deleteMessagesToBeWrapped(DiscordGuild discordGuild, int32_t channelIndex) {
 		DiscordGuild newDiscordGuild{ discordGuild };
 		try {
 			const int32_t numberOfMessagesToSave = discordGuild.data.deletionChannels[channelIndex].numberOfMessagesToSave;
@@ -20,13 +19,13 @@ namespace DiscordCoreAPI {
 				newDiscordGuild.data.deletionChannels.erase(newDiscordGuild.data.deletionChannels.begin() + channelIndex);
 				std::cout << shiftToBrightBlue() << "Removing an 'unknown channel' from list of deletion channels!" << std::endl << std::endl << reset();
 				newDiscordGuild.writeDataToDB();
-				co_return;
+				return;
 			}
 
 			if (newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == true) {
 				std::cout << shiftToBrightGreen() << "Nope! Still being deleted! Channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + "\n"
 						  << reset();
-				co_return;
+				return;
 			}
 
 			std::cout << shiftToBrightBlue()
@@ -132,7 +131,7 @@ namespace DiscordCoreAPI {
 						if (newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == false) {
 							newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
 							newDiscordGuild.writeDataToDB();
-							co_return;
+							return;
 						}
 						currentValue += 1;
 						std::cout << shiftToBrightBlue()
@@ -200,7 +199,7 @@ namespace DiscordCoreAPI {
 					newDiscordGuild.writeDataToDB();
 					std::cout << shiftToBrightGreen() << "Total of 0 in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n\n"
 							  << reset();
-					co_return;
+					return;
 				}
 				std::vector<std::string> purgeVector{};
 				std::vector<Message> deleteVector{};
@@ -258,7 +257,7 @@ namespace DiscordCoreAPI {
 						if (newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == false) {
 							newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
 							newDiscordGuild.writeDataToDB();
-							co_return;
+							return;
 						}
 						currentValue += 1;
 						std::cout << shiftToBrightBlue()
@@ -277,7 +276,7 @@ namespace DiscordCoreAPI {
 			newDiscordGuild.getDataFromDB();
 			newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
 			newDiscordGuild.writeDataToDB();
-			co_return;
+			return;
 		} catch (...) {
 			reportException("deleteMessagesToBeWrapped Error: ");
 			newDiscordGuild.getDataFromDB();
@@ -286,7 +285,7 @@ namespace DiscordCoreAPI {
 		}
 		newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = false;
 		newDiscordGuild.writeDataToDB();
-		co_return;
+		return;
 	}
 
 	void deleteMessages(DiscordCoreAPI::DiscordCoreClient*) {
@@ -298,7 +297,10 @@ namespace DiscordCoreAPI {
 				DiscordGuild discordGuild(value);
 				discordGuildVector.push_back(discordGuild);
 				for (int32_t x = 0; x < discordGuild.data.deletionChannels.size(); x += 1) {
-					deleteMessagesToBeWrapped(discordGuild, x);
+					std::jthread theThread = std::jthread([=]() {
+						deleteMessagesToBeWrapped(discordGuild, x);
+					});
+					theThread.detach();
 				}
 			}
 

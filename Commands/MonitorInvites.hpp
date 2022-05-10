@@ -174,8 +174,7 @@ namespace DiscordCoreAPI {
 
 		MonitorInvites(){};
 
-		static CoRoutine<void> updateInvitesDataBaseToWrap(std::string guildId) {
-			co_await NewThreadAwaitable<void>();
+		static void updateInvitesDataBaseToWrap(std::string guildId) {
 			try {
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = guildId }).get();
 				DiscordGuild discordGuild{ guild };
@@ -218,11 +217,11 @@ namespace DiscordCoreAPI {
 						}
 					}
 				}
-				co_return;
+				return;
 			} catch (...) {
 				reportException("updateInvitesDataBaseToWrap Error: ");
 			}
-			co_return;
+			return;
 		}
 
 		static void execute(OnInviteCreationData dataPackage) {
