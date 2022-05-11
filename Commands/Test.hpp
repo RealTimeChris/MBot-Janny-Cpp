@@ -27,7 +27,7 @@ namespace DiscordCoreAPI {
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
 				RespondToInputEventData dataPackage02{ newArgs.eventData };
-				dataPackage02.setResponseType(InputEventResponseType::Interaction_Response);
+				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 				dataPackage02.addContent(
 					"<t:" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
 				File theFile{};
