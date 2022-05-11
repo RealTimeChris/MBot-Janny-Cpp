@@ -44,7 +44,7 @@ namespace DiscordCoreAPI {
 				std::cout << "WERE HERE THIS IS REALLY IT 01010101" + std::to_string(2) << std::endl;
 				for (uint32_t x = 0; x < 50; x += 1) {
 					RespondToInputEventData dataPackage02{ newEvent };
-					dataPackage02.setResponseType(InputEventResponseType::Edit_Follow_Up_Message);
+					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
 					dataPackage02.addContent("TEST MESSAGE: " + std::to_string(x));
 					theResponses.push_back(InputEvents::respondToInputEventAsync(dataPackage02));
 					std::cout << "WERE HERE THIS IS REALLY IT 01010101" + std::to_string(x) << std::endl;
