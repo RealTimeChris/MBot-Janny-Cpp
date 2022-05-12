@@ -7,11 +7,12 @@
 
 void theAutoCompleteFunction(DiscordCoreAPI::OnAutoCompleteEntryData dataPackage) {
 	DiscordCoreAPI::RespondToInputEventData dataPackageNew{ dataPackage.inputEvent };
-	if (dataPackage.inputEvent.getInteractionData().data.applicationCommandData.options[0].valueString.find("tes") != std::string::npos) {
-		dataPackageNew.setAutoCompleteChoice("The Test Value", "test_value_name");
+	if (dataPackage.inputEvent.getInteractionData().data.applicationCommanddata.options[0].valueString.find("tes") != std::string::npos) {
+		dataPackageNew.setAutoCompleteChoice(nullptr, nullptr, std::make_unique<std::string>("The Test Value"), "test_value_name");
 		dataPackageNew.setResponseType(DiscordCoreAPI::InputEventResponseType::Application_Command_AutoComplete_Result);
 		DiscordCoreAPI::InputEvents::respondToInputEventAsync(dataPackageNew).get();
-	} else {
+	}
+	else {
 		dataPackageNew.setResponseType(DiscordCoreAPI::InputEventResponseType::Application_Command_AutoComplete_Result);
 		DiscordCoreAPI::InputEvents::respondToInputEventAsync(dataPackageNew).get();
 	}
