@@ -26,7 +26,13 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
-
+				if (newArgs.commandData.optionsArgs.size() > 0) {
+					std::cout << "THE RESULT: " << newArgs.commandData.optionsArgs[0] << std::endl;
+				} else if (newArgs.commandData.optionsArgs.size() > 1) {
+					std::cout << "THE RESULT 01: " << newArgs.commandData.optionsArgs[0] << std::endl;
+					std::cout << "THE RESULT 02: " << newArgs.commandData.optionsArgs[1] << std::endl;
+				}
+				
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.dmPermission = true;
 				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
