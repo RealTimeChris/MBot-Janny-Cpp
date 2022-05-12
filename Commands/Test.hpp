@@ -26,6 +26,28 @@ namespace DiscordCoreAPI {
 
 		virtual void execute(BaseFunctionArguments& newArgs) {
 			try {
+
+				CreateGlobalApplicationCommandData createTestData{};
+				createTestData.dmPermission = true;
+				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
+				createTestData.type = ApplicationCommandType::Chat_Input;
+				createTestData.name = "test";
+				createTestData.defaultPermission = true;
+				createTestData.description = "Test command.";
+				ApplicationCommandOptionData testOptionOne{};
+				testOptionOne.type = ApplicationCommandOptionType::Attachment;
+				testOptionOne.name = "attachment";
+				testOptionOne.required = false;
+				testOptionOne.description = "Test attachment!";
+				createTestData.options.push_back(testOptionOne);
+				ApplicationCommandOptionData testOptionTwo{};
+				testOptionTwo.type = ApplicationCommandOptionType::String;
+				testOptionTwo.name = "test_string";
+				testOptionTwo.required = false;
+				testOptionTwo.autocomplete = true;
+				testOptionTwo.description = "Test string!";
+				createTestData.options.push_back(testOptionTwo);
+				ApplicationCommands::createGlobalApplicationCommandAsync(createTestData).get();
 				RespondToInputEventData dataPackage02{ newArgs.eventData };
 				dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 				dataPackage02.addContent(

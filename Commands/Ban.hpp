@@ -238,7 +238,7 @@ namespace DiscordCoreAPI {
 
 					currentPage = 0;
 					RespondToInputEventData dataPackage(newEvent);
-					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+					dataPackage.setResponseType(InputEventResponseType ::Deferred_Response);
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 					auto returnValue = moveThroughMessagePages(newEvent.getRequesterId(), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
 					if (returnValue.buttonId == "exit" || returnValue.buttonId == "empty") {

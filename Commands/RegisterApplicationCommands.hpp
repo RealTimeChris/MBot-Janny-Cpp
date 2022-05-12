@@ -34,7 +34,7 @@ namespace DiscordCoreAPI {
 				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-				/*
+				
 				CreateGlobalApplicationCommandData reactionRoleData{};
 				reactionRoleData.dmPermission = false;
 				reactionRoleData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -225,7 +225,7 @@ namespace DiscordCoreAPI {
 				createSetBorderColoreOptionOne.required = true;
 				ApplicationCommandOptionChoiceData setBorderColorchoiceOne;
 				setBorderColorchoiceOne.name = "janny";
-				setBorderColorchoiceOne.valueString = "janny";
+				setBorderColorchoiceOne = "janny";
 				createSetBorderColoreOptionOne.choices.push_back(setBorderColorchoiceOne);
 				createSetBorderColorCommandData.options.push_back(createSetBorderColoreOptionOne);
 				ApplicationCommandOptionData createSetBorderColorOptionTwo;
@@ -270,7 +270,7 @@ namespace DiscordCoreAPI {
 				createSetInvitesChannelOptionOneOne.required = true;
 				ApplicationCommandOptionChoiceData createSetInvitesChoiceOne;
 				createSetInvitesChoiceOne.name = "add";
-				createSetInvitesChoiceOne.valueString = "add";
+				createSetInvitesChoiceOne = "add";
 				createSetInvitesChannelOptionOneOne.choices.push_back(createSetInvitesChoiceOne);
 				createSetInvitesChannelOptionOne.options.push_back(createSetInvitesChannelOptionOneOne);
 				createSetInvitesChannelCommandData.options.push_back(createSetInvitesChannelOptionOne);
@@ -285,7 +285,7 @@ namespace DiscordCoreAPI {
 				createSetInvitesChannelOptionTwoOne.required = true;
 				ApplicationCommandOptionChoiceData createSetInvitesChoiceTwo;
 				createSetInvitesChoiceTwo.name = "remove";
-				createSetInvitesChoiceTwo.valueString = "remove";
+				createSetInvitesChoiceTwo = "remove";
 				createSetInvitesChannelOptionTwoOne.choices.push_back(createSetInvitesChoiceTwo);
 				createSetInvitesChannelOptionTwo.options.push_back(createSetInvitesChannelOptionTwoOne);
 				createSetInvitesChannelCommandData.options.push_back(createSetInvitesChannelOptionTwo);
@@ -300,7 +300,7 @@ namespace DiscordCoreAPI {
 				createSetInvitesChannelOptionThreeOne.required = true;
 				ApplicationCommandOptionChoiceData createSetInvitesChoiceThree;
 				createSetInvitesChoiceThree.name = "view";
-				createSetInvitesChoiceThree.valueString = "view";
+				createSetInvitesChoiceThree = "view";
 				createSetInvitesChannelOptionThreeOne.choices.push_back(createSetInvitesChoiceThree);
 				createSetInvitesChannelOptionThree.options.push_back(createSetInvitesChannelOptionThreeOne);
 				createSetInvitesChannelCommandData.options.push_back(createSetInvitesChannelOptionThree);
@@ -452,7 +452,7 @@ namespace DiscordCoreAPI {
 				for (int32_t x = 0; x < 10; x += 1) {
 					ApplicationCommandOptionChoiceData choiceDataOne;
 					choiceDataOne.name = discordGuild.data.logs[x].name;
-					choiceDataOne.valueString = discordGuild.data.logs[x].nameSmall;
+					choiceDataOne = discordGuild.data.logs[x].nameSmall;
 					createManageLogsOptionOneOne.choices.push_back(choiceDataOne);
 				}
 				createManageLogsOptionOne.options.push_back(createManageLogsOptionOneOne);
@@ -475,7 +475,7 @@ namespace DiscordCoreAPI {
 				for (int32_t x = 10; x < discordGuild.data.logs.size(); x += 1) {
 					ApplicationCommandOptionChoiceData choiceDataOne;
 					choiceDataOne.name = discordGuild.data.logs[x].name;
-					choiceDataOne.valueString = discordGuild.data.logs[x].nameSmall;
+					choiceDataOne = discordGuild.data.logs[x].nameSmall;
 					createManageLogsOptionTwoOne.choices.push_back(choiceDataOne);
 				}
 				createManageLogsOptionTwo.options.push_back(createManageLogsOptionTwoOne);
@@ -513,7 +513,7 @@ namespace DiscordCoreAPI {
 				pushmecommandData.description = "Push me to find out!";
 				pushmecommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				ApplicationCommands::createGlobalApplicationCommandAsync(pushmecommandData).get();
-				*/
+				
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor("FeFeFe");
