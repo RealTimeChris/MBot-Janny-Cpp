@@ -470,9 +470,9 @@ namespace DiscordCoreAPI {
 						std::unique_ptr<Message> previousMessage{ std::make_unique<Message>(
 							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = currentDeletionChannel->deletionMessageId }).get()) };
 						if (previousMessage->id != "") {
-							Messages::deleteMessageAsync({ .channelId = previousMessage->channelId,
+							Messages::deleteMessageAsync({ .timeStamp = previousMessage->timestamp,
+															 .channelId = previousMessage->channelId,
 															 .messageId = previousMessage->id,
-															 .timeStamp = previousMessage->timestamp,
 															 .reason = "Deleting for the next one!" })
 								.get();
 						}

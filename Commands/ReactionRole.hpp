@@ -154,9 +154,11 @@ namespace DiscordCoreAPI {
 						}
 					}
 					if (discordGuild->data.roleManager.theRoles.size() == 0) {
-						std::unique_ptr<Message> messageNew{ std::make_unique<Message>(
-							Messages::getMessageAsync({ .channelId = discordGuild->data.roleManager.channelId, .id = discordGuild->data.roleManager.messageId }).get()) };
-						Messages::deleteMessageAsync({ .channelId = messageNew->channelId, .messageId = messageNew->id, .timeStamp = messageNew->timestamp, .reason = "Deleting!" })
+						std::unique_ptr<Message> messageNew {
+							std::make_unique<Message>(Messages::getMessageAsync(
+								{ .channelId = discordGuild->data.roleManager.channelId,  .id = discordGuild->data.roleManager.messageId })
+																						   .get()) };
+						Messages::deleteMessageAsync({ .timeStamp = messageNew->timestamp, .channelId = messageNew->channelId, .messageId = messageNew->id, .reason = "Deleting!" })
 							.get();
 						discordGuild->data.roleManager.channelId = "";
 						discordGuild->data.roleManager.messageId = "";
@@ -209,7 +211,7 @@ namespace DiscordCoreAPI {
 			Messages::getMessageAsync({ .channelId = discordGuild->data.roleManager.channelId, .id = discordGuild->data.roleManager.messageId }).get()) };
 
 		if (message->id != "") {
-			Messages::deleteMessageAsync({ .channelId = message->channelId, .messageId = message->id, .timeStamp = message->timestamp, .reason = "Deleting!" }).get();
+			Messages::deleteMessageAsync({ .timeStamp = message->timestamp, .channelId = message->channelId, .messageId = message->id, .reason = "Deleting!" }).get();
 		}
 		std::string messageString = "------\n__**Hello! Press start to begin selecting your roles!**__\n------";
 		std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed02{ std::make_unique<DiscordCoreAPI::EmbedData>() };
@@ -243,7 +245,7 @@ namespace DiscordCoreAPI {
 				InputEventData inputData = InputEventData{ *message, *resultValue[0].interactionData, InteractionType::Application_Command };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
-				Messages::deleteMessageAsync({ .channelId = newMessage->channelId, .messageId = newMessage->id, .timeStamp = newMessage->timestamp, .reason = "Deleting!" }).get();
+				Messages::deleteMessageAsync({ .timeStamp = newMessage->timestamp, .channelId = newMessage->channelId, .messageId = newMessage->id, .reason = "Deleting!" }).get();
 			} else {
 				discordGuild->data.roleManager.messageId = newMessage->id;
 				discordGuild->data.roleManager.channelId = newMessage->channelId;
@@ -254,7 +256,7 @@ namespace DiscordCoreAPI {
 				InputEventData inputData = InputEventData{ *message, *resultValue[0].interactionData, InteractionType::Application_Command };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
-				Messages::deleteMessageAsync({ .channelId = newMessage->channelId, .messageId = newMessage->id, .timeStamp = newMessage->timestamp, .reason = "Deleting!" }).get();
+				Messages::deleteMessageAsync({ .timeStamp = newMessage->timestamp, .channelId = newMessage->channelId, .messageId = newMessage->id, .reason = "Deleting!" }).get();
 			}
 
 
