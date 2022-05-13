@@ -280,7 +280,7 @@ namespace DiscordCoreAPI {
 				reportException("Ban::execute()");
 			}
 		}
-		virtual ~Ban(){};
+		~Ban(){};
 	};
 
 };

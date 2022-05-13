@@ -88,7 +88,7 @@ namespace DiscordCoreAPI {
 				reportException("ServerInfo::execute()");
 			}
 		}
-		virtual ~ServerInfo(){};
+		~ServerInfo(){};
 	};
 
 }

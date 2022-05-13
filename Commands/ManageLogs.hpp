@@ -207,7 +207,7 @@ namespace DiscordCoreAPI {
 				reportException("ManageLogs::execute()");
 			}
 		}
-		virtual ~ManageLogs(){};
+		~ManageLogs(){};
 	};
 
 }

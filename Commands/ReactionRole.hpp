@@ -198,7 +198,7 @@ namespace DiscordCoreAPI {
 				reportException("ReactionRole::execute()");
 			}
 		}
-		virtual ~ReactionRole(){};
+		~ReactionRole(){};
 	};
 
 	CoRoutine<void> theLoop(DiscordGuild* discordGuild, DiscordCoreAPI::DiscordCoreClient* theClient) {

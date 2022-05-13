@@ -272,7 +272,7 @@ namespace DiscordCoreAPI {
 				reportException("Purge::execute()");
 			}
 		}
-		virtual ~Purge(){};
+		~Purge(){};
 	};
 
 }

@@ -71,7 +71,7 @@ namespace DiscordCoreAPI {
 				reportException("PushMe::execute()");
 			}
 		}
-		virtual ~PushMe(){};
+		~PushMe(){};
 	};
 
 }

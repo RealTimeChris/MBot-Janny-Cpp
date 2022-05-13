@@ -284,7 +284,7 @@ namespace DiscordCoreAPI {
 				reportException("SetDefaultRole::execute()");
 			}
 		}
-		virtual ~SetDefaultRole(){};
+		~SetDefaultRole(){};
 	};
 
 }

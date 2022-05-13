@@ -530,7 +530,7 @@ namespace DiscordCoreAPI {
 				reportException("RegisterApplicationCommands::execute()");
 			}
 		}
-		virtual ~RegisterApplicationCommands(){};
+		~RegisterApplicationCommands(){};
 	};
 
 }

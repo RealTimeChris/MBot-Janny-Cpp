@@ -70,7 +70,7 @@ namespace DiscordCoreAPI {
 				reportException("Avatar::execute()");
 			}
 		}
-		virtual ~Avatar(){};
+		~Avatar(){};
 	};
 
 }

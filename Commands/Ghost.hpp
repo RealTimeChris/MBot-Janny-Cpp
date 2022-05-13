@@ -214,6 +214,6 @@ namespace DiscordCoreAPI {
 				reportException("Ghost::execute()");
 			}
 		}
-		virtual ~Ghost(){};
+		~Ghost(){};
 	};
 }

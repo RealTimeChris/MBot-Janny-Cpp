@@ -324,6 +324,6 @@ namespace DiscordCoreAPI {
 			}
 			co_return;
 		}
-		virtual ~MonitorInvites(){};
+		~MonitorInvites(){};
 	};
 }

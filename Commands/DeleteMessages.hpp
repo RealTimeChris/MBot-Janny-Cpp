@@ -559,7 +559,7 @@ namespace DiscordCoreAPI {
 				reportException("SetDeletionStatus::execute()");
 			}
 		}
-		virtual ~SetDeletionStatus(){};
+		~SetDeletionStatus(){};
 	};
 
 }
