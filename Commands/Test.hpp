@@ -38,7 +38,7 @@ namespace DiscordCoreAPI {
 				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createTestData.type = ApplicationCommandType::Chat_Input;
 				createTestData.name = "test";
-				createTestData.defaultPermission = true;
+				createTestData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
 				createTestData.description = "Test command.";
 				ApplicationCommandOptionData testOptionOne{};
 				testOptionOne.type = ApplicationCommandOptionType::Attachment;
