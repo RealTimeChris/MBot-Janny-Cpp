@@ -24,7 +24,7 @@ namespace DiscordCoreAPI {
 			return std::make_unique<Test>();
 		}
 
-		virtual void execute(BaseFunctionArguments& newArgs) {
+		void execute(BaseFunctionArguments& newArgs) {
 			try {
 				if (newArgs.commandData.optionsArgs.size() > 0) {
 					std::cout << "THE RESULT: " << newArgs.commandData.optionsArgs[0] << std::endl;
