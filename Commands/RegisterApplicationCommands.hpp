@@ -31,10 +31,10 @@ namespace DiscordCoreAPI {
 				InputEvents::deleteInputEventResponseAsync(newArgs.eventData);
 				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
-				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage);
+				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-				
+
 				CreateGlobalApplicationCommandData reactionRoleData{};
 				reactionRoleData.dmPermission = false;
 				reactionRoleData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -172,7 +172,7 @@ namespace DiscordCoreAPI {
 				createGhostOptionThree.options.push_back(createGhostOptionThreeTwo);
 				registerGhostCommandData.options.push_back(createGhostOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(registerGhostCommandData);
-				
+
 				CreateGlobalApplicationCommandData registerPurgeCommandData{};
 				registerPurgeCommandData.dmPermission = false;
 				registerPurgeCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -201,7 +201,7 @@ namespace DiscordCoreAPI {
 				createPurgeOptionThree.description = "Do we delete pinned messages?";
 				registerPurgeCommandData.options.push_back(createPurgeOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(registerPurgeCommandData);
-				
+
 				CreateGlobalApplicationCommandData registerServerInfoCommandData{};
 				registerServerInfoCommandData.dmPermission = false;
 				registerServerInfoCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -305,7 +305,7 @@ namespace DiscordCoreAPI {
 				createSetInvitesChannelOptionThree.options.push_back(createSetInvitesChannelOptionThreeOne);
 				createSetInvitesChannelCommandData.options.push_back(createSetInvitesChannelOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createSetInvitesChannelCommandData);
-				
+
 				CreateGlobalApplicationCommandData createBanCommandData{};
 				createBanCommandData.dmPermission = false;
 				createBanCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -389,7 +389,7 @@ namespace DiscordCoreAPI {
 
 				createSetDeletionStatusCommandData.options.push_back(createSetDeletionStatusOptionThree);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createSetDeletionStatusCommandData);
-				
+
 				CreateGlobalApplicationCommandData createUserInfoData{};
 				createUserInfoData.dmPermission = false;
 				createUserInfoData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -406,7 +406,7 @@ namespace DiscordCoreAPI {
 				RegisterApplicationCommandsCommandData.description = "Register the programmatically designated slash commands.";
 				RegisterApplicationCommandsCommandData.name = "registerapplicationcommands";
 				auto theResult02 = ApplicationCommands::createGlobalApplicationCommandAsync(RegisterApplicationCommandsCommandData);
-				
+
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.dmPermission = true;
 				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -421,7 +421,7 @@ namespace DiscordCoreAPI {
 				testOptionOne.description = "Test Attachment!";
 				createTestData.options.push_back(testOptionOne);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createTestData);
-				
+
 				CreateGlobalApplicationCommandData createManageLogsData{};
 				createManageLogsData.dmPermission = false;
 				createManageLogsData.applicationId = newArgs.discordCoreClient->getBotUser().id;
@@ -506,7 +506,7 @@ namespace DiscordCoreAPI {
 				createAvatarOptionOne.required = true;
 				createAvatarData.options.push_back(createAvatarOptionOne);
 				ApplicationCommands::createGlobalApplicationCommandAsync(createAvatarData);
-				
+
 				CreateGlobalApplicationCommandData pushmecommandData{};
 				pushmecommandData.dmPermission = false;
 				pushmecommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
@@ -514,14 +514,14 @@ namespace DiscordCoreAPI {
 				pushmecommandData.description = "Push me to find out!";
 				pushmecommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				ApplicationCommands::createGlobalApplicationCommandAsync(pushmecommandData);
-				
+
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor("FeFeFe");
 				msgEmbed.setDescription("------\nNicely done, you've registered some commands!\n------");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**Register Application Commands Complete:**__");
-				RespondToInputEventData responseData(newEvent);
+				RespondToInputEventData responseData{ newEvent };
 				responseData.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				responseData.addMessageEmbed(msgEmbed);
 				auto event = InputEvents::respondToInputEventAsync(responseData);
