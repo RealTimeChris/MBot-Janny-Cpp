@@ -524,7 +524,7 @@ namespace DiscordCoreAPI {
 				RespondToInputEventData responseData{ newEvent };
 				responseData.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				responseData.addMessageEmbed(msgEmbed);
-				auto event = InputEvents::respondToInputEventAsync(responseData);
+				auto event = InputEvents::respondToInputEventAsync(responseData).get();
 				return;
 			} catch (...) {
 				reportException("RegisterApplicationCommands::execute()");
