@@ -32,7 +32,15 @@ namespace DiscordCoreAPI {
 					std::cout << "THE RESULT 01: " << newArgs.commandData.optionsArgs[0] << std::endl;
 					std::cout << "THE RESULT 02: " << newArgs.commandData.optionsArgs[1] << std::endl;
 				}
-				
+				RespondToInputEventData dataPackage{ newArgs.eventData };
+				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+				dataPackage.addContent("TESTING");
+				dataPackage.addMessageEmbed({ .description = "TESTING" });
+				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+				RespondToInputEventData dataPackage02{ newEvent };
+				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+				dataPackage02.addContent("TESTING");
+				InputEvents::respondToInputEventAsync(dataPackage02).get();
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.dmPermission = true;
 				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
