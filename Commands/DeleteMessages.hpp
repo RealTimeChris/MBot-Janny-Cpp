@@ -52,8 +52,8 @@ namespace DiscordCoreAPI {
 				std::vector<Message> messagesToDelete{};
 				for (uint64_t x = 0; x < originalMessagesArray.size(); x += 1) {
 					if (!originalMessagesArray[x].pinned &&
-						hasTimeElapsed(
-							originalMessagesArray[x].timestamp.getOriginalTimeStamp(), 0, 0, newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
+						hasTimeElapsed(originalMessagesArray[x].timestamp.getOriginalTimeStamp(), 0, 0,
+							newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
 						messagesToDelete.push_back(originalMessagesArray[x]);
 					} else if (!hasTimeElapsed(originalMessagesArray[x].timestamp, 0, 0, newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted) &&
 						!originalMessagesArray[x].pinned) {
@@ -171,7 +171,7 @@ namespace DiscordCoreAPI {
 					arrayOfMessages.shrink_to_fit();
 					if (arrayOfMessages.size() > 0) {
 						*startingMessage = arrayOfMessages.at(arrayOfMessages.size() - 1);
-						x = (int32_t)(arrayOfMessages).size();
+						x = ( int32_t )(arrayOfMessages).size();
 						for (auto& value: arrayOfMessages) {
 							x = ( int32_t )arrayOfMessages.size();
 							if (x > 0 &&

@@ -154,10 +154,8 @@ namespace DiscordCoreAPI {
 						}
 					}
 					if (discordGuild->data.roleManager.theRoles.size() == 0) {
-						std::unique_ptr<Message> messageNew {
-							std::make_unique<Message>(Messages::getMessageAsync(
-								{ .channelId = discordGuild->data.roleManager.channelId,  .id = discordGuild->data.roleManager.messageId })
-																						   .get()) };
+						std::unique_ptr<Message> messageNew{ std::make_unique<Message>(
+							Messages::getMessageAsync({ .channelId = discordGuild->data.roleManager.channelId, .id = discordGuild->data.roleManager.messageId }).get()) };
 						Messages::deleteMessageAsync({ .timeStamp = messageNew->timestamp, .channelId = messageNew->channelId, .messageId = messageNew->id, .reason = "Deleting!" })
 							.get();
 						discordGuild->data.roleManager.channelId = "";
@@ -328,8 +326,8 @@ namespace DiscordCoreAPI {
 						.setTimeStamp(getTimeAndDate());
 					dataPackages[currentPageIndex].setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
 					dataPackages[currentPageIndex].addMessageEmbed(messageEmbeds[currentPageIndex]);
-					dataPackages[currentPageIndex].addSelectMenu(
-						false, "role_selection_" + currentPageIndex, theOptions, "Select Roles", static_cast<int32_t>(theOptions.size()), 0);
+					dataPackages[currentPageIndex].addSelectMenu(false, "role_selection_" + currentPageIndex, theOptions, "Select Roles", static_cast<int32_t>(theOptions.size()),
+						0);
 				}
 			}
 			InputEventData newEvent{ inputData };

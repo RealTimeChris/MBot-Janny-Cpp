@@ -81,9 +81,9 @@ namespace DiscordCoreAPI {
 						.name = "__User ID:__",
 					};
 					fields.push_back(field3);
-					EmbedFieldData field4{ .value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime), .name = "__Joined:__"};
+					EmbedFieldData field4{ .value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime), .name = "__Joined:__" };
 					fields.push_back(field4);
-					EmbedFieldData field5{ .value = guildMember.user.createdAt, .name = "__Created At:__"};
+					EmbedFieldData field5{ .value = guildMember.user.createdAt, .name = "__Created At:__" };
 					fields.push_back(field5);
 					Permissions permsString{ Permissions::getCurrentGuildPermissions(guildMember) };
 					std::vector<std::string> permissionsArray{ permsString.displayPermissions() };
@@ -108,19 +108,19 @@ namespace DiscordCoreAPI {
 					}
 					if (msgString != "") {
 						EmbedFieldData field7 = { .Inline = false, .value = msgString, .name = "__Permissions:__" };
-						
+
 						fields.push_back(field7);
 					}
 
 					msgEmbed.setImage(guildMember.user.avatar);
 				} else if (user.userName != "") {
-					EmbedFieldData field{ .value = user.userName + "#" + user.discriminator, .name = "__User Tag: __"};
+					EmbedFieldData field{ .value = user.userName + "#" + user.discriminator, .name = "__User Tag: __" };
 					fields.push_back(field);
-					EmbedFieldData field1{ .value = user.userName, .name = "__User Name:__"};
+					EmbedFieldData field1{ .value = user.userName, .name = "__User Name:__" };
 					fields.push_back(field1);
-					EmbedFieldData field3{ .value = user.id, .name = "__User ID:__"};
+					EmbedFieldData field3{ .value = user.id, .name = "__User ID:__" };
 					fields.push_back(field3);
-					EmbedFieldData field5{ .value = user.createdAt, .name = "__Created At:__"};
+					EmbedFieldData field5{ .value = user.createdAt, .name = "__Created At:__" };
 					fields.push_back(field5);
 					EmbedFieldData field6{ .Inline = false, .value = "", .name = "__Roles:__" };
 					std::string msgString{ "__**User Info**__" };

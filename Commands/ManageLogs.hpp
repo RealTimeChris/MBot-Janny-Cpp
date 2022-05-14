@@ -65,14 +65,12 @@ namespace DiscordCoreAPI {
 							discordGuild.data.logs[x].enabled = false;
 						}
 						if (discordGuild.data.logs[x].enabled == false) {
-							EmbedFieldData field = { .Inline = true,.value = "__Enabled:__ ❌", .name = "__**" + discordGuild.data.logs[x].name + "**__" };
+							EmbedFieldData field = { .Inline = true, .value = "__Enabled:__ ❌", .name = "__**" + discordGuild.data.logs[x].name + "**__" };
 							fields.push_back(field);
 						} else if (discordGuild.data.logs[x].enabled == true) {
-							EmbedFieldData field = {
-								.Inline = true,
+							EmbedFieldData field = { .Inline = true,
 								.value = "__Enabled:__ ✅\n__Logging Channel:__ <#" + discordGuild.data.logs[x].loggingChannelId + ">",
-								.name = "__**" + discordGuild.data.logs[x].name + "**__"								
-							};
+								.name = "__**" + discordGuild.data.logs[x].name + "**__" };
 							fields.push_back(field);
 						}
 					}

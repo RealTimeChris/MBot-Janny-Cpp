@@ -51,25 +51,25 @@ namespace DiscordCoreAPI {
 				}
 
 				std::vector<EmbedFieldData> fields;
-				EmbedFieldData field1 = { .Inline = true,.value = guild.name, .name = "__Server Name:__ "};
+				EmbedFieldData field1 = { .Inline = true, .value = guild.name, .name = "__Server Name:__ " };
 				fields.push_back(field1);
-				EmbedFieldData field2 = { .Inline = true,.value = guild.id, .name = "__Server ID:__ " };
+				EmbedFieldData field2 = { .Inline = true, .value = guild.id, .name = "__Server ID:__ " };
 				fields.push_back(field2);
-				EmbedFieldData field3 = { .Inline = true,.value = std::to_string(guild.memberCount), .name = "__Server Member Count:__ "};
+				EmbedFieldData field3 = { .Inline = true, .value = std::to_string(guild.memberCount), .name = "__Server Member Count:__ " };
 				fields.push_back(field3);
-				EmbedFieldData field4 = { .Inline = true,.value = "<@" + guild.ownerId + ">", .name = "__Server Owner:__ "};
+				EmbedFieldData field4 = { .Inline = true, .value = "<@" + guild.ownerId + ">", .name = "__Server Owner:__ " };
 				fields.push_back(field4);
-				EmbedFieldData field5 = { .Inline = true, .value = guild.ownerId, .name = "__Server Owner ID:__ "};
+				EmbedFieldData field5 = { .Inline = true, .value = guild.ownerId, .name = "__Server Owner ID:__ " };
 				fields.push_back(field5);
-				EmbedFieldData field6 = { .Inline = true, .value = std::to_string(guild.roles.size()), .name = "__Role Count:__ "};
+				EmbedFieldData field6 = { .Inline = true, .value = std::to_string(guild.roles.size()), .name = "__Role Count:__ " };
 				fields.push_back(field6);
-				EmbedFieldData field7 = { .Inline = true, .value = std::to_string(categoryCount), .name = "__Channel Category Count:__ "};
+				EmbedFieldData field7 = { .Inline = true, .value = std::to_string(categoryCount), .name = "__Channel Category Count:__ " };
 				fields.push_back(field7);
-				EmbedFieldData field8 = { .Inline = true, .value = std::to_string(textChannelCount), .name = "__Text Channel Count:__ "};
+				EmbedFieldData field8 = { .Inline = true, .value = std::to_string(textChannelCount), .name = "__Text Channel Count:__ " };
 				fields.push_back(field8);
-				EmbedFieldData field9 = { .Inline = true, .value = std::to_string(voiceChannelCount), .name = "__Voice Channel Count:__ "};
+				EmbedFieldData field9 = { .Inline = true, .value = std::to_string(voiceChannelCount), .name = "__Voice Channel Count:__ " };
 				fields.push_back(field9);
-				EmbedFieldData field10 = { .Inline = true, .value = guild.createdAt, .name = "__Created At:__ "};
+				EmbedFieldData field10 = { .Inline = true, .value = guild.createdAt, .name = "__Created At:__ " };
 				fields.push_back(field10);
 
 				EmbedData msgEmbed{};
