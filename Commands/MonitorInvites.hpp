@@ -183,7 +183,6 @@ namespace DiscordCoreAPI {
 				}
 				std::vector<InviteData> invites = Guilds::getGuildInvitesAsync({ .guildId = guild.id }).get();
 				for (uint32_t x = 0; x < invites.size(); x += 1) {
-					std::cout << "WERE HERE THIS IS IT!" << std::endl;
 					for (auto& [key, value2]: guild.members) {
 						DiscordGuildMember discordGuildMember(value2);
 						if (invites[x].inviter.id == discordGuildMember.data.guildMemberId) {
@@ -221,17 +220,20 @@ namespace DiscordCoreAPI {
 			return;
 		}
 
-		static void execute(OnInviteCreationData dataPackage) {
+		static CoRoutine<void> execute(OnInviteCreationData dataPackage) {
+			co_await NewThreadAwaitable<void>();
 			updateInvitesDataBaseToWrap(dataPackage.invite.guildId);
+			co_return;
 		}
 
-		static void execute(OnInviteDeletionData dataPackage) {
+		static CoRoutine<void> execute(OnInviteDeletionData dataPackage) {
+			co_await NewThreadAwaitable<void>();
 			updateInvitesDataBaseToWrap(dataPackage.guildId);
+			co_return;
 		}
 
-		static CoRoutine<void> execute(MonitorInvitesArgs newArgs) {
+		static void execute(MonitorInvitesArgs newArgs) {
 			try {
-				co_await NewThreadAwaitable<void>();
 				auto invites = Guilds::getGuildInvitesAsync({ .guildId = newArgs.guildMemberData.guildId }).get();
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.guildMemberData.guildId }).get();
 				DiscordGuild discordGuild{ guild };
@@ -318,11 +320,11 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 				}
-				co_return;
+				return;
 			} catch (...) {
 				reportException("MonitorInvites::execute()");
 			}
-			co_return;
+			return;
 		}
 		~MonitorInvites(){};
 	};
