@@ -83,8 +83,9 @@ namespace DiscordCoreAPI {
 					std::string msgString01;
 					std::vector<DiscordGuildMember> discordGuildMembers;
 					std::vector<std::string> idsAlreadyInUse;
-					for (auto& [key, value]: guild.members) {
-						DiscordGuildMember discordGuildMember(value);
+					for (auto& value: guild.members) {
+						auto guildMemberNew = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value, .guildId = guild.id }).get();
+						DiscordGuildMember discordGuildMember(guildMemberNew);
 						discordGuildMember.getDataFromDB();
 						bool doWeContinue = false;
 						for (auto& value02: idsAlreadyInUse) {
@@ -98,7 +99,7 @@ namespace DiscordCoreAPI {
 						}
 						if (discordGuildMember.data.totalInvites > 0) {
 							discordGuildMembers.push_back(std::move(discordGuildMember));
-							idsAlreadyInUse.push_back(value.user.id);
+							idsAlreadyInUse.push_back(value);
 						}
 					}
 					uint32_t maxIdx = 0;
@@ -183,8 +184,9 @@ namespace DiscordCoreAPI {
 				}
 				std::vector<InviteData> invites = Guilds::getGuildInvitesAsync({ .guildId = guild.id }).get();
 				for (uint32_t x = 0; x < invites.size(); x += 1) {
-					for (auto& [key, value2]: guild.members) {
-						DiscordGuildMember discordGuildMember(value2);
+					for (auto& value2: guild.members) {
+						auto guildMemberNew = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value2, .guildId = guild.id }).get();
+						DiscordGuildMember discordGuildMember(guildMemberNew);
 						if (invites[x].inviter.id == discordGuildMember.data.guildMemberId) {
 							bool isItFound = false;
 							for (uint32_t y = 0; y < discordGuildMember.data.invites.size(); y += 1) {
@@ -249,15 +251,16 @@ namespace DiscordCoreAPI {
 						goto pastPart;
 					}
 
-					for (auto& [key, value]: guild.members) {
-						DiscordGuildMember discordGuildMember(value);
+					for (auto& value: guild.members) {
+						auto guildMemberNew = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value, .guildId = guild.id }).get();
+						DiscordGuildMember discordGuildMember(guildMemberNew);
 						for (uint32_t x = 0; x < discordGuildMember.data.invites.size(); x += 1) {
 							bool isItFound = false;
 							for (uint32_t y = 0; y < invites.size(); y += 1) {
 								if (invites[y].code == discordGuildMember.data.invites[x].inviteCode) {
 									isItFound = true;
 									if (invites[y].uses >= discordGuildMember.data.invites[x].invitesUsed + 1) {
-										guildMemberInviterData = value;
+										guildMemberInviterData = guildMemberNew;
 										bool areTheyFound = false;
 										for (auto& value02: discordGuildMember.data.invitedMemberIds) {
 											if (value02 == newArgs.guildMemberData.user.id) {
@@ -277,7 +280,7 @@ namespace DiscordCoreAPI {
 								}
 							}
 							if (!isItFound) {
-								guildMemberInviterData = value;
+								guildMemberInviterData = guildMemberNew;
 								bool areTheyFound = false;
 								for (auto& value02: discordGuildMember.data.invitedMemberIds) {
 									if (value02 == newArgs.guildMemberData.user.id) {

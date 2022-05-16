@@ -38,14 +38,15 @@ namespace DiscordCoreAPI {
 				uint32_t categoryCount = 0;
 				uint32_t voiceChannelCount = 0;
 				uint32_t textChannelCount = 0;
-				for (auto [key, value]: guild.channels) {
-					if (value.type == ChannelType::Guild_Voice) {
+				for (auto value: guild.channels) {
+					Channel newChannel = Channels::getCachedChannelAsync({ .channelId = value }).get();
+					if (newChannel.type == ChannelType::Guild_Voice) {
 						voiceChannelCount += 1;
 					}
-					if (value.type == ChannelType::Guild_Text) {
+					if (newChannel.type == ChannelType::Guild_Text) {
 						textChannelCount += 1;
 					}
-					if (value.type == ChannelType::Guild_Category) {
+					if (newChannel.type == ChannelType::Guild_Category) {
 						categoryCount += 1;
 					}
 				}

@@ -13,19 +13,20 @@ namespace DiscordCoreAPI {
 		try {
 			co_await NewThreadAwaitable<void>();
 			DiscordGuild discordGuild{ guild };
-			for (auto& [key, value]: guild.members) {
-				DiscordGuildMember guildMember(value);
+			for (auto& value: guild.members) {
+				auto guildMemberNew = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value, .guildId = guild.id }).get();
+				DiscordGuildMember guildMember(guildMemberNew);
 				if (guildMember.data.previousRoleIds.size() == 0) {
 					for (auto& value01: discordGuild.data.defaultRoleIds) {
 						bool isItFound = false;
-						for (auto& value02: value.roles) {
+						for (auto& value02: guildMemberNew.roles) {
 							if (value02 == value01) {
 								isItFound = true;
 								break;
 							}
 						}
 						if (!isItFound) {
-							Roles::addGuildMemberRoleAsync({ .guildId = guild.id, .userId = value.user.id, .roleId = value01, .reason = "New User." }).get();
+							Roles::addGuildMemberRoleAsync({ .guildId = guild.id, .userId = value, .roleId = value01, .reason = "New User." }).get();
 						}
 					}
 				}
