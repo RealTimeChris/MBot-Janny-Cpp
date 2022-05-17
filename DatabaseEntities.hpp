@@ -276,11 +276,12 @@ namespace DiscordCoreAPI {
 						break;
 					}
 				}
+				return newData;
 			} catch (...) {
 				reportException("DatabaseManagerAgent::run() Error: ");
 				return newData;
 			}
-			return newData;
+			
 		}
 
 	  protected:
