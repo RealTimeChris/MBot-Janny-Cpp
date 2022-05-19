@@ -11,7 +11,7 @@ namespace DiscordCoreAPI {
 
 	void onRoleCreationToBeWrapped(OnRoleCreationData dataPackageNew) {
 		try {
-			if (dataPackageNew.role.id == "") {
+			if (dataPackageNew.role.id == 0) {
 				return;
 			}
 
@@ -30,7 +30,7 @@ namespace DiscordCoreAPI {
 				Channel textChannel = Channels::getCachedChannelAsync({ .channelId = log.loggingChannelId }).get();
 
 				AuditLogData auditLogs =
-					Guilds::getGuildAuditLogsAsync({ .actionType = AuditLogEvent::Role_Create, .guildId = dataPackageNew.guildId, .userId = "", .limit = 1 }).get();
+					Guilds::getGuildAuditLogsAsync({ .actionType = AuditLogEvent::Role_Create, .guildId = dataPackageNew.guildId, .userId = 0, .limit = 1 }).get();
 				int64_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				AuditLogEntryData auditLogEntry{};
 				for (auto& value: auditLogs.auditLogEntries) {
@@ -41,9 +41,9 @@ namespace DiscordCoreAPI {
 				Role newRole = Roles::getCachedRoleAsync({ .roleId = dataPackageNew.role.id }).get();
 				EmbedData msgEmbed{};
 				std::string msgString{};
-				msgString = "__**New Role:**__ <@&" + newRole.id + ">(" + newRole.name + ")\n";
+				msgString = "__**New Role:**__ <@&" + std::to_string(newRole.id) + ">(" + newRole.name + ")\n";
 				User user = Users::getUserAsync({ .userId = auditLogEntry.userId }).get();
-				msgString += "__**Created By:**__ <@" + user.id + ">(" + user.userName + "#" + user.discriminator + ")\n";
+				msgString += "__**Created By:**__ <@" + std::to_string(user.id) + ">(" + user.userName + "#" + user.discriminator + ")\n";
 				msgString += "__**Role Count:**__ " + std::to_string(guild.roles.size());
 
 				msgEmbed.setTitle("__**Role Created:**__");

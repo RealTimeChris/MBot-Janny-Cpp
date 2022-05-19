@@ -56,7 +56,7 @@ void onBoot02(DiscordCoreAPI::DiscordCoreClient*) {
 	std::vector<DiscordCoreAPI::Guild> guilds = DiscordCoreAPI::Guilds::getAllGuildsAsync().get();
 	for (auto& value: guilds) {
 		std::jthread theThread = std::jthread{ [=]() {
-			DiscordCoreAPI::MonitorInvites::updateInvitesDataBaseToWrap(value.id);
+			DiscordCoreAPI::MonitorInvites::updateInvitesDataBaseToWrap(std::to_string(value.id));
 		} };
 		theThread.detach();
 	}

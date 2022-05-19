@@ -20,7 +20,7 @@ namespace DiscordCoreAPI {
 					for (auto& value01: discordGuild.data.defaultRoleIds) {
 						bool isItFound = false;
 						for (auto& value02: guildMemberNew.roles) {
-							if (value02 == value01) {
+							if (value02 == std::to_string(value01)) {
 								isItFound = true;
 								break;
 							}
@@ -134,7 +134,7 @@ namespace DiscordCoreAPI {
 						for (auto& value: roleArray) {
 							for (auto& value02: discordGuild.data.defaultRoleIds) {
 								if (value.id == value02) {
-									msgString += "<@&" + value02 + ">\n";
+									msgString += "<@&" + std::to_string(value02) + ">\n";
 								}
 							}
 						}
@@ -156,11 +156,11 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				Role currentRole = Roles::getRoleAsync({ .guildId = newArgs.eventData.getGuildId(), .roleId = roleId }).get();
+				Role currentRole = Roles::getRoleAsync({ .guildId = newArgs.eventData.getGuildId(), .roleId = stoull(roleId) }).get();
 
 				bool isItFound = false;
 				for (auto& value: roleArray) {
-					if (roleId == value.id) {
+					if (roleId == std::to_string(value.id)) {
 						isItFound = true;
 						break;
 					}
@@ -211,7 +211,8 @@ namespace DiscordCoreAPI {
 						}
 					}
 
-					if (currentRole.position > highestBotRole.position || currentRole.getManaged()) {
+					if (currentRole.position > highestBotRole.position ||
+						DiscordCoreAPI::getBool<int8_t, DiscordCoreAPI::RoleFlags>(currentRole.flags, DiscordCoreAPI::RoleFlags::Managed)) {
 						std::string msgString = "------\n**Sorry, but that is either a managed role or it is higher than my highest role! I cannot use it!**\n------";
 						std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
 						msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
@@ -229,7 +230,7 @@ namespace DiscordCoreAPI {
 					discordGuild.data.defaultRoleIds.push_back(currentRole.id);
 					discordGuild.writeDataToDB();
 
-					std::string msgString = "\n------\n__**Role:**__ <@&" + currentRole.id + "> \n------";
+					std::string msgString = "\n------\n__**Role:**__ <@&" + std::to_string(currentRole.id) + "> \n------";
 					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
 					msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 					msgEmbed->setColor(discordGuild.data.borderColor);
@@ -267,7 +268,7 @@ namespace DiscordCoreAPI {
 						return;
 					}
 
-					std::string msgString = "\n------\n__**Role**__: <@&" + currentRole.id + ">\n------";
+					std::string msgString = "\n------\n__**Role**__: <@&" + std::to_string(currentRole.id) + ">\n------";
 
 					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
 					msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());

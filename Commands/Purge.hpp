@@ -142,12 +142,12 @@ namespace DiscordCoreAPI {
 				std::string msgString2;
 				uint32_t messageLimit = ( uint32_t )std::stoll(digitString);
 				std::vector<std::string> messageIdsToDelete;
-				std::string currentMessageId = newEvent.getMessageId();
+				uint64_t currentMessageId = newEvent.getMessageId();
 				if (deletePinned) {
 					if (newArgs.commandData.optionsArgs.size() < 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::optional<std::vector<Message>> messageArray = Messages::getMessagesAsync({
-																											  .beforeThisId = currentMessageId,
+																											  .beforeThisId = std::to_string(currentMessageId),
 																											  .channelId = newArgs.eventData.getChannelId(),
 																											  .limit = 100,
 																										  })
@@ -161,7 +161,7 @@ namespace DiscordCoreAPI {
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
 								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14)) {
-									messageIdsToDelete.push_back(value.id);
+									messageIdsToDelete.push_back(std::to_string(value.id));
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {
 									break;
@@ -171,7 +171,7 @@ namespace DiscordCoreAPI {
 					} else if (newArgs.commandData.optionsArgs.size() >= 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::optional<std::vector<Message>> messageArray =
-								Messages::getMessagesAsync({ .beforeThisId = currentMessageId, .channelId = newArgs.eventData.getChannelId(), .limit = 100 }).get();
+								Messages::getMessagesAsync({ .beforeThisId = std::to_string(currentMessageId), .channelId = newArgs.eventData.getChannelId(), .limit = 100 }).get();
 							if (!messageArray.has_value()) {
 								break;
 							}
@@ -180,8 +180,8 @@ namespace DiscordCoreAPI {
 							}
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
-								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && value.author.id == userId) {
-									messageIdsToDelete.push_back(value.id);
+								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && value.author.id == stoull(userId)) {
+									messageIdsToDelete.push_back(std::to_string(value.id));
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {
 									break;
@@ -193,7 +193,7 @@ namespace DiscordCoreAPI {
 					if (newArgs.commandData.optionsArgs.size() < 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::optional<std::vector<Message>> messageArray = Messages::getMessagesAsync({
-																											  .beforeThisId = currentMessageId,
+																											  .beforeThisId = std::to_string(currentMessageId),
 																											  .channelId = newArgs.eventData.getChannelId(),
 																											  .limit = 100,
 																										  })
@@ -207,7 +207,7 @@ namespace DiscordCoreAPI {
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
 								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && !value.pinned) {
-									messageIdsToDelete.push_back(value.id);
+									messageIdsToDelete.push_back(std::to_string(value.id));
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {
 									break;
@@ -217,7 +217,7 @@ namespace DiscordCoreAPI {
 					} else if (newArgs.commandData.optionsArgs.size() >= 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::optional<std::vector<Message>> messageArray = Messages::getMessagesAsync({
-																											  .beforeThisId = currentMessageId,
+																											  .beforeThisId = std::to_string(currentMessageId),
 																											  .channelId = newArgs.eventData.getChannelId(),
 																											  .limit = 100,
 																										  })
@@ -230,8 +230,8 @@ namespace DiscordCoreAPI {
 							}
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
-								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && value.author.id == userId && !value.pinned) {
-									messageIdsToDelete.push_back(value.id);
+								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && std::to_string(value.author.id) == userId && !value.pinned) {
+									messageIdsToDelete.push_back(std::to_string(value.id));
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {
 									break;

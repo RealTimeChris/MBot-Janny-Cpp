@@ -45,8 +45,8 @@ namespace DiscordCoreAPI {
 					userID = userIdMatch.str();
 				}
 
-				User user = Users::getUserAsync({ .userId = userID }).get();
-				if (user.id == "") {
+				User user = Users::getUserAsync({ .userId = stoull(userID) }).get();
+				if (user.id == 0) {
 					std::string msgString = "------\n**Please enter a valid user ID or user mention! (!userinfo = @USERMENTION)**\n------";
 					EmbedData msgEmbed{};
 					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
@@ -60,7 +60,7 @@ namespace DiscordCoreAPI {
 					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
-				GuildMember guildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = userID, .guildId = newArgs.eventData.getGuildId() }).get();
+				GuildMember guildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = stoull(userID), .guildId = newArgs.eventData.getGuildId() }).get();
 				std::vector<EmbedFieldData> fields;
 				EmbedData msgEmbed{};
 				if (guildMember.joinedAt.getOriginalTimeStamp() != "") {
@@ -77,7 +77,7 @@ namespace DiscordCoreAPI {
 					}
 					EmbedFieldData field3{
 						.Inline = true,
-						.value = guildMember.user.id,
+						.value = std::to_string(guildMember.user.id),
 						.name = "__User ID:__",
 					};
 					fields.push_back(field3);
@@ -118,7 +118,7 @@ namespace DiscordCoreAPI {
 					fields.push_back(field);
 					EmbedFieldData field1{ .value = user.userName, .name = "__User Name:__" };
 					fields.push_back(field1);
-					EmbedFieldData field3{ .value = user.id, .name = "__User ID:__" };
+					EmbedFieldData field3{ .value = std::to_string(user.id), .name = "__User ID:__" };
 					fields.push_back(field3);
 					EmbedFieldData field5{ .value = user.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__" };
 					fields.push_back(field5);

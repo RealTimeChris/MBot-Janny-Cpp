@@ -77,7 +77,7 @@ namespace DiscordCoreAPI {
 				}
 				whatAreWeDoing = newArgs.commandData.subCommandName;
 				if (whatAreWeDoing == "add") {
-					GuildMember guildMember01 = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
+					GuildMember guildMember01 = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = stoull(userId), .guildId = newArgs.eventData.getGuildId() }).get();
 					GuildMember botGuildMember =
 						GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData.getGuildId() }).get();
 					auto userRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember01, .guildId = newArgs.eventData.getGuildId() }).get();
@@ -115,7 +115,7 @@ namespace DiscordCoreAPI {
 					dataPackageNew.deleteMessageDays = daysDigit;
 					dataPackageNew.guildId = newEvent.getGuildId();
 					dataPackageNew.reason = reason;
-					dataPackageNew.guildMemberId = userId;
+					dataPackageNew.guildMemberId = stoull(userId);
 
 					if (reason != "") {
 						std::string msgString01 =
@@ -126,7 +126,7 @@ namespace DiscordCoreAPI {
 						msgEmbed->setDescription(msgString01);
 						msgEmbed->setColor(discordGuild.data.borderColor);
 						msgEmbed->setTitle("__**You've been REDACTED:**__");
-						auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
+						auto DmChannel = Channels::createDMChannelAsync({ .userId = stoull(userId) }).get();
 						CreateMessageData dataPackage{ DmChannel.id };
 						dataPackage.addMessageEmbed(*msgEmbed);
 						Messages::createMessageAsync(dataPackage).get();
@@ -148,13 +148,13 @@ namespace DiscordCoreAPI {
 					for (uint32_t x = 0; x < discordGuild.data.userBanInfo.size(); x += 1) {
 						if (discordGuild.data.userBanInfo[x].userId == newEvent.getAuthorId()) {
 							BanInfoLite newData;
-							auto guildMemberNew = Users::getUserAsync({ .userId = userId }).get();
+							auto guildMemberNew = Users::getUserAsync({ .userId = stoull(userId) }).get();
 							for (auto& value: discordGuild.data.userBanInfo[x].userBans) {
 								if (value.userId == guildMemberNew.id) {
 									discordGuild.data.userBanInfo.erase(discordGuild.data.userBanInfo.begin() + x);
 								}
 							}
-							newData.userId = userId;
+							newData.userId = stoull(userId);
 							newData.userName = guildMemberNew.userName;
 							newData.avatarUrl = guildMemberNew.avatar;
 							newData.bannedAt = getTimeAndDate();
@@ -212,7 +212,7 @@ namespace DiscordCoreAPI {
 						}
 
 						std::string msgString = "__**#" + std::to_string(currentPage * membersPerPage + ((x % membersPerPage) + 1)) + " | Name:**__ <@" +
-							discordGuild.data.userBanInfo[x].userId + "> __**| Ban Count:**__ " + std::to_string(discordGuild.data.userBanInfo[x].userBans.size()) + "\n";
+							std::to_string(discordGuild.data.userBanInfo[x].userId) + "> __**| Ban Count:**__ " + std::to_string(discordGuild.data.userBanInfo[x].userBans.size()) + "\n";
 
 						pageStrings[currentPage] += msgString;
 						if (x % membersPerPage == membersPerPage - 1 || x == discordGuild.data.userBanInfo.size() - 1) {
@@ -240,7 +240,7 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newEvent);
 					dataPackage.setResponseType(InputEventResponseType ::Deferred_Response);
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-					auto returnValue = moveThroughMessagePages(newEvent.getRequesterId(), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
+					auto returnValue = moveThroughMessagePages(std::to_string(newEvent.getRequesterId()), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
 					if (returnValue.buttonId == "exit" || returnValue.buttonId == "empty") {
 						InputEvents::deleteInputEventResponseAsync(InputEventData(returnValue.inputEventData));
 						return;
@@ -272,7 +272,7 @@ namespace DiscordCoreAPI {
 							msgEmbeds.push_back(*newEmbed);
 						}
 						int32_t currentPageIndex02 = 0;
-						moveThroughMessagePages(newEvent.getRequesterId(), InputEventData(returnValue.inputEventData), currentPageIndex02, msgEmbeds, true, 120000, true);
+						moveThroughMessagePages(std::to_string(newEvent.getRequesterId()), InputEventData(returnValue.inputEventData), currentPageIndex02, msgEmbeds, true, 120000, true);
 					}
 				}
 				return;

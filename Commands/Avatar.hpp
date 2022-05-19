@@ -44,19 +44,19 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				std::string userId{ "" };
+				uint64_t userId{ 0 };
 				std::regex userIdRegex("\\d{18}");
 				std::cmatch userIDMatch{};
 				std::regex_search(newArgs.commandData.optionsArgs[0].c_str(), userIDMatch, userIdRegex);
 				std::string userIDOne = userIDMatch.str();
-				userId = userIDOne;
+				userId = stoull(userIDOne);
 
 				GuildMember guildMemberGet = GuildMembers::getGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
 
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor(discordGuild.data.borderColor);
-				msgEmbed.setDescription("<@" + guildMemberGet.user.id + ">'s Avatar");
+				msgEmbed.setDescription("<@" + std::to_string(guildMemberGet.user.id) + ">'s Avatar");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setImage(guildMemberGet.user.avatar);
 				msgEmbed.setTitle("__**User Avatar:**__");

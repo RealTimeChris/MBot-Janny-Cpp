@@ -48,7 +48,7 @@ namespace DiscordCoreAPI {
 				std::regex userMentionRegex("<@\\d{18}>");
 				std::regex userIdRegexp("\\d{18}");
 				std::string ghostReason;
-				std::string userId;
+				uint64_t userId;
 				if (newArgs.commandData.subCommandName == "view") {
 					whatAreWeDoing = "viewing";
 					userId = newArgs.eventData.getAuthorId();
@@ -61,14 +61,14 @@ namespace DiscordCoreAPI {
 					std::cmatch userIDMatch;
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();
-					userId = userIDOne;
+					userId = stoull(userIDOne);
 				} else if (newArgs.commandData.optionsArgs.size() > 0 && newArgs.commandData.subCommandName == "remove") {
 					whatAreWeDoing = "remove";
 					std::string argOne = newArgs.commandData.optionsArgs[0];
 					std::cmatch userIDMatch;
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();
-					userId = userIDOne;
+					userId = stoull(userIDOne);
 				}
 
 				InputEventData newEvent01 = newArgs.eventData;
@@ -84,8 +84,8 @@ namespace DiscordCoreAPI {
 					modifyData.reason = ghostReason;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
 
-					if (targetGuildMember.user.id == "") {
-						std::string msgString = "------\n**Hello! There was an error while trying to ghost <@" + userId + ">**\n------\n";
+					if (targetGuildMember.user.id == 0) {
+						std::string msgString = "------\n**Hello! There was an error while trying to ghost <@" + std::to_string(userId) + ">**\n------\n";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
 						msgEmbed->setColor(discordGuild.data.borderColor);
@@ -99,7 +99,7 @@ namespace DiscordCoreAPI {
 						return;
 					}
 
-					discordGuild.data.ghostedIds.push_back(targetGuildMember.user.id);
+					discordGuild.data.ghostedIds.push_back(std::to_string(targetGuildMember.user.id));
 					discordGuild.writeDataToDB();
 
 					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name + " for the following reason(s): " + ghostReason +
@@ -116,8 +116,8 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 =
-						"------\n**Hello! You've ghosted the following member:** <@" + targetGuildMember.user.id + "> (" + targetGuildMember.user.userName + ")\n------";
+					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@" + std::to_string(targetGuildMember.user.id) + "> (" +
+						targetGuildMember.user.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);
@@ -152,7 +152,7 @@ namespace DiscordCoreAPI {
 					bool isItThere{ false };
 					int32_t index{ 0 };
 					for (uint32_t x = 0; x < discordGuild.data.ghostedIds.size(); x += 1) {
-						if (discordGuild.data.ghostedIds[x] == targetGuildMember.user.id) {
+						if (discordGuild.data.ghostedIds[x] == std::to_string(targetGuildMember.user.id)) {
 							isItThere = true;
 							index = x;
 							break;
@@ -165,8 +165,8 @@ namespace DiscordCoreAPI {
 					modifyData.guildMemberId = targetGuildMember.user.id;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
 
-					if (targetGuildMember.user.id == "" || !isItThere) {
-						std::string msgString = "------\n**Hello! There was an error while trying to un-ghost <@" + userId + ">**\n------\n";
+					if (targetGuildMember.user.id == 0 || !isItThere) {
+						std::string msgString = "------\n**Hello! There was an error while trying to un-ghost <@" + std::to_string(userId) + ">**\n------\n";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
 						msgEmbed->setColor(discordGuild.data.borderColor);
@@ -195,8 +195,8 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 =
-						"------\n**Hello! You've un-ghosted the following member:** <@" + targetGuildMember.user.id + "> (" + targetGuildMember.user.userName + ")\n------";
+					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@" + std::to_string(targetGuildMember.user.id) + "> (" +
+						targetGuildMember.user.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);

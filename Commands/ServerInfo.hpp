@@ -54,7 +54,7 @@ namespace DiscordCoreAPI {
 				std::vector<EmbedFieldData> fields;
 				EmbedFieldData field1 = { .Inline = true, .value = guild.name, .name = "__Server Name:__ " };
 				fields.push_back(field1);
-				EmbedFieldData field2 = { .Inline = true, .value = guild.id, .name = "__Server ID:__ " };
+				EmbedFieldData field2 = { .Inline = true, .value = std::to_string(guild.id), .name = "__Server ID:__ " };
 				fields.push_back(field2);
 				EmbedFieldData field3 = { .Inline = true, .value = std::to_string(guild.memberCount), .name = "__Server Member Count:__ " };
 				fields.push_back(field3);
@@ -70,7 +70,7 @@ namespace DiscordCoreAPI {
 				fields.push_back(field8);
 				EmbedFieldData field9 = { .Inline = true, .value = std::to_string(voiceChannelCount), .name = "__Voice Channel Count:__ " };
 				fields.push_back(field9);
-				EmbedFieldData field10 = { .Inline = true, .value = guild.createdAt, .name = "__Created At:__ " };
+				EmbedFieldData field10 = { .Inline = true, .value = guild.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__ " };
 				fields.push_back(field10);
 
 				EmbedData msgEmbed{};

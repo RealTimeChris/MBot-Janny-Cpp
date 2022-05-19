@@ -61,15 +61,16 @@ namespace DiscordCoreAPI {
 					for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
 						if (Channels::getCachedChannelAsync({ .channelId = discordGuild.data.logs[x].loggingChannelId }).get().name == "") {
 							discordGuild.data.logs[x].loggingChannelName = "";
-							discordGuild.data.logs[x].loggingChannelId = "";
+							discordGuild.data.logs[x].loggingChannelId = 0;
 							discordGuild.data.logs[x].enabled = false;
 						}
 						if (discordGuild.data.logs[x].enabled == false) {
 							EmbedFieldData field = { .Inline = true, .value = "__Enabled:__ ❌", .name = "__**" + discordGuild.data.logs[x].name + "**__" };
 							fields.push_back(field);
 						} else if (discordGuild.data.logs[x].enabled == true) {
-							EmbedFieldData field = { .Inline = true,
-								.value = "__Enabled:__ ✅\n__Logging Channel:__ <#" + discordGuild.data.logs[x].loggingChannelId + ">",
+							EmbedFieldData field = {
+								.Inline = true,
+								.value = "__Enabled:__ ✅\n__Logging Channel:__ <#" + std::to_string(discordGuild.data.logs[x].loggingChannelId) + ">",
 								.name = "__**" + discordGuild.data.logs[x].name + "**__" };
 							fields.push_back(field);
 						}
@@ -135,7 +136,7 @@ namespace DiscordCoreAPI {
 								discordGuild.writeDataToDB();
 								std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
 								std::string msgString = "------\n**Nicely done! You've enabled logging for " + discordGuild.data.logs[x].name + ".\nIn channel <#" +
-									discordGuild.data.logs[x].loggingChannelId + ">.** \n------";
+									std::to_string(discordGuild.data.logs[x].loggingChannelId) + ">.** \n------";
 								msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 								msgEmbed->setColor(discordGuild.data.borderColor);
 								msgEmbed->setDescription(msgString);
@@ -167,7 +168,7 @@ namespace DiscordCoreAPI {
 							if (convertToLowerCase(newArgs.commandData.optionsArgs[1]) == discordGuild.data.logs[x].nameSmall) {
 								isItFound = true;
 								Channel channelNew = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
-								discordGuild.data.logs[x].loggingChannelId = "";
+								discordGuild.data.logs[x].loggingChannelId = 0;
 								discordGuild.data.logs[x].loggingChannelName = "";
 								discordGuild.data.logs[x].enabled = false;
 								discordGuild.writeDataToDB();
