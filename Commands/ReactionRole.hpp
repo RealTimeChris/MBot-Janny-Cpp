@@ -78,7 +78,7 @@ namespace DiscordCoreAPI {
 					if (isItFound) {
 						std::string msgString = "------\n**Sorry, but that role is already added!**\n------";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-						msgEmbed->setAuthor(botMember.user.userName, botMember.user.avatar);
+						msgEmbed->setAuthor(botMember.userName, botMember.userAvatar);
 						msgEmbed->setColor(discordGuild->data.borderColor);
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -101,7 +101,7 @@ namespace DiscordCoreAPI {
 					if (newRole.position > highestRole.position) {
 						std::string msgString = "------\n**Sorry, but that role needs to be lowered beneath mine in the list of roles so that I can apply it!**\n------";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-						msgEmbed->setAuthor(botMember.user.userName, botMember.user.avatar);
+						msgEmbed->setAuthor(botMember.userName, botMember.userAvatar);
 						msgEmbed->setColor(discordGuild->data.borderColor);
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -136,7 +136,7 @@ namespace DiscordCoreAPI {
 					if (!isItFound) {
 						std::string msgString = "------\n**Sorry, but that role is not already added!**\n------";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-						msgEmbed->setAuthor(botMember.user.userName, botMember.user.avatar);
+						msgEmbed->setAuthor(botMember.userName, botMember.userAvatar);
 						msgEmbed->setColor(discordGuild->data.borderColor);
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -365,7 +365,7 @@ namespace DiscordCoreAPI {
 				if (returnData.size() > 0 && returnData[0].values[0] != "empty") {
 					InteractionData eventNew = *returnData[0].interactionData;
 					GuildMember guildMember =
-						GuildMembers::getGuildMemberAsync({ .guildMemberId = returnData[0].interactionData->member.user.id, .guildId = discordGuild->data.guildId }).get();
+						GuildMembers::getGuildMemberAsync({ .guildMemberId = returnData[0].interactionData->member.id, .guildId = discordGuild->data.guildId }).get();
 					theRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember, .guildId = discordGuild->data.guildId }).get();
 
 					for (auto value: returnData[0].values) {
@@ -399,7 +399,7 @@ namespace DiscordCoreAPI {
 							eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
 						} else {
 							Roles::addGuildMemberRoleAsync(
-								{ .guildId = inputData.getGuildId(), .userId = guildMember.user.id, .roleId = stoull(value), .reason = "Role-granting." })
+								{ .guildId = inputData.getGuildId(), .userId = guildMember.id, .roleId = stoull(value), .reason = "Role-granting." })
 								.get();
 							std::string msgString = "------\n**Nicely done! You've added the <@&" + value + "> role to yourself!**\n------";
 							std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };

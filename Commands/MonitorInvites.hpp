@@ -263,13 +263,13 @@ namespace DiscordCoreAPI {
 										guildMemberInviterData = guildMemberNew;
 										bool areTheyFound = false;
 										for (auto& value02: discordGuildMember.data.invitedMemberIds) {
-											if (value02 == std::to_string(newArgs.guildMemberData.user.id)) {
+											if (value02 == std::to_string(newArgs.guildMemberData.id)) {
 												areTheyFound = true;
 											}
 										}
 										if (areTheyFound == false) {
 											discordGuildMember.data.totalInvites += 1;
-											discordGuildMember.data.invitedMemberIds.push_back(std::to_string(newArgs.guildMemberData.user.id));
+											discordGuildMember.data.invitedMemberIds.push_back(std::to_string(newArgs.guildMemberData.id));
 										}
 										discordGuildMember.data.invites[x].invitesUsed = invites[y].uses;
 										discordGuildMember.data.invites[x].maxInvites = invites[y].maxUses;
@@ -283,13 +283,13 @@ namespace DiscordCoreAPI {
 								guildMemberInviterData = guildMemberNew;
 								bool areTheyFound = false;
 								for (auto& value02: discordGuildMember.data.invitedMemberIds) {
-									if (value02 == std::to_string(newArgs.guildMemberData.user.id)) {
+									if (value02 == std::to_string(newArgs.guildMemberData.id)) {
 										areTheyFound = true;
 									}
 								}
 								if (areTheyFound == false) {
 									discordGuildMember.data.totalInvites += 1;
-									discordGuildMember.data.invitedMemberIds.push_back(std::to_string(newArgs.guildMemberData.user.id));
+									discordGuildMember.data.invitedMemberIds.push_back(std::to_string(newArgs.guildMemberData.id));
 								}
 								discordGuildMember.data.invites.erase(discordGuildMember.data.invites.begin() + x);
 								currengGuildMemberInvitesCount = discordGuildMember.data.totalInvites;
@@ -305,18 +305,18 @@ namespace DiscordCoreAPI {
 					msgEmbed.setAuthor(botUser.userName, botUser.avatar);
 					msgEmbed.setColor(discordGuild.data.borderColor);
 					msgEmbed.setTimeStamp(getTimeAndDate());
-					if (guildMemberInviterData.user.id != 0) {
-						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + std::to_string(newArgs.guildMemberData.user.id) + ">, (" +
-							newArgs.guildMemberData.user.userName + ") was invited by the server member <@" + std::to_string(guildMemberInviterData.user.id) + ">, (" +
-							guildMemberInviterData.user.userName + "), who now has " + std::to_string(currengGuildMemberInvitesCount) + " invites!\n------**");
+					if (guildMemberInviterData.id != 0) {
+						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + std::to_string(newArgs.guildMemberData.id) + ">, (" +
+							newArgs.guildMemberData.userName + ") was invited by the server member <@" + std::to_string(guildMemberInviterData.id) + ">, (" +
+							guildMemberInviterData.userName + "), who now has " + std::to_string(currengGuildMemberInvitesCount) + " invites!\n------**");
 					} else if (discordGuild.data.vanityInviteUses <= vanityInvite.uses - 1 && vanityInvite.code != "") {
-						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + std::to_string(newArgs.guildMemberData.user.id) + ">, (" +
-							newArgs.guildMemberData.user.userName + ") was invited using the vanity Url code: " + guild.vanityUrlCode + ".\n------**");
+						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + std::to_string(newArgs.guildMemberData.id) + ">, (" +
+							newArgs.guildMemberData.userName + ") was invited using the vanity Url code: " + guild.vanityUrlCode + ".\n------**");
 						discordGuild.data.vanityInviteUses = vanityInvite.uses;
 						discordGuild.writeDataToDB();
 					} else {
-						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + std::to_string(newArgs.guildMemberData.user.id) + ">, (" +
-							newArgs.guildMemberData.user.userName + ") was invited by an unknown server member!\n------**");
+						msgEmbed.setDescription("**------\nIt appears as though the server member <@" + std::to_string(newArgs.guildMemberData.id) + ">, (" +
+							newArgs.guildMemberData.userName + ") was invited by an unknown server member!\n------**");
 					}
 					msgEmbed.setTitle("__**Inviter Status:**__");
 					CreateMessageData dataPackage(stoull(discordGuild.data.inviteReportingChannelId));

@@ -43,7 +43,7 @@ namespace DiscordCoreAPI {
 		DiscordGuild discordGuild{ guild };
 
 		for (auto& value: discordGuild.data.defaultRoleIds) {
-			Roles::addGuildMemberRoleAsync({ .guildId = guild.id, .userId = guildMember.user.id, .roleId = value, .reason = "New User." }).get();
+			Roles::addGuildMemberRoleAsync({ .guildId = guild.id, .userId = guildMember.id, .roleId = value, .reason = "New User." }).get();
 		}
 	}
 

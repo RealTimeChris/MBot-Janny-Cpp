@@ -80,11 +80,11 @@ namespace DiscordCoreAPI {
 					TimeoutGuildMemberData modifyData{};
 					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::Week;
 					modifyData.guildId = newArgs.eventData.getGuildId();
-					modifyData.guildMemberId = targetGuildMember.user.id;
+					modifyData.guildMemberId = targetGuildMember.id;
 					modifyData.reason = ghostReason;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
 
-					if (targetGuildMember.user.id == 0) {
+					if (targetGuildMember.id == 0) {
 						std::string msgString = "------\n**Hello! There was an error while trying to ghost <@" + std::to_string(userId) + ">**\n------\n";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
@@ -99,7 +99,7 @@ namespace DiscordCoreAPI {
 						return;
 					}
 
-					discordGuild.data.ghostedIds.push_back(std::to_string(targetGuildMember.user.id));
+					discordGuild.data.ghostedIds.push_back(std::to_string(targetGuildMember.id));
 					discordGuild.writeDataToDB();
 
 					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name + " for the following reason(s): " + ghostReason +
@@ -116,10 +116,10 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@" + std::to_string(targetGuildMember.user.id) + "> (" +
-						targetGuildMember.user.userName + ")\n------";
+					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@" + std::to_string(targetGuildMember.id) + "> (" +
+						targetGuildMember.userName + ")\n------";
 					EmbedData msgEmbed2;
-					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
+					msgEmbed2.setAuthor(sendingGuildMember.userName, sendingGuildMember.userAvatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);
 					msgEmbed2.setDescription(msgString2);
 					msgEmbed2.setTimeStamp(getTimeAndDate());
@@ -152,7 +152,7 @@ namespace DiscordCoreAPI {
 					bool isItThere{ false };
 					int32_t index{ 0 };
 					for (uint32_t x = 0; x < discordGuild.data.ghostedIds.size(); x += 1) {
-						if (discordGuild.data.ghostedIds[x] == std::to_string(targetGuildMember.user.id)) {
+						if (discordGuild.data.ghostedIds[x] == std::to_string(targetGuildMember.id)) {
 							isItThere = true;
 							index = x;
 							break;
@@ -162,10 +162,10 @@ namespace DiscordCoreAPI {
 					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::None;
 					modifyData.guildId = newArgs.eventData.getGuildId();
 					modifyData.reason = ghostReason;
-					modifyData.guildMemberId = targetGuildMember.user.id;
+					modifyData.guildMemberId = targetGuildMember.id;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
 
-					if (targetGuildMember.user.id == 0 || !isItThere) {
+					if (targetGuildMember.id == 0 || !isItThere) {
 						std::string msgString = "------\n**Hello! There was an error while trying to un-ghost <@" + std::to_string(userId) + ">**\n------\n";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
 						msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
@@ -195,10 +195,10 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@" + std::to_string(targetGuildMember.user.id) + "> (" +
-						targetGuildMember.user.userName + ")\n------";
+					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@" + std::to_string(targetGuildMember.id) + "> (" +
+						targetGuildMember.userName + ")\n------";
 					EmbedData msgEmbed2;
-					msgEmbed2.setAuthor(sendingGuildMember.user.userName, sendingGuildMember.user.avatar);
+					msgEmbed2.setAuthor(sendingGuildMember.userName, sendingGuildMember.userAvatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);
 					msgEmbed2.setDescription(msgString2);
 					msgEmbed2.setTimeStamp(getTimeAndDate());

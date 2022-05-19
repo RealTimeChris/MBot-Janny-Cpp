@@ -14,8 +14,8 @@ namespace DiscordCoreAPI {
 		UserInfo() {
 			this->commandName = "userinfo";
 			this->helpDescription = "Displays some info about a chosen user.";
-			EmbedData msgEmbed{};
-			msgEmbed.setDescription("------\nEnter /userinfo to display your own info!\nOr /userinfo @USERMENTION, to display the info of another user.\n------");
+			EmbedData msgEmbed;
+			msgEmbed.setDescription("------\nEnter /userinfo, or /userinfo @USERMENTION, to display the info of another user.\n------");
 			msgEmbed.setTitle("__**User Info Usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
 			msgEmbed.setColor("FeFeFe");
@@ -28,120 +28,68 @@ namespace DiscordCoreAPI {
 
 		void execute(BaseFunctionArguments& newArgs) {
 			try {
-				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
+				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get();
 
 				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 
-				DiscordGuild discordGuild{ guild };
-				std::string userID;
-				std::regex userIdRegexp("\\d{18}");
-				if (newArgs.commandData.optionsArgs.size() == 0) {
-					userID = newArgs.eventData.getAuthorId();
-				} else if (std::regex_search(newArgs.commandData.optionsArgs[0], userIdRegexp)) {
-					std::cmatch userIdMatch{};
-					std::regex_search(newArgs.commandData.optionsArgs[0].c_str(), userIdMatch, userIdRegexp);
-					userID = userIdMatch.str();
-				}
-
-				User user = Users::getUserAsync({ .userId = stoull(userID) }).get();
-				if (user.id == 0) {
-					std::string msgString = "------\n**Please enter a valid user ID or user mention! (!userinfo = @USERMENTION)**\n------";
-					EmbedData msgEmbed{};
-					msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-					RespondToInputEventData dataPackage(newArgs.eventData);
-					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
-					dataPackage.addMessageEmbed(msgEmbed);
-					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
-					return;
-				}
-				GuildMember guildMember = GuildMembers::getGuildMemberAsync({ .guildMemberId = stoull(userID), .guildId = newArgs.eventData.getGuildId() }).get();
+				DiscordGuild discordGuild(guild);
+				uint64_t messageId = stoull(newArgs.commandData.optionsArgs[0]);
+				auto message = Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = messageId }).get();
+				GuildMemberData guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = message.author.id, .guildId = newArgs.eventData.getGuildId() }).get();
+				User theUser = Users::getCachedUserAsync({ .userId = newArgs.eventData.getAuthorId() }).get();
 				std::vector<EmbedFieldData> fields;
-				EmbedData msgEmbed{};
-				if (guildMember.joinedAt.getOriginalTimeStamp() != "") {
-					EmbedFieldData field{ .Inline = true, .value = guildMember.user.userName + "#" + guildMember.user.discriminator, .name = "__User Tag: __" };
-					fields.push_back(field);
-					EmbedFieldData field1{ .Inline = true, .value = guildMember.user.userName, .name = "__User Name:__" };
-					fields.push_back(field1);
-					if (guildMember.nick == "") {
-						EmbedFieldData field2{ .Inline = true, .value = guildMember.user.userName, .name = "__Display Name:__" };
-						fields.push_back(field2);
-					} else {
-						EmbedFieldData field2 = { .Inline = true, .value = guildMember.nick, .name = "__Display Name:__" };
-						fields.push_back(field2);
-					}
-					EmbedFieldData field3{
-						.Inline = true,
-						.value = std::to_string(guildMember.user.id),
-						.name = "__User ID:__",
-					};
-					fields.push_back(field3);
-					EmbedFieldData field4{ .value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime), .name = "__Joined:__" };
-					fields.push_back(field4);
-					EmbedFieldData field5{ .value = guildMember.user.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__" };
-					fields.push_back(field5);
-					Permissions permsString{ Permissions::getCurrentGuildPermissions(guildMember) };
-					std::vector<std::string> permissionsArray{ permsString.displayPermissions() };
-					std::string msgString{};
-					for (int32_t x = 0; x < permissionsArray.size(); x += 1) {
-						msgString += permissionsArray[x];
-						if (x < permissionsArray.size() - 1) {
-							msgString += ", ";
-						}
-					}
-
-					EmbedFieldData field6{ .Inline = false, .value = "", .name = "__Roles:__" };
-
-					for (uint32_t x = 0; x < guildMember.roles.size(); x += 1) {
-						field6.value += "<@&" + std::to_string(guildMember.roles[x]) + ">";
-						if (x < guildMember.roles.size() - 1) {
-							field6.value += ", ";
-						}
-					}
-					if (field6.value != "") {
-						fields.push_back(field6);
-					}
-					if (msgString != "") {
-						EmbedFieldData field7 = { .Inline = false, .value = msgString, .name = "__Permissions:__" };
-
-						fields.push_back(field7);
-					}
-
-					msgEmbed.setImage(guildMember.user.avatar);
-				} else if (user.userName != "") {
-					EmbedFieldData field{ .value = user.userName + "#" + user.discriminator, .name = "__User Tag: __" };
-					fields.push_back(field);
-					EmbedFieldData field1{ .value = user.userName, .name = "__User Name:__" };
-					fields.push_back(field1);
-					EmbedFieldData field3{ .value = std::to_string(user.id), .name = "__User ID:__" };
-					fields.push_back(field3);
-					EmbedFieldData field5{ .value = user.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__" };
-					fields.push_back(field5);
-					EmbedFieldData field6{ .Inline = false, .value = "", .name = "__Roles:__" };
-					std::string msgString{ "__**User Info**__" };
-					msgEmbed.setDescription(msgString);
-					msgEmbed.setImage(user.avatar);
+				EmbedFieldData field = { .Inline = true, .value = guildMember.userName + "#" + std::string{ theUser.discriminator }, .name = "__User Tag: __" };
+				fields.push_back(field);
+				EmbedFieldData field1 = { .Inline = true, .value = guildMember.userName, .name = "__User Name:__" };
+				fields.push_back(field1);
+				if (guildMember.nick == "") {
+					EmbedFieldData field2 = { .Inline = true, .value = guildMember.userName, .name = "__Display Name:__" };
+					fields.push_back(field2);
 				} else {
-					std::string msgString = "------\n**Please enter a valid user ID or user mention! (!userinfo = @USERMENTION)**\n------";
-					msgEmbed.setDescription(msgString);
+					EmbedFieldData field2 = { .Inline = true, .value = guildMember.nick, .name = "__Display Name:__" };
+					fields.push_back(field2);
 				}
 
+				EmbedFieldData field3 = { .Inline = true, .value = std::to_string(guildMember.id), .name = "__User ID:__" };
+				fields.push_back(field3);
+				EmbedFieldData field4 = { .Inline = true, .value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime), .name = "__Joined:__" };
+				fields.push_back(field4);
+				EmbedFieldData field5 = { .Inline = true, .value = guildMember.getCreatedAtTimestamp(TimeFormat::LongDateTime), .name = "__Created At:__" };
+				fields.push_back(field5);
+				Permissions permsString = Permissions::getCurrentChannelPermissions(guildMember, channel);
+				std::vector<std::string> permissionsArray = permsString.displayPermissions();
+				std::string msgString;
+				for (int32_t x = 0; x < permissionsArray.size(); x += 1) {
+					msgString += permissionsArray[x];
+					if (x < permissionsArray.size() - 1) {
+						msgString += ", ";
+					}
+				}
+				EmbedFieldData field6 = { .Inline = false, .value = "", .name = "__Roles:__" };
 
+				for (uint32_t x = 0; x < guildMember.roles.size(); x += 1) {
+					field6.value += "<@&" + std::to_string(guildMember.roles[x]) + ">";
+					if (x < guildMember.roles.size() - 1) {
+						field6.value += ", ";
+					}
+				}
+				fields.push_back(field6);
+				EmbedFieldData field7 = { .Inline = false, .value = msgString, .name = "__Permissions:__" };
+				fields.push_back(field7);
+
+				EmbedData msgEmbed;
 				msgEmbed.setColor(discordGuild.data.borderColor);
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**User Info:**__");
-
+				msgEmbed.setImage(guildMember.userAvatar);
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.fields = fields;
-				RespondToInputEventData dataPackage(newArgs.eventData);
-				dataPackage.addMessageEmbed(msgEmbed);
-				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
-				auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
+				RespondToInputEventData dataPackage02(newArgs.eventData);
+				dataPackage02.addMessageEmbed(msgEmbed);
+				dataPackage02.setResponseType(InputEventResponseType::Interaction_Response);
+				auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
 
 				return;
 			} catch (...) {
