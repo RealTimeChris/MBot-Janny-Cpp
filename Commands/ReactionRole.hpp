@@ -226,7 +226,7 @@ namespace DiscordCoreAPI {
 		dataPackage02.addMessageEmbed(*msgEmbed02);
 		std::unique_ptr<Message> newMessage{ std::make_unique<Message>(Messages::createMessageAsync(dataPackage02).get()) };
 		std::unique_ptr<InteractionData> interaction{ std::make_unique<InteractionData>() };
-		InputEventData currentEvent = InputEventData{ *newMessage, *interaction, InteractionType::Application_Command };
+		InputEventData currentEvent = InputEventData{ *interaction };
 		int32_t counter{ 0 };
 
 		while (true) {
@@ -237,11 +237,11 @@ namespace DiscordCoreAPI {
 				discordGuild->data.roleManager.channelId = newMessage->channelId;
 				discordGuild->writeDataToDB();
 
-				currentEvent = InputEventData{ *newMessage, *interaction, InteractionType::Application_Command };
+				currentEvent = InputEventData{ *interaction };
 
 				std::unique_ptr<ButtonCollector> buttonCollector{ std::make_unique<ButtonCollector>(currentEvent) };
 				auto resultValue = buttonCollector->collectButtonData(true, INT32_MAX, 1, 0).get();
-				InputEventData inputData = InputEventData{ *message, *resultValue[0].interactionData, InteractionType::Application_Command };
+				InputEventData inputData = InputEventData{ *resultValue[0].interactionData };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync({ .timeStamp = newMessage->timestamp, .channelId = newMessage->channelId, .messageId = newMessage->id, .reason = "Deleting!" }).get();
@@ -252,7 +252,7 @@ namespace DiscordCoreAPI {
 
 				std::unique_ptr<ButtonCollector> buttonCollector{ std::make_unique<ButtonCollector>(currentEvent) };
 				auto resultValue = buttonCollector->collectButtonData(true, INT32_MAX, 1, 0).get();
-				InputEventData inputData = InputEventData{ *message, *resultValue[0].interactionData, InteractionType::Application_Command };
+				InputEventData inputData = InputEventData{ *resultValue[0].interactionData };
 				startupTheMessagePerGuild(discordGuild, botUser, discordGuild->data.roleManager.message, inputData);
 
 				Messages::deleteMessageAsync({ .timeStamp = newMessage->timestamp, .channelId = newMessage->channelId, .messageId = newMessage->id, .reason = "Deleting!" }).get();

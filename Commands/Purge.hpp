@@ -109,11 +109,9 @@ namespace DiscordCoreAPI {
 					}
 				}
 				InputEventData newEvent01{};
-				if (newArgs.eventData.eventType == InteractionType::Application_Command) {
-					RespondToInputEventData dataPackage(newArgs.eventData);
-					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
-					newEvent01 = InputEvents::respondToInputEventAsync(dataPackage).get();
-				}
+				RespondToInputEventData dataPackage(newArgs.eventData);
+				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+				newEvent01 = InputEvents::respondToInputEventAsync(dataPackage).get();
 
 				if (newArgs.commandData.optionsArgs.size() > 1) {
 					std::cmatch userIdMatch;
@@ -135,10 +133,10 @@ namespace DiscordCoreAPI {
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**Purging Messages:**__");
 				InputEventData newEvent{};
-				RespondToInputEventData dataPackage(newEvent01);
-				dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-				dataPackage.addMessageEmbed(msgEmbed);
-				newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+				RespondToInputEventData dataPackage02(newEvent01);
+				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+				dataPackage02.addMessageEmbed(msgEmbed);
+				newEvent = InputEvents::respondToInputEventAsync(dataPackage02).get();
 				std::string msgString2;
 				uint32_t messageLimit = ( uint32_t )std::stoll(digitString);
 				std::vector<uint64_t> messageIdsToDelete;
@@ -262,10 +260,10 @@ namespace DiscordCoreAPI {
 				msgEmbed2.setDescription(msgString2);
 				msgEmbed2.setTimeStamp(getTimeAndDate());
 				msgEmbed2.setTitle("__**Purging Messages:**__");
-				RespondToInputEventData dataPackage02(newEvent);
-				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-				dataPackage02.addMessageEmbed(msgEmbed2);
-				newEvent = InputEvents::respondToInputEventAsync(dataPackage02).get();
+				RespondToInputEventData dataPackage03(newEvent);
+				dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+				dataPackage03.addMessageEmbed(msgEmbed2);
+				newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
 				InputEvents::deleteInputEventResponseAsync(std::move(newEvent), 20000);
 				return;
 			} catch (...) {

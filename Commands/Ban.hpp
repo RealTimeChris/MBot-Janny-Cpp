@@ -240,7 +240,8 @@ namespace DiscordCoreAPI {
 					RespondToInputEventData dataPackage(newEvent);
 					dataPackage.setResponseType(InputEventResponseType ::Deferred_Response);
 					newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-					auto returnValue = moveThroughMessagePages(std::to_string(newEvent.getRequesterId()), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
+					auto returnValue =
+						moveThroughMessagePages(std::to_string(newArgs.eventData.getAuthorId()), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
 					if (returnValue.buttonId == "exit" || returnValue.buttonId == "empty") {
 						InputEvents::deleteInputEventResponseAsync(InputEventData(returnValue.inputEventData));
 						return;
@@ -272,7 +273,8 @@ namespace DiscordCoreAPI {
 							msgEmbeds.push_back(*newEmbed);
 						}
 						int32_t currentPageIndex02 = 0;
-						moveThroughMessagePages(std::to_string(newEvent.getRequesterId()), InputEventData(returnValue.inputEventData), currentPageIndex02, msgEmbeds, true, 120000, true);
+						moveThroughMessagePages(std::to_string(newArgs.eventData.getAuthorId()), InputEventData(returnValue.inputEventData), currentPageIndex02, msgEmbeds, true,
+							120000, true);
 					}
 				}
 				return;
