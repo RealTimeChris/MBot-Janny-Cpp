@@ -40,7 +40,7 @@ namespace DiscordCoreAPI {
 					if (startingMessage->id == 0) {
 						arrayOfMessagesToDelete = Messages::getMessagesAsync({ .channelId = channelId, .limit = 100 }).get();
 					} else {
-						arrayOfMessagesToDelete = Messages::getMessagesAsync({ .beforeThisId = std::to_string(startingMessage->id), .channelId = channelId, .limit = 100 }).get();
+						arrayOfMessagesToDelete = Messages::getMessagesAsync({ .beforeThisId = startingMessage->id, .channelId = channelId, .limit = 100 }).get();
 					}
 
 					originalMessagesArray.insert(originalMessagesArray.end(), arrayOfMessagesToDelete.begin(), arrayOfMessagesToDelete.end());
@@ -93,14 +93,14 @@ namespace DiscordCoreAPI {
 						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n\n"
 						  << reset();
 				if (purgeVector.size() >= 2) {
-					std::vector<std::vector<std::string>> newVector{};
+					std::vector<std::vector<uint64_t>> newVector{};
 					int32_t secondIndex{ -1 };
 					for (int32_t w = 0; w < purgeVector.size(); w += 1) {
 						if (w % 100 == 0) {
-							newVector.push_back(std::vector<std::string>());
+							newVector.push_back(std::vector<uint64_t>());
 							secondIndex += 1;
 						}
-						newVector[secondIndex].push_back(std::to_string(purgeVector[w]));
+						newVector[secondIndex].push_back(purgeVector[w]);
 					}
 					int32_t totalDeletedBefore{ 0 };
 					int32_t totalDeletedAfter{ 0 };
@@ -167,7 +167,7 @@ namespace DiscordCoreAPI {
 						}
 					}
 
-					arrayOfMessages = Messages::getMessagesAsync({ .beforeThisId = std::to_string(startingMessage->id), .channelId = channelId, .limit = 100 }).get();
+					arrayOfMessages = Messages::getMessagesAsync({ .beforeThisId = startingMessage->id, .channelId = channelId, .limit = 100 }).get();
 					arrayOfMessages.shrink_to_fit();
 					if (arrayOfMessages.size() > 0) {
 						*startingMessage = arrayOfMessages.at(arrayOfMessages.size() - 1);
@@ -192,7 +192,7 @@ namespace DiscordCoreAPI {
 					std::cout << shiftToBrightGreen() << "Total of 0 in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n\n" << reset();
 					return;
 				}
-				std::vector<std::string> purgeVector{};
+				std::vector<uint64_t> purgeVector{};
 				std::vector<Message> deleteVector{};
 				int32_t totalMessageCount{ 0 };
 				for (int32_t w = 0; w < ( int32_t )arrayOfMessageArrays.size(); w += 1) {
@@ -201,7 +201,7 @@ namespace DiscordCoreAPI {
 								hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 0, 0,
 									newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted))) {
 							//deleteVector.push_back(arrayOfMessageArrays[w][z]);
-							purgeVector.push_back(std::to_string(arrayOfMessageArrays[w][z].id));
+							purgeVector.push_back(arrayOfMessageArrays[w][z].id);
 						} else if (!arrayOfMessageArrays[w][z].pinned) {
 							totalMessageCount += 1;
 							deleteVector.push_back(arrayOfMessageArrays[w][z]);
@@ -214,11 +214,11 @@ namespace DiscordCoreAPI {
 						  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName + ".\n\n"
 						  << reset();
 				if (purgeVector.size() >= 2) {
-					std::vector<std::vector<std::string>> newVector{};
+					std::vector<std::vector<uint64_t>> newVector{};
 					int32_t secondIndex{ -1 };
 					for (int32_t w = 0; w < purgeVector.size(); w += 1) {
 						if (w % 100 == 0) {
-							newVector.push_back(std::vector<std::string>());
+							newVector.push_back(std::vector<uint64_t>());
 							secondIndex += 1;
 						}
 						newVector[secondIndex].push_back(purgeVector[w]);
@@ -236,7 +236,7 @@ namespace DiscordCoreAPI {
 					}
 				} else {
 					for (auto& value: purgeVector) {
-						std::unique_ptr<Message> message{ std::make_unique<Message>(Messages::getMessageAsync({ .channelId = channelId, .id = stoull(value) }).get()) };
+						std::unique_ptr<Message> message{ std::make_unique<Message>(Messages::getMessageAsync({ .channelId = channelId, .id = value }).get()) };
 						deleteVector.push_back(*message);
 					}
 				}

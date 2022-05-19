@@ -20,7 +20,7 @@ namespace DiscordCoreAPI {
 					for (auto& value01: discordGuild.data.defaultRoleIds) {
 						bool isItFound = false;
 						for (auto& value02: guildMemberNew.roles) {
-							if (value02 == std::to_string(value01)) {
+							if (value02 == value01) {
 								isItFound = true;
 								break;
 							}
