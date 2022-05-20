@@ -182,7 +182,7 @@ namespace DiscordCoreAPI {
 					dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
 					dataPackage.addContent("TEST");
 					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
-					InputEvents::deleteInputEventResponseAsync(std::move(eventNew)).get();
+					InputEvents::deleteInputEventResponseAsync(eventNew).get();
 					if (discordGuild->data.roleManager.theRoles.size() == 0) {
 						discordGuild->data.roleManager.channelId = 0;
 						discordGuild->data.roleManager.messageId = 0;

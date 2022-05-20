@@ -264,7 +264,7 @@ namespace DiscordCoreAPI {
 				dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 				dataPackage03.addMessageEmbed(msgEmbed2);
 				newEvent = InputEvents::respondToInputEventAsync(dataPackage03).get();
-				InputEvents::deleteInputEventResponseAsync(std::move(newEvent), 20000);
+				InputEvents::deleteInputEventResponseAsync(newEvent, 20000);
 				return;
 			} catch (...) {
 				reportException("Purge::execute()");
