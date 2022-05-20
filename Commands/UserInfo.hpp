@@ -33,12 +33,14 @@ namespace DiscordCoreAPI {
 				InputEvents::deleteInputEventResponseAsync(newArgs.eventData).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
-
+				std::string userId{}; 
+				if (newArgs.commandData.optionsArgs.size() > 0) {
+					userId = newArgs.commandData.optionsArgs[0];
+				}
+				
 				DiscordGuild discordGuild(guild);
-				uint64_t messageId = stoull(newArgs.commandData.optionsArgs[0]);
-				auto message = Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = messageId }).get();
-				GuildMemberData guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = message.author.id, .guildId = newArgs.eventData.getGuildId() }).get();
-				User theUser = Users::getCachedUserAsync({ .userId = newArgs.eventData.getAuthorId() }).get();
+				GuildMemberData guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = stoull(userId), .guildId = newArgs.eventData.getGuildId() }).get();
+				User theUser = Users::getUserAsync({ .userId = newArgs.eventData.getAuthorId() }).get();
 				std::vector<EmbedFieldData> fields;
 				EmbedFieldData field = { .Inline = true, .value = guildMember.userName + "#" + std::string{ theUser.discriminator }, .name = "__User Tag: __" };
 				fields.push_back(field);
