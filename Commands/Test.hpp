@@ -26,43 +26,25 @@ namespace DiscordCoreAPI {
 
 		void execute(BaseFunctionArguments& newArgs) {
 			try {
-				if (newArgs.commandData.optionsArgs.size() > 0) {
-					std::cout << "THE RESULT: " << newArgs.commandData.optionsArgs[0] << std::endl;
-				} else if (newArgs.commandData.optionsArgs.size() > 1) {
-					std::cout << "THE RESULT 01: " << newArgs.commandData.optionsArgs[0] << std::endl;
-					std::cout << "THE RESULT 02: " << newArgs.commandData.optionsArgs[1] << std::endl;
-				}
 				RespondToInputEventData dataPackage{ newArgs.eventData };
+				File theFile{};
+				theFile.fileName = "Cran04.jpeg";
+				theFile.data = loadFileContents("C:/Users/Chris/Downloads/Cran04.jpeg");
+				dataPackage.addFile(theFile);
+				EmbedData theEmbed{};
+				theEmbed.description = "TESTING!";
+				theEmbed.image.url = "attachment://Cran04.jpeg";
+				dataPackage.addMessageEmbed(theEmbed);
 				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-				dataPackage.addContent("TESTING");
-				dataPackage.addMessageEmbed({ .description = "TESTING" });
-				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
-				RespondToInputEventData dataPackage02{ newEvent };
-				dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-				dataPackage02.addContent("TESTING");
-				InputEvents::respondToInputEventAsync(dataPackage02).get();
-				CreateGlobalApplicationCommandData createTestData{};
-				createTestData.dmPermission = true;
-				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
-				createTestData.type = ApplicationCommandType::Chat_Input;
-				createTestData.name = "test";
-				createTestData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
-				createTestData.description = "Test command.";
-				ApplicationCommandOptionData testOptionOne{};
-				testOptionOne.type = ApplicationCommandOptionType::Attachment;
-				testOptionOne.name = "attachment";
-				testOptionOne.required = false;
-				testOptionOne.description = "Test attachment!";
-				createTestData.options.push_back(testOptionOne);
-				ApplicationCommandOptionData testOptionTwo{};
-				testOptionTwo.type = ApplicationCommandOptionType::String;
-				testOptionTwo.name = "test_string";
-				testOptionTwo.required = false;
-				testOptionTwo.autocomplete = true;
-				testOptionTwo.description = "Test string!";
-				createTestData.options.push_back(testOptionTwo);
-				ApplicationCommands::createGlobalApplicationCommandAsync(createTestData).get();
+				auto inputsNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 
+				for (uint32_t x = 0; x < 50; x += 1) {
+					RespondToInputEventData dataPackageNew{ inputsNew };
+					dataPackageNew.addContent("POST NUMBER: " + std::to_string(x) +
+						"\n<t:" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
+					dataPackageNew.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+					InputEvents::respondToInputEventAsync(dataPackageNew);
+				}
 			} catch (...) {
 				reportException("Test::execute()");
 			}
