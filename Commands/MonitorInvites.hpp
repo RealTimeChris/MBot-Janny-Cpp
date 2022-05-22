@@ -61,7 +61,7 @@ namespace DiscordCoreAPI {
 					InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else if (newArgs.commandData.optionsArgs[0] == "remove") {
-					discordGuild.data.inviteReportingChannelId = "";
+					discordGuild.data.inviteReportingChannelId = 0;
 					discordGuild.writeDataToDB();
 					std::string msgString = "**------\nNice! You've de-activated invite tracking by removing the channel <#" + std::to_string(newArgs.eventData.getChannelId()) +
 						"> as the tracking channel for the invites!\n------** ";
@@ -245,7 +245,7 @@ namespace DiscordCoreAPI {
 					vanityInvite = Guilds::getGuildVanityInviteAsync({ .guildId = guild.id }).get();
 				}
 
-				if (discordGuild.data.inviteReportingChannelId != "") {
+				if (discordGuild.data.inviteReportingChannelId != 0) {
 					int32_t currengGuildMemberInvitesCount = 0;
 					GuildMemberData guildMemberInviterData;
 					if (vanityInvite.uses >= ( int32_t )discordGuild.data.vanityInviteUses + 1) {
@@ -320,7 +320,7 @@ namespace DiscordCoreAPI {
 							newArgs.guildMemberData.userName + ") was invited by an unknown server member!\n------**");
 					}
 					msgEmbed.setTitle("__**Inviter Status:**__");
-					CreateMessageData dataPackage(stoull(discordGuild.data.inviteReportingChannelId));
+					CreateMessageData dataPackage(discordGuild.data.inviteReportingChannelId);
 					dataPackage.addMessageEmbed(msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 				}

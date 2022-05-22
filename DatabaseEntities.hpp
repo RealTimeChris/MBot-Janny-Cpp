@@ -29,7 +29,7 @@ namespace DiscordCoreAPI {
 		int32_t minutesToWaitUntilDeleted{ 0 };
 		bool currentlyBeingDeleted{ false };
 		int32_t numberOfMessagesToSave{ 0 };
-		std::string deletionMessageId{ "" };
+		uint64_t deletionMessageId{ 0 };
 		uint64_t channelId{ 0 };
 	};
 
@@ -54,9 +54,9 @@ namespace DiscordCoreAPI {
 
 	struct RoleManager {
 		std::vector<uint64_t> theRoles{};
+		std::string message{ "" };
 		uint64_t channelId{ 0 };
 		uint64_t messageId{ 0 };
-		std::string message{ "" };
 	};
 
 	struct Log {
@@ -116,37 +116,37 @@ namespace DiscordCoreAPI {
 			this->logs.push_back(log);
 		}
 		std::vector<DeletionChannelData> deletionChannels{};
-		std::string inviteReportingChannelId{ "" };
+		uint64_t inviteReportingChannelId{ 0 };
 		std::vector<uint64_t> defaultRoleIds{};
-		std::vector<std::string> trackedUsers{};
 		std::vector<UserBanInfo> userBanInfo{};
-		std::vector<std::string> ghostedIds{};
+		std::vector<uint64_t> trackedUsers{};
 		std::string borderColor{ "FEFEFE" };
+		std::vector<uint64_t> ghostedIds{};
 		int32_t vanityInviteUses{ 0 };
 		std::string guildName{ "" };
-		RoleManager roleManager{};
-		uint64_t guildId{ 0 };
 		uint32_t memberCount{ 0 };
+		RoleManager roleManager{};
 		std::vector<Log> logs{};
+		uint64_t guildId{ 0 };
 	};
 
 	/// A Permission overwrite, for a given Channel. \brief A Permission overwrite, for a given Channel.
 	struct PermissionOverWriteData {
+		PermissionOverwritesType type{};///< Role or User type.
 		uint64_t channelId{ 0 };///< Channel id for which Channel this overwrite beint64_ts to.
 		Permissions allow{ "" };///< Collection of Permissions to allow.
 		Permissions deny{ "" };///< Collection of Permissions to deny.
-		PermissionOverwritesType type{};///< Role or User type.
 		uint64_t id{ 0 };///< Id of the permission overwrite.
 	};
 
 	struct DiscordGuildMemberData {
 		std::vector<PermissionOverWriteData> previousPermissionOverwrites{};
 		std::vector<std::string> invitedMemberIds{};
-		std::vector<uint64_t> previousRoleIds{};
 		std::vector<DiscordInviteData> invites{};
+		std::vector<uint64_t> previousRoleIds{};
 		std::string guildMemberMention{ "" };
-		uint64_t guildMemberId{ 0 };
 		std::string displayName{ "" };
+		uint64_t guildMemberId{ 0 };
 		uint32_t totalInvites{ 0 };
 		std::string globalId{ "" };
 		std::string userName{ "" };
@@ -351,10 +351,10 @@ namespace DiscordCoreAPI {
 				}));
 				buildDoc.append(kvp("ghostedIds", [discordGuildData](bsoncxx::builder::basic::sub_array subArray01) {
 					for (auto& value02: discordGuildData.ghostedIds) {
-						subArray01.append(value02.c_str());
+						subArray01.append(bsoncxx::types::b_int64(value02));
 					}
 				}));
-				buildDoc.append(kvp("inviteReportingChannelId", discordGuildData.inviteReportingChannelId.c_str()));
+				buildDoc.append(kvp("inviteReportingChannelId", bsoncxx::types::b_int64(discordGuildData.inviteReportingChannelId)));
 				buildDoc.append(kvp("defaultRoleIds",
 					[discordGuildData](bsoncxx::builder::basic::sub_array subArray) {
 						for (auto& value: discordGuildData.defaultRoleIds) {
@@ -366,8 +366,9 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("deletionChannels", [discordGuildData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildData.deletionChannels) {
 						subArray.append([=](bsoncxx::builder::basic::sub_document subDocument) {
-							subDocument.append(kvp("channelId", bsoncxx::types::b_int64(value.channelId)), kvp("currentlyBeingDeleted", bsoncxx::types::b_bool(value.currentlyBeingDeleted)),
-								kvp("deletionMessageId", value.deletionMessageId.c_str()), kvp("numberOfMessagesToSave", value.numberOfMessagesToSave),
+							subDocument.append(kvp("channelId", bsoncxx::types::b_int64(value.channelId)),
+								kvp("currentlyBeingDeleted", bsoncxx::types::b_bool(value.currentlyBeingDeleted)),
+								kvp("deletionMessageId", bsoncxx::types::b_int64(value.deletionMessageId)), kvp("numberOfMessagesToSave", value.numberOfMessagesToSave),
 								kvp("minutesToWaitUntilDeleted", bsoncxx::types::b_int32(value.minutesToWaitUntilDeleted)));
 						});
 					}
@@ -401,7 +402,7 @@ namespace DiscordCoreAPI {
 
 				buildDoc.append(kvp("trackedUsers", [discordGuildData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildData.trackedUsers) {
-						subArray.append(value.c_str());
+						subArray.append(bsoncxx::types::b_int64(value));
 					}
 				}));
 				return buildDoc;
@@ -414,10 +415,10 @@ namespace DiscordCoreAPI {
 		static DiscordGuildData parseGuildData(bsoncxx::document::value docValue) {
 			DiscordGuildData guildData{};
 			try {
-				guildData.inviteReportingChannelId = docValue.view()["inviteReportingChannelId"].get_utf8().value.to_string();
+				guildData.inviteReportingChannelId = docValue.view()["inviteReportingChannelId"].get_int64().value;
 				if (docValue.view()["ghostedIds"].type() == bsoncxx::v_noabi::type::k_array) {
 					for (auto& value: docValue.view()["ghostedIds"].get_array().value) {
-						guildData.ghostedIds.push_back(value.get_value().get_utf8().value.to_string());
+						guildData.ghostedIds.push_back(value.get_value().get_int64().value);
 					}
 				}
 
@@ -430,7 +431,7 @@ namespace DiscordCoreAPI {
 					DeletionChannelData newData;
 					newData.channelId = value.get_document().view()["channelId"].get_int64().value;					
 					newData.currentlyBeingDeleted = value.get_document().view()["currentlyBeingDeleted"].get_bool().value;
-					newData.deletionMessageId = value.get_document().view()["deletionMessageId"].get_utf8().value.to_string();
+					newData.deletionMessageId = value.get_document().view()["deletionMessageId"].get_int64().value;
 					newData.numberOfMessagesToSave = value.get_document().view()["numberOfMessagesToSave"].get_int32().value;
 					if (value.get_document().view()["minutesToWaitUntilDeleted"].type() != bsoncxx::v_noabi::type::k_null) {
 						newData.minutesToWaitUntilDeleted = value.get_document().view()["minutesToWaitUntilDeleted"].get_int32().value;
@@ -452,7 +453,7 @@ namespace DiscordCoreAPI {
 					guildData.userBanInfo.push_back(newData);
 				}
 				for (auto& value: docValue.view()["trackedUsers"].get_array().value) {
-					guildData.trackedUsers.push_back(value.get_utf8().value.to_string());
+					guildData.trackedUsers.push_back(value.get_int64().value);
 				}
 				auto roleManager = docValue.view()["roleManager"].get_document();
 				if (roleManager.view()["theRoles"].type() == bsoncxx::v_noabi::type::k_array) {

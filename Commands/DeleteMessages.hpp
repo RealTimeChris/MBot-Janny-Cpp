@@ -407,7 +407,7 @@ namespace DiscordCoreAPI {
 				currentDeletionChannel->numberOfMessagesToSave = howManyBack;
 				currentDeletionChannel->channelId = newArgs.eventData.getChannelId();
 				currentDeletionChannel->currentlyBeingDeleted = false;
-				currentDeletionChannel->deletionMessageId = "";
+				currentDeletionChannel->deletionMessageId = 0;
 
 				if (whatAreWeDoing == "view") {
 					std::string msgString = "\n------\n";
@@ -466,7 +466,7 @@ namespace DiscordCoreAPI {
 						thePtr = InputEvents::respondToInputEventAsync(dataPackage).get();
 						InputEvents::deleteInputEventResponseAsync(thePtr, 20000);
 						std::unique_ptr<Message> previousMessage{ std::make_unique<Message>(
-							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = stoull(currentDeletionChannel->deletionMessageId) }).get()) };
+							Messages::getMessageAsync({ .channelId = newArgs.eventData.getChannelId(), .id = currentDeletionChannel->deletionMessageId }).get()) };
 						if (previousMessage->id != 0) {
 							Messages::deleteMessageAsync({ .timeStamp = previousMessage->timestamp,
 															 .channelId = previousMessage->channelId,

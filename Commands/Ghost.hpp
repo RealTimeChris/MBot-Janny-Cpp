@@ -97,7 +97,7 @@ namespace DiscordCoreAPI {
 						return;
 					}
 
-					discordGuild.data.ghostedIds.push_back(std::to_string(targetGuildMember.id));
+					discordGuild.data.ghostedIds.push_back(targetGuildMember.id);
 					discordGuild.writeDataToDB();
 
 					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name + " for the following reason(s): " + ghostReason +
@@ -130,7 +130,7 @@ namespace DiscordCoreAPI {
 					std::string msgString = "------\n";
 
 					for (auto& value: discordGuild.data.ghostedIds) {
-						msgString += "<@" + value + ">\n";
+						msgString += "<@" + std::to_string(value) + ">\n";
 					}
 
 					msgString += "------";
@@ -150,7 +150,7 @@ namespace DiscordCoreAPI {
 					bool isItThere{ false };
 					int32_t index{ 0 };
 					for (uint32_t x = 0; x < discordGuild.data.ghostedIds.size(); x += 1) {
-						if (discordGuild.data.ghostedIds[x] == std::to_string(targetGuildMember.id)) {
+						if (discordGuild.data.ghostedIds[x] == targetGuildMember.id) {
 							isItThere = true;
 							index = x;
 							break;
