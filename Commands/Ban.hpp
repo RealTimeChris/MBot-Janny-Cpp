@@ -210,7 +210,8 @@ namespace DiscordCoreAPI {
 						}
 
 						std::string msgString = "__**#" + std::to_string(currentPage * membersPerPage + ((x % membersPerPage) + 1)) + " | Name:**__ <@" +
-							std::to_string(discordGuild.data.userBanInfo[x].userId) + "> __**| Ban Count:**__ " + std::to_string(discordGuild.data.userBanInfo[x].userBans.size()) + "\n";
+							std::to_string(discordGuild.data.userBanInfo[x].userId) + "> __**| Ban Count:**__ " + std::to_string(discordGuild.data.userBanInfo[x].userBans.size()) +
+							"\n";
 
 						pageStrings[currentPage] += msgString;
 						if (x % membersPerPage == membersPerPage - 1 || x == discordGuild.data.userBanInfo.size() - 1) {

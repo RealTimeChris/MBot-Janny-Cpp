@@ -31,11 +31,11 @@ namespace DiscordCoreAPI {
 				Channel channel = Channels::getCachedChannelAsync({ newArgs.eventData.getChannelId() }).get();
 
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
-				std::string userId{}; 
+				std::string userId{};
 				if (newArgs.commandData.optionsArgs.size() > 0) {
 					userId = newArgs.commandData.optionsArgs[0];
 				}
-				
+
 				DiscordGuild discordGuild(guild);
 				GuildMemberData guildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = stoull(userId), .guildId = newArgs.eventData.getGuildId() }).get();
 				User theUser = Users::getUserAsync({ .userId = newArgs.eventData.getAuthorId() }).get();

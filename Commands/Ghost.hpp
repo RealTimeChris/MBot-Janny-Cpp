@@ -114,8 +114,8 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@" + std::to_string(targetGuildMember.id) + "> (" +
-						targetGuildMember.userName + ")\n------";
+					std::string msgString2 =
+						"------\n**Hello! You've ghosted the following member:** <@" + std::to_string(targetGuildMember.id) + "> (" + targetGuildMember.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.userName, sendingGuildMember.userAvatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);
@@ -193,8 +193,8 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					Messages::createMessageAsync(dataPackage).get();
 
-					std::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@" + std::to_string(targetGuildMember.id) + "> (" +
-						targetGuildMember.userName + ")\n------";
+					std::string msgString2 =
+						"------\n**Hello! You've un-ghosted the following member:** <@" + std::to_string(targetGuildMember.id) + "> (" + targetGuildMember.userName + ")\n------";
 					EmbedData msgEmbed2;
 					msgEmbed2.setAuthor(sendingGuildMember.userName, sendingGuildMember.userAvatar);
 					msgEmbed2.setColor(discordGuild.data.borderColor);

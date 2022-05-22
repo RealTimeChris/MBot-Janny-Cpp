@@ -396,8 +396,7 @@ namespace DiscordCoreAPI {
 							dataPackage02.addMessageEmbed(*msgEmbed);
 							eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
 						} else {
-							Roles::addGuildMemberRoleAsync(
-								{ .guildId = inputData.getGuildId(), .userId = guildMember.id, .roleId = stoull(value), .reason = "Role-granting." })
+							Roles::addGuildMemberRoleAsync({ .guildId = inputData.getGuildId(), .userId = guildMember.id, .roleId = stoull(value), .reason = "Role-granting." })
 								.get();
 							std::string msgString = "------\n**Nicely done! You've added the <@&" + value + "> role to yourself!**\n------";
 							std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
