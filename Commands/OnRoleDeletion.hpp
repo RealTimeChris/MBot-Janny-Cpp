@@ -62,6 +62,6 @@ namespace DiscordCoreAPI {
 	}
 
 	void onRoleDeletionEvent(OnRoleDeletionData dataPackageNew) {
-		ThreadPool::executeFunctionAfterTimePeriod<OnRoleDeletionData>(onRoleDeletionToBeWrapped, 5000, false, dataPackageNew);
+		ThreadPool::storeThread<OnRoleDeletionData>(onRoleDeletionToBeWrapped, 5000, false, dataPackageNew);
 	}
 }
