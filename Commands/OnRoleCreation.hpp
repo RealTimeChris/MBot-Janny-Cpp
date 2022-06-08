@@ -62,6 +62,6 @@ namespace DiscordCoreAPI {
 	}
 
 	void onRoleCreationEvent(OnRoleCreationData dataPackageNew) {
-		ThreadPool::storeThread<OnRoleCreationData>(onRoleCreationToBeWrapped, 10000, false, dataPackageNew);
+		ThreadPool::executeFunctionAfterTimePeriod<OnRoleCreationData>(onRoleCreationToBeWrapped, 10000, true, dataPackageNew);
 	}
 }
