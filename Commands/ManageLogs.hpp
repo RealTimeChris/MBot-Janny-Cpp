@@ -57,7 +57,8 @@ namespace DiscordCoreAPI {
 				if (newArgs.commandData.optionsArgs.size() == 0) {
 					std::vector<EmbedFieldData> fields;
 					for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
-						if (Channels::getCachedChannelAsync({ .channelId = discordGuild.data.logs[x].loggingChannelId }).get().name == "") {
+						std::string theString = Channels::getCachedChannelAsync({ .channelId = discordGuild.data.logs[x].loggingChannelId }).get().name; 
+						if (theString == "") {
 							discordGuild.data.logs[x].loggingChannelName = "";
 							discordGuild.data.logs[x].loggingChannelId = 0;
 							discordGuild.data.logs[x].enabled = false;
