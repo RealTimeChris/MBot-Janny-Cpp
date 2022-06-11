@@ -96,7 +96,6 @@ namespace DiscordCoreAPI {
 				}
 				if (newArgs.commandData.optionsArgs.size() > 0) {
 					roleId = newArgs.commandData.optionsArgs[0];
-					std::cout << "THE ROLE ID: " << newArgs.commandData.optionsArgs[0] << std::endl;
 				}
 
 				std::vector<Role> roleArray = Roles::getGuildRolesAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
