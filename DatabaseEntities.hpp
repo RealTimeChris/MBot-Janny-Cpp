@@ -502,8 +502,9 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("previousPermissionOverwrites", [discordGuildMemberData](bsoncxx::builder::basic::sub_array subArray) {
 					for (PermissionOverWriteData value: discordGuildMemberData.previousPermissionOverwrites) {
 						subArray.append([value](bsoncxx::builder::basic::sub_document subDocument) {
-							subDocument.append(kvp("allow", bsoncxx::types::b_utf8(static_cast<std::string>(value.allow.c_str()))),
-								kvp("type", bsoncxx::types::b_int64(( int64_t )value.type)), kvp("deny", bsoncxx::types::b_utf8(static_cast<std::string>(value.deny.c_str()))),
+							subDocument.append(kvp("allow", bsoncxx::types::b_utf8(static_cast<std::string>(static_cast<StringWrapper>(value.allow)).c_str())),
+								kvp("type", bsoncxx::types::b_int64(( int64_t )value.type)),
+								kvp("deny", bsoncxx::types::b_utf8(static_cast<std::string>(static_cast<StringWrapper>(value.deny)).c_str())),
 								kvp("id", std::to_string(value.id).c_str()));
 						});
 					}
