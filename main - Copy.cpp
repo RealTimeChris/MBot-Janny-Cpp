@@ -16,6 +16,7 @@ void onInviteDeletion(DiscordCoreAPI::OnInviteDeletionData dataPackage) {
 void onGuildCreation(DiscordCoreAPI::OnGuildCreationData dataPackage) {
 	DiscordCoreAPI::DiscordGuild discordGuild{ dataPackage.guild };
 	discordGuild.getDataFromDB();
+	
 	for (auto& value: dataPackage.guild.members) {
 		auto guildMemberNew = DiscordCoreAPI::GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value, .guildId = dataPackage.guild.id }).get();
 		for (auto& value02: discordGuild.data.defaultRoleIds) {
@@ -53,10 +54,10 @@ void onGuildMemberAdd(DiscordCoreAPI::OnGuildMemberAddData dataPackage) {
 }
 
 void onBoot02(DiscordCoreAPI::DiscordCoreClient*) {
-	std::vector<DiscordCoreAPI::Guild> guilds = DiscordCoreAPI::Guilds::getAllGuildsAsync().get();
+	std::vector<DiscordCoreAPI::GuildData> guilds = DiscordCoreAPI::Guilds::getAllGuildsAsync().get();
 	for (auto& value: guilds) {
 		std::jthread theThread = std::jthread{ [=]() {
-			DiscordCoreAPI::MonitorInvites::updateInvitesDataBaseToWrap(std::to_string(value.id));
+			DiscordCoreAPI::MonitorInvites::updateInvitesDataBaseToWrap(value.id);
 		} };
 		theThread.detach();
 	}
@@ -79,7 +80,7 @@ void onBoot01(DiscordCoreAPI::DiscordCoreClient* args) {
 }
 
 int32_t main() {
-	std::string botToken = "";
+	std::string botToken = "YOUR_BOT_TOKEN_HERE";
 	std::vector<DiscordCoreAPI::RepeatedFunctionData> functionVector{};
 	functionVector.reserve(5);
 	DiscordCoreAPI::RepeatedFunctionData function00{};
@@ -88,26 +89,41 @@ int32_t main() {
 	function00.repeated = false;
 	functionVector.push_back(function00);
 	DiscordCoreAPI::RepeatedFunctionData function01{};
-	function01.function = std::ref(onBoot00);
+	function01.function = onBoot00;
 	function01.intervalInMs = 0;
 	function01.repeated = false;
 	functionVector.push_back(function01);
 	DiscordCoreAPI::RepeatedFunctionData function02{};
-	function02.function = std::ref(onBoot01);
+	function02.function = onBoot01;
 	function02.intervalInMs = 500;
 	function02.repeated = false;
 	functionVector.push_back(function02);
 	DiscordCoreAPI::RepeatedFunctionData function03{};
-	function03.function = std::ref(onBoot02);
+	function03.function = onBoot02;
 	function03.intervalInMs = 15000;
 	function03.repeated = false;
-	functionVector.push_back(function03);
+	//functionVector.push_back(function03);
 	DiscordCoreAPI::RepeatedFunctionData function04{};
 	function04.function = std::ref(DiscordCoreAPI::deleteMessages);
 	function04.intervalInMs = 60000;
 	function04.repeated = true;
 	functionVector.push_back(function04);
-	std::unique_ptr<DiscordCoreAPI::DiscordCoreClient> thePtr{ std::make_unique<DiscordCoreAPI::DiscordCoreClient>(botToken, functionVector) };
+	DiscordCoreAPI::ShardingOptions shardOptions{};
+	shardOptions.numberOfShardsForThisProcess = 1;
+	shardOptions.startingShard = 0;
+	shardOptions.totalNumberOfShards = 1;
+	DiscordCoreAPI::LoggingOptions logOptions{};
+	logOptions.logFFMPEGErrorMessages = true;
+	logOptions.logGeneralErrorMessages = true;
+	logOptions.logHttpErrorMessages = true;
+	logOptions.logWebSocketErrorMessages = true;
+	DiscordCoreAPI::DiscordCoreClientConfig clientConfig{};
+	//clientConfig.alternateConnectionAddress = "127.0.0.1";
+	clientConfig.botToken = botToken;
+	clientConfig.logOptions = logOptions;
+	clientConfig.shardOptions = shardOptions;
+	clientConfig.functionsToExecute = functionVector;
+	auto thePtr = std::make_unique<DiscordCoreAPI::DiscordCoreClient>(clientConfig);
 	thePtr->eventManager.onGuildCreation(&onGuildCreation);
 	thePtr->eventManager.onGuildMemberAdd(&onGuildMemberAdd);
 	thePtr->eventManager.onInviteCreation(&onInviteCreation);
