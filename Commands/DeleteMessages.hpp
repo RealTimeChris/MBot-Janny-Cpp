@@ -283,7 +283,7 @@ namespace DiscordCoreAPI {
 				newDiscordGuild.writeDataToDB();
 				return;
 			}
-			
+
 			if (newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted == true) {
 				std::unique_lock<std::mutex> theLock{ SetDeletionStatus::theMutex };
 				std::cout << shiftToBrightGreen() << "Nope! Still being deleted! Channel: " + channel->name + " of server " + newDiscordGuild.data.guildName << reset() << std::endl
@@ -297,7 +297,7 @@ namespace DiscordCoreAPI {
 						  << std::endl
 						  << std::endl;
 			}
-			
+
 			newDiscordGuild.data.deletionChannels[channelIndex].currentlyBeingDeleted = true;
 			newDiscordGuild.writeDataToDB();
 			if (numberOfMessagesToSave > 0) {
@@ -359,13 +359,14 @@ namespace DiscordCoreAPI {
 
 				purgeVector.shrink_to_fit();
 				deleteVector.shrink_to_fit();
-				{ std::unique_lock<std::mutex> theLock{ SetDeletionStatus::theMutex };
+				{
+					std::unique_lock<std::mutex> theLock{ SetDeletionStatus::theMutex };
 					std::cout << shiftToBrightGreen()
 							  << "Total of " + std::to_string(totalMessageCount) + " in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName << reset()
 							  << std::endl
 							  << std::endl;
 				}
-				
+
 				if (purgeVector.size() >= 2) {
 					std::vector<std::vector<uint64_t>> newVector{};
 					int32_t secondIndex{ -1 };
@@ -388,7 +389,7 @@ namespace DiscordCoreAPI {
 									  << reset() << std::endl
 									  << std::endl;
 						}
-						
+
 						Messages::deleteMessagesBulkAsync({ .messageIds = value, .channelId = channelId, .reason = "Purging the channel!" }).get();
 						totalDeletedBefore += ( int32_t )value.size();
 					}
@@ -415,7 +416,7 @@ namespace DiscordCoreAPI {
 									  << reset() << std::endl
 									  << std::endl;
 						}
-						
+
 						DeleteMessageData deleteData{};
 						deleteData.channelId = value.channelId;
 						deleteData.timeStamp = value.timestamp;
@@ -478,7 +479,7 @@ namespace DiscordCoreAPI {
 						std::cout << shiftToBrightGreen() << "Total of 0 in channel: " + channel->name + " of server " + newDiscordGuild.data.guildName << reset() << std::endl
 								  << std::endl;
 					}
-					
+
 					return;
 				}
 				std::vector<uint64_t> purgeVector{};
@@ -506,7 +507,7 @@ namespace DiscordCoreAPI {
 							  << std::endl
 							  << std::endl;
 				}
-				
+
 				if (purgeVector.size() >= 2) {
 					std::vector<std::vector<uint64_t>> newVector{};
 					int32_t secondIndex{ -1 };
@@ -529,7 +530,7 @@ namespace DiscordCoreAPI {
 									  << reset() << std::endl
 									  << std::endl;
 						}
-						
+
 						Messages::deleteMessagesBulkAsync({ .messageIds = value, .channelId = channelId, .reason = "Purging the channel!" }).get();
 						totalDeletedBefore += ( int32_t )value.size();
 					}
@@ -557,7 +558,7 @@ namespace DiscordCoreAPI {
 									  << reset() << std::endl
 									  << std::endl;
 						}
-						
+
 						DeleteMessageData deleteData{};
 						deleteData.channelId = value.channelId;
 						deleteData.timeStamp = value.timestamp;

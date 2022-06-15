@@ -16,7 +16,7 @@ void onInviteDeletion(DiscordCoreAPI::OnInviteDeletionData dataPackage) {
 void onGuildCreation(DiscordCoreAPI::OnGuildCreationData dataPackage) {
 	DiscordCoreAPI::DiscordGuild discordGuild{ dataPackage.guild };
 	discordGuild.getDataFromDB();
-	
+
 	for (auto& value: dataPackage.guild.members) {
 		auto guildMemberNew = DiscordCoreAPI::GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value, .guildId = dataPackage.guild.id }).get();
 		for (auto& value02: discordGuild.data.defaultRoleIds) {

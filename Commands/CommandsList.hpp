@@ -25,4 +25,4 @@
 #include "PushMe.hpp"
 #include "Test.hpp"
 #include "UserInfo.hpp"
-#include "RegisterApplicationCommands.hpp" 
+#include "RegisterApplicationCommands.hpp"
