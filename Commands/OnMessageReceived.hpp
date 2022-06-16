@@ -10,7 +10,7 @@
 namespace DiscordCoreAPI {
 
 	void onMessageReceived(DiscordCoreAPI::OnMessageCreationData dataPackage) {
-		if (dataPackage.message.content.find("discord.gg") != std::string::npos) {
+		if (dataPackage.message.content.find("discord.gg") != std::string::npos && dataPackage.message.author.id != stoull(std::string("898368255121559634"))) {
 			DeleteMessageData deleteMessageData{};
 			deleteMessageData.timeDelay = 0;
 			deleteMessageData.reason = "Banned content!";
