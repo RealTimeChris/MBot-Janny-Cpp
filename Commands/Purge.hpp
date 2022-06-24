@@ -158,7 +158,7 @@ namespace DiscordCoreAPI {
 							}
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
-								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14)) {
+								if (!value.timestamp.hasTimeElapsed(14)) {
 									messageIdsToDelete.push_back(value.id);
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {
@@ -178,7 +178,7 @@ namespace DiscordCoreAPI {
 							}
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
-								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && value.author.id == stoull(userId)) {
+								if (!value.timestamp.hasTimeElapsed(14) && value.author.id == stoull(userId)) {
 									messageIdsToDelete.push_back(value.id);
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {
@@ -204,7 +204,7 @@ namespace DiscordCoreAPI {
 							}
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
-								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && !value.pinned) {
+								if (!value.timestamp.hasTimeElapsed(14) && !value.pinned) {
 									messageIdsToDelete.push_back(value.id);
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {
@@ -228,7 +228,7 @@ namespace DiscordCoreAPI {
 							}
 							currentMessageId = messageArray->at(messageArray->size() - 1).id;
 							for (auto& value: *messageArray) {
-								if (!hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 14) && std::to_string(value.author.id) == userId && !value.pinned) {
+								if (!value.timestamp.hasTimeElapsed(14) && std::to_string(value.author.id) == userId && !value.pinned) {
 									messageIdsToDelete.push_back(value.id);
 								}
 								if (messageIdsToDelete.size() >= messageLimit) {

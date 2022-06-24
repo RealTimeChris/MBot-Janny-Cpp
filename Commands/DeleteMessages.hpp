@@ -322,10 +322,11 @@ namespace DiscordCoreAPI {
 				std::vector<Message> messagesToDelete{};
 				for (uint64_t x = 0; x < originalMessagesArray.size(); x += 1) {
 					if (!originalMessagesArray[x].pinned &&
-						hasTimeElapsed(originalMessagesArray[x].timestamp.getOriginalTimeStamp(), 0, 0,
+						originalMessagesArray[x].timestamp.hasTimeElapsed(0, 0,
 							newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
 						messagesToDelete.push_back(originalMessagesArray[x]);
-					} else if (!hasTimeElapsed(originalMessagesArray[x].timestamp, 0, 0, newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted) &&
+					} else if (!originalMessagesArray[x].timestamp.hasTimeElapsed(0, 0,
+								   newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted) &&
 						!originalMessagesArray[x].pinned) {
 						messagesSaved += 1;
 					} else if (originalMessagesArray[x].pinned) {
@@ -347,7 +348,7 @@ namespace DiscordCoreAPI {
 				std::vector<Message> deleteVector{};
 				int32_t totalMessageCount{ 0 };
 				for (int32_t z = 0; z < ( int32_t )messagesToDelete.size(); z += 1) {
-					if (!hasTimeElapsed(messagesToDelete[z].timestamp.getOriginalTimeStamp(), 14, 0, 0) && !messagesToDelete[z].pinned) {
+					if (!messagesToDelete[z].timestamp.hasTimeElapsed(14, 0, 0) && !messagesToDelete[z].pinned) {
 						totalMessageCount += 1;
 						purgeVector.push_back(messagesToDelete[z].id);
 						//deleteVector.push_back(messagesToDelete[z]);
@@ -441,7 +442,8 @@ namespace DiscordCoreAPI {
 							for (auto& value: arrayOfMessages) {
 								x = ( int32_t )arrayOfMessages.size();
 								if (x > 0 &&
-									hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 0, 0, newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
+									value.timestamp.hasTimeElapsed(0, 0,
+										newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
 									arrayOfMessagesToDelete.push_back(value);
 									y += 1;
 								}
@@ -460,7 +462,8 @@ namespace DiscordCoreAPI {
 						for (auto& value: arrayOfMessages) {
 							x = ( int32_t )arrayOfMessages.size();
 							if (x > 0 &&
-								hasTimeElapsed(value.timestamp.getOriginalTimeStamp(), 0, 0, newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
+								value.timestamp.hasTimeElapsed(0, 0,
+									newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted)) {
 								arrayOfMessagesToDelete.push_back(value);
 								y += 1;
 							}
@@ -487,8 +490,9 @@ namespace DiscordCoreAPI {
 				int32_t totalMessageCount{ 0 };
 				for (int32_t w = 0; w < ( int32_t )arrayOfMessageArrays.size(); w += 1) {
 					for (int32_t z = 0; z < ( int32_t )arrayOfMessageArrays[w].size(); z += 1) {
-						if ((!hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 14, 0, 0) && !arrayOfMessageArrays[w][z].pinned &&
-								hasTimeElapsed(arrayOfMessageArrays[w][z].timestamp.getOriginalTimeStamp(), 0, 0,
+						if ((!arrayOfMessageArrays[w][z].timestamp.hasTimeElapsed(14, 0, 0) &&
+								!arrayOfMessageArrays[w][z].pinned &&
+								arrayOfMessageArrays[w][z].timestamp.hasTimeElapsed(0, 0,
 									newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted))) {
 							//deleteVector.push_back(arrayOfMessageArrays[w][z]);
 							purgeVector.push_back(arrayOfMessageArrays[w][z].id);
