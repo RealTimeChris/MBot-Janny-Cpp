@@ -32,16 +32,19 @@ namespace DiscordCoreAPI {
 
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-
-				GuildMember sendingGuildMember =
-					GuildMembers::getGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
+				std::cout << "THE GUILD ID: " << guild.id << std::endl;
+				GetGuildMemberData dataPackage00{};
+				dataPackage00.guildMemberId = newArgs.eventData.getAuthorId();
+				dataPackage00.guildId = guild.id;
+				GuildMember sendingGuildMember = GuildMembers::getCachedGuildMemberAsync(dataPackage00).get();
 
 				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, sendingGuildMember);
-
+				RespondToInputEventData dataPackage{ newArgs.eventData };
+				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
+				newArgs.eventData = InputEvents::respondToInputEventAsync(dataPackage).get();
 				if (!doWeHaveAdminPerms) {
 					return;
 				}
-
 				std::string whatAreWeDoing;
 				std::regex userMentionRegex("<@\\d{18}>");
 				std::regex userIdRegexp("\\d{18}");
@@ -59,6 +62,7 @@ namespace DiscordCoreAPI {
 					std::cmatch userIDMatch;
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();
+					std::cout << "THE USER ID REAL: " << userIDOne << std::endl;
 					userId = stoull(userIDOne);
 				} else if (newArgs.commandData.optionsArgs.size() > 0 && newArgs.commandData.subCommandName == "remove") {
 					whatAreWeDoing = "remove";
@@ -70,14 +74,13 @@ namespace DiscordCoreAPI {
 				}
 
 				InputEventData newEvent01 = newArgs.eventData;
-
-				GuildMember targetGuildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = newArgs.eventData.getGuildId() }).get();
+				
+				GuildMember targetGuildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = guild.id }).get();
 				DiscordGuildMember discordGuildMember(targetGuildMember);
-
 				if (whatAreWeDoing == "add") {
 					TimeoutGuildMemberData modifyData{};
 					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::Week;
-					modifyData.guildId = newArgs.eventData.getGuildId();
+					modifyData.guildId = guild.id;
 					modifyData.guildMemberId = targetGuildMember.id;
 					modifyData.reason = ghostReason;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
@@ -91,7 +94,7 @@ namespace DiscordCoreAPI {
 						msgEmbed->setTimeStamp(getTimeAndDate());
 						msgEmbed->setTitle("__**Ghosting Error:**__");
 						RespondToInputEventData dataPackage(newEvent01);
-						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
 						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
@@ -123,7 +126,7 @@ namespace DiscordCoreAPI {
 					msgEmbed2.setTimeStamp(getTimeAndDate());
 					msgEmbed2.setTitle("__**New Server Member Ghosted:**__");
 					RespondToInputEventData dataPackage02(newEvent01);
-					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed2);
 					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
 				} else if (whatAreWeDoing == "viewing") {
@@ -142,7 +145,7 @@ namespace DiscordCoreAPI {
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setTitle("__**Currently Ghosted Members:**__");
 					RespondToInputEventData dataPackage(newEvent01);
-					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
 					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
@@ -172,7 +175,7 @@ namespace DiscordCoreAPI {
 						msgEmbed->setTimeStamp(getTimeAndDate());
 						msgEmbed->setTitle("__**Un-Ghosting Error:**__");
 						RespondToInputEventData dataPackage(newEvent01);
-						dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
 						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 						return;
@@ -202,7 +205,7 @@ namespace DiscordCoreAPI {
 					msgEmbed2.setTimeStamp(getTimeAndDate());
 					msgEmbed2.setTitle("__**New Server Member Un-Ghosted:**__");
 					RespondToInputEventData dataPackage02(newEvent01);
-					dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed2);
 					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
 					return;
