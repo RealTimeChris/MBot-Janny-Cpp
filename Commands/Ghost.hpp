@@ -49,7 +49,7 @@ namespace DiscordCoreAPI {
 				std::regex userMentionRegex("<@\\d{18}>");
 				std::regex userIdRegexp("\\d{18}");
 				std::string ghostReason;
-				uint64_t userId;
+				uint64_t userId{};
 				if (newArgs.commandData.subCommandName == "view") {
 					whatAreWeDoing = "viewing";
 					userId = newArgs.eventData.getAuthorId();
@@ -71,6 +71,7 @@ namespace DiscordCoreAPI {
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();
 					userId = stoull(userIDOne);
+					std::cout << "THE USER ID REAL: " << userId << std::endl;
 				}
 
 				InputEventData newEvent01 = newArgs.eventData;
