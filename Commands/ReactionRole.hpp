@@ -90,7 +90,7 @@ namespace DiscordCoreAPI {
 					auto botRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botMember, .guildId = newArgs.eventData.getGuildId() }).get();
 					std::vector<Role> theRolesNew{};
 					Role highestRole{};
-					for (auto& value: botRoles.theRoles) {
+					for (auto& value: botRoles) {
 						if (value.position > highestRole.position) {
 							highestRole = value;
 						}
@@ -219,7 +219,7 @@ namespace DiscordCoreAPI {
 		msgEmbed02->setTitle("__**Add New Roles:**__");
 		CreateMessageData dataPackage02{};
 		dataPackage02.channelId = discordGuild->data.roleManager.channelId;
-		Guild guildNew = Guilds::getCachedGuildAsync({ .guildId = discordGuild->data.guildId }).get();
+		Guild guildNew = Guilds::getGuildAsync({ .guildId = discordGuild->data.guildId }).get();
 		dataPackage02.addButton(false, "start", "Start", ButtonStyle::Success, "check", 687509905208508640);
 		dataPackage02.addMessageEmbed(*msgEmbed02);
 		std::unique_ptr<Message> newMessage{ std::make_unique<Message>(Messages::createMessageAsync(dataPackage02).get()) };
@@ -264,7 +264,7 @@ namespace DiscordCoreAPI {
 
 	void startupToWrapTwo(DiscordCoreAPI::DiscordCoreClient* theClient) {
 		auto guilds = Guilds::getAllGuildsAsync().get();
-		for (auto& value: guilds.theGuildDatas) {
+		for (auto& value: guilds) {
 			DiscordCoreAPI::DiscordGuild discordGuild{ value };
 			if (discordGuild.data.roleManager.messageId == 0 || discordGuild.data.roleManager.theRoles.size() == 0) {
 				continue;
@@ -347,7 +347,7 @@ namespace DiscordCoreAPI {
 					dataPackages[0].addSelectMenu(false, "role_selection_" + currentPageIndex, theOptions, "Select Roles", static_cast<int32_t>(theOptions.size()), 0);
 				}
 				auto newResult = moveThroughMessagePages(std::to_string(inputData.getAuthorId()), InputEventData(newEvent), currentPageIndex, messageEmbeds, false, 120000, true);
-				RoleVector theRoles{};
+				std::vector<Role> theRoles{};
 				std::vector<SelectMenuResponseData> returnData{};
 
 				std::unique_ptr<SelectMenuCollector> collector{ std::make_unique<SelectMenuCollector>(newEvent) };
@@ -376,7 +376,7 @@ namespace DiscordCoreAPI {
 							InputEvents::respondToInputEventAsync(dataPackage03).get();
 							continue;
 						}
-						for (auto& value02: theRoles.theRoles) {
+						for (auto& value02: theRoles) {
 							if (value02.id == stoull(value)) {
 								isItFound = true;
 								break;
