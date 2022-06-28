@@ -81,7 +81,7 @@ namespace DiscordCoreAPI {
 					auto userRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember01, .guildId = newArgs.eventData.getGuildId() }).get();
 					int32_t highestUserRolePosition{ 0 };
 
-					for (auto& value: userRoles) {
+					for (auto& value: userRoles.theRoles) {
 						if (value.position > highestUserRolePosition) {
 							highestUserRolePosition = value.position;
 						}
@@ -89,7 +89,7 @@ namespace DiscordCoreAPI {
 
 					int32_t highestBotRolePosition{ 0 };
 					auto botRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData.getGuildId() }).get();
-					for (auto& value: botRoles) {
+					for (auto& value: botRoles.theRoles) {
 						if (value.position > highestBotRolePosition) {
 							highestBotRolePosition = value.position;
 						}

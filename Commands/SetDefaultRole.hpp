@@ -98,12 +98,12 @@ namespace DiscordCoreAPI {
 					roleId = newArgs.commandData.optionsArgs[0];
 				}
 
-				std::vector<Role> roleArray = Roles::getGuildRolesAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
+				RoleVector roleArray = Roles::getGuildRolesAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 
 				std::vector<bool> isItFoundReal;
 				for (int32_t x = 0; x < discordGuild.data.defaultRoleIds.size(); x += 1) {
 					bool isItFound = false;
-					for (auto& value: roleArray) {
+					for (auto& value: roleArray.theRoles) {
 						if (value.id == discordGuild.data.defaultRoleIds[x]) {
 							isItFound = true;
 							break;
@@ -128,7 +128,7 @@ namespace DiscordCoreAPI {
 
 					if (discordGuild.data.defaultRoleIds.size() > 0) {
 						msgString = "\n------\n";
-						for (auto& value: roleArray) {
+						for (auto& value: roleArray.theRoles) {
 							for (auto& value02: discordGuild.data.defaultRoleIds) {
 								if (value.id == value02) {
 									msgString += "<@&" + std::to_string(value02) + ">\n";
@@ -156,7 +156,7 @@ namespace DiscordCoreAPI {
 				Role currentRole = Roles::getRoleAsync({ .guildId = newArgs.eventData.getGuildId(), .roleId = stoull(roleId) }).get();
 
 				bool isItFound = false;
-				for (auto& value: roleArray) {
+				for (auto& value: roleArray.theRoles) {
 					if (roleId == std::to_string(value.id)) {
 						isItFound = true;
 						break;
@@ -198,10 +198,10 @@ namespace DiscordCoreAPI {
 
 					GuildMember botGuildMember =
 						GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.discordCoreClient->getBotUser().id, .guildId = newArgs.eventData.getGuildId() }).get();
-					std::vector<Role> highestBotRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData.getGuildId() }).get();
+					RoleVector highestBotRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = newArgs.eventData.getGuildId() }).get();
 					RoleData highestBotRole;
 					int32_t currentPosition = 0;
-					for (auto& value: highestBotRoles) {
+					for (auto& value: highestBotRoles.theRoles) {
 						if (value.position > currentPosition) {
 							highestBotRole = value;
 							currentPosition = value.position;

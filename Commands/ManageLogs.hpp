@@ -63,12 +63,16 @@ namespace DiscordCoreAPI {
 							discordGuild.data.logs[x].enabled = false;
 						}
 						if (discordGuild.data.logs[x].enabled == false) {
-							EmbedFieldData field = { .Inline = true, .value = "__Enabled:__ ❌", .name = "__**" + discordGuild.data.logs[x].name + "**__" };
+							EmbedFieldData field{};
+							field.Inline = true;
+							field.value = "__Enabled:__ ❌";
+							field.name = "__**" + discordGuild.data.logs[x].name + "**__";
 							fields.push_back(field);
 						} else if (discordGuild.data.logs[x].enabled == true) {
-							EmbedFieldData field = { .Inline = true,
-								.value = "__Enabled:__ ✅\n__Logging Channel:__ <#" + std::to_string(discordGuild.data.logs[x].loggingChannelId) + ">",
-								.name = "__**" + discordGuild.data.logs[x].name + "**__" };
+							EmbedFieldData field{};
+							field.Inline = true;
+							field.value = "__Enabled:__ ✅\n__Logging Channel:__ <#" + std::to_string(discordGuild.data.logs[x].loggingChannelId) + ">";
+							field.name = "__**" + discordGuild.data.logs[x].name + "**__";
 							fields.push_back(field);
 						}
 					}

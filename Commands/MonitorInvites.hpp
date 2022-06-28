@@ -183,29 +183,29 @@ namespace DiscordCoreAPI {
 					discordGuild.data.vanityInviteUses = vanityInvite.uses;
 					discordGuild.writeDataToDB();
 				}
-				std::vector<InviteData> invites = Guilds::getGuildInvitesAsync({ .guildId = guild.id }).get();
-				for (uint32_t x = 0; x < invites.size(); x += 1) {
+				InviteDataVector invites = Guilds::getGuildInvitesAsync({ .guildId = guild.id }).get();
+				for (uint32_t x = 0; x < invites.theInviteDatas.size(); x += 1) {
 					for (auto& value2: guild.members) {
 						auto guildMemberNew = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value2, .guildId = guild.id }).get();
 						DiscordGuildMember discordGuildMember(guildMemberNew);
-						if (invites[x].inviter.id == discordGuildMember.data.guildMemberId) {
+						if (invites.theInviteDatas[x].inviter.id == discordGuildMember.data.guildMemberId) {
 							bool isItFound = false;
 							for (uint32_t y = 0; y < discordGuildMember.data.invites.size(); y += 1) {
-								if (invites[x].code == discordGuildMember.data.invites[y].inviteCode) {
+								if (invites.theInviteDatas[x].code == discordGuildMember.data.invites[y].inviteCode) {
 									isItFound = true;
 									discordGuildMember.data.invites.erase(discordGuildMember.data.invites.begin() + y);
 								}
 							}
 							DiscordInviteData inviteData;
-							inviteData.inviteCode = invites[x].code;
-							inviteData.maxInvites = invites[x].maxUses;
-							inviteData.invitesUsed = invites[x].uses;
+							inviteData.inviteCode = invites.theInviteDatas[x].code;
+							inviteData.maxInvites = invites.theInviteDatas[x].maxUses;
+							inviteData.invitesUsed = invites.theInviteDatas[x].uses;
 							discordGuildMember.data.invites.push_back(inviteData);
 						}
 						for (uint32_t y = 0; y < discordGuildMember.data.invites.size(); y += 1) {
 							bool isItFound02 = false;
-							for (uint32_t z = 0; z < invites.size(); z += 1) {
-								if (discordGuildMember.data.invites[y].inviteCode == invites[z].code) {
+							for (uint32_t z = 0; z < invites.theInviteDatas.size(); z += 1) {
+								if (discordGuildMember.data.invites[y].inviteCode == invites.theInviteDatas[z].code) {
 									isItFound02 = true;
 								}
 							}
@@ -257,10 +257,10 @@ namespace DiscordCoreAPI {
 						DiscordGuildMember discordGuildMember(guildMemberNew);
 						for (uint32_t x = 0; x < discordGuildMember.data.invites.size(); x += 1) {
 							bool isItFound = false;
-							for (uint32_t y = 0; y < invites.size(); y += 1) {
-								if (invites.theInvites[y].code == discordGuildMember.data.invites[x].inviteCode) {
+							for (uint32_t y = 0; y < invites.theInviteDatas.size(); y += 1) {
+								if (invites.theInviteDatas[y].code == discordGuildMember.data.invites[x].inviteCode) {
 									isItFound = true;
-									if (invites.theInvites[y].uses >= discordGuildMember.data.invites[x].invitesUsed + 1) {
+									if (invites.theInviteDatas[y].uses >= discordGuildMember.data.invites[x].invitesUsed + 1) {
 										guildMemberInviterData = guildMemberNew;
 										bool areTheyFound = false;
 										for (auto& value02: discordGuildMember.data.invitedMemberIds) {
@@ -272,8 +272,8 @@ namespace DiscordCoreAPI {
 											discordGuildMember.data.totalInvites += 1;
 											discordGuildMember.data.invitedMemberIds.push_back(std::to_string(newArgs.guildMemberData.id));
 										}
-										discordGuildMember.data.invites[x].invitesUsed = invites[y].uses;
-										discordGuildMember.data.invites[x].maxInvites = invites[y].maxUses;
+										discordGuildMember.data.invites[x].invitesUsed = invites.theInviteDatas[y].uses;
+										discordGuildMember.data.invites[x].maxInvites = invites.theInviteDatas[y].maxUses;
 										currengGuildMemberInvitesCount = discordGuildMember.data.totalInvites;
 										discordGuildMember.writeDataToDB();
 										goto pastPart;
