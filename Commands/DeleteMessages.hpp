@@ -304,16 +304,17 @@ namespace DiscordCoreAPI {
 				std::unique_ptr<MessageData> startingMessage{ std::make_unique<MessageData>() };
 				int64_t totalMessagesReturned{ 1 };
 				int64_t messagesSaved{ 0 };
-				std::vector<Message> originalMessagesArray{};
+				std::vector<Message>originalMessagesArray{};
 				while (totalMessagesReturned > 0) {
-					std::vector<Message> arrayOfMessagesToDelete{};
+					std::vector<Message>arrayOfMessagesToDelete{};
 					if (startingMessage->id == 0) {
 						arrayOfMessagesToDelete = Messages::getMessagesAsync({ .channelId = channelId, .limit = 100 }).get();
 					} else {
 						arrayOfMessagesToDelete = Messages::getMessagesAsync({ .beforeThisId = startingMessage->id, .channelId = channelId, .limit = 100 }).get();
 					}
 
-					originalMessagesArray.insert(originalMessagesArray.end(), arrayOfMessagesToDelete.begin(), arrayOfMessagesToDelete.end());
+					originalMessagesArray.insert(originalMessagesArray.end(), arrayOfMessagesToDelete.begin(),
+						arrayOfMessagesToDelete.end());
 					totalMessagesReturned = arrayOfMessagesToDelete.size();
 					if (arrayOfMessagesToDelete.size() > 0) {
 						*startingMessage = arrayOfMessagesToDelete[arrayOfMessagesToDelete.size() - 1];
@@ -433,8 +434,8 @@ namespace DiscordCoreAPI {
 				std::vector<std::vector<Message>> arrayOfMessageArrays;
 				std::unique_ptr<MessageData> startingMessage{ std::make_unique<MessageData>() };
 				while (x != 0) {
-					std::vector<Message> arrayOfMessages{};
-					std::vector<Message> arrayOfMessagesToDelete{};
+					std::vector<Message>arrayOfMessages{};
+					std::vector<Message>arrayOfMessagesToDelete{};
 					if (y == 0) {
 						arrayOfMessages = Messages::getMessagesAsync({ .channelId = channelId, .limit = 100 }).get();
 						if (arrayOfMessages.size() > 0) {
@@ -490,8 +491,7 @@ namespace DiscordCoreAPI {
 				int32_t totalMessageCount{ 0 };
 				for (int32_t w = 0; w < ( int32_t )arrayOfMessageArrays.size(); w += 1) {
 					for (int32_t z = 0; z < ( int32_t )arrayOfMessageArrays[w].size(); z += 1) {
-						if ((!arrayOfMessageArrays[w][z].timestamp.hasTimeElapsed(14, 0, 0) &&
-								!arrayOfMessageArrays[w][z].pinned &&
+						if ((!arrayOfMessageArrays[w][z].timestamp.hasTimeElapsed(14, 0, 0) && !arrayOfMessageArrays[w][z].pinned &&
 								arrayOfMessageArrays[w][z].timestamp.hasTimeElapsed(0, 0,
 									newDiscordGuild.data.deletionChannels[channelIndex].minutesToWaitUntilDeleted))) {
 							//deleteVector.push_back(arrayOfMessageArrays[w][z]);

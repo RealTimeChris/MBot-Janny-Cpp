@@ -219,7 +219,7 @@ namespace DiscordCoreAPI {
 		msgEmbed02->setTitle("__**Add New Roles:**__");
 		CreateMessageData dataPackage02{};
 		dataPackage02.channelId = discordGuild->data.roleManager.channelId;
-		Guild guildNew = Guilds::getGuildAsync({ .guildId = discordGuild->data.guildId }).get();
+		Guild guildNew = Guilds::getCachedGuildAsync({ .guildId = discordGuild->data.guildId }).get();
 		dataPackage02.addButton(false, "start", "Start", ButtonStyle::Success, "check", 687509905208508640);
 		dataPackage02.addMessageEmbed(*msgEmbed02);
 		std::unique_ptr<Message> newMessage{ std::make_unique<Message>(Messages::createMessageAsync(dataPackage02).get()) };

@@ -183,7 +183,7 @@ namespace DiscordCoreAPI {
 					discordGuild.data.vanityInviteUses = vanityInvite.uses;
 					discordGuild.writeDataToDB();
 				}
-				std::vector<InviteData> invites = Guilds::getGuildInvitesAsync({ .guildId = guild.id }).get();
+				auto invites = Guilds::getGuildInvitesAsync({ .guildId = guild.id }).get();
 				for (uint32_t x = 0; x < invites.size(); x += 1) {
 					for (auto& value2: guild.members) {
 						auto guildMemberNew = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = value2, .guildId = guild.id }).get();
@@ -261,6 +261,7 @@ namespace DiscordCoreAPI {
 								if (invites[y].code == discordGuildMember.data.invites[x].inviteCode) {
 									isItFound = true;
 									if (invites[y].uses >= discordGuildMember.data.invites[x].invitesUsed + 1) {
+
 										guildMemberInviterData = guildMemberNew;
 										bool areTheyFound = false;
 										for (auto& value02: discordGuildMember.data.invitedMemberIds) {
