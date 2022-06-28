@@ -258,9 +258,9 @@ namespace DiscordCoreAPI {
 						for (uint32_t x = 0; x < discordGuildMember.data.invites.size(); x += 1) {
 							bool isItFound = false;
 							for (uint32_t y = 0; y < invites.size(); y += 1) {
-								if (invites.theInvites[y].code == discordGuildMember.data.invites[x].inviteCode) {
+								if (invites[y].code == discordGuildMember.data.invites[x].inviteCode) {
 									isItFound = true;
-									if (invites.theInvites[y].uses >= discordGuildMember.data.invites[x].invitesUsed + 1) {
+									if (invites[y].uses >= discordGuildMember.data.invites[x].invitesUsed + 1) {
 										guildMemberInviterData = guildMemberNew;
 										bool areTheyFound = false;
 										for (auto& value02: discordGuildMember.data.invitedMemberIds) {

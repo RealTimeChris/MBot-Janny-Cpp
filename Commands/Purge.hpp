@@ -144,20 +144,17 @@ namespace DiscordCoreAPI {
 				if (deletePinned) {
 					if (newArgs.commandData.optionsArgs.size() < 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
-							std::optional<std::vector<Message>> messageArray = Messages::getMessagesAsync({
-																											  .beforeThisId = currentMessageId,
-																											  .channelId = newArgs.eventData.getChannelId(),
-																											  .limit = 100,
-																										  })
-																				   .get();
-							if (!messageArray.has_value()) {
+							std::vector<Message> messageArray = Messages::getMessagesAsync({
+								.beforeThisId = currentMessageId,
+								.channelId = newArgs.eventData.getChannelId(),
+								.limit = 100,
+							});
+					
+							if (messageArray.size() == 0) {
 								break;
 							}
-							if (messageArray->size() == 0) {
-								break;
-							}
-							currentMessageId = messageArray->at(messageArray->size() - 1).id;
-							for (auto& value: *messageArray) {
+							currentMessageId = messageArray.at(messageArray.size() - 1).id;
+							for (auto& value: messageArray) {
 								if (!value.timestamp.hasTimeElapsed(14)) {
 									messageIdsToDelete.push_back(value.id);
 								}
