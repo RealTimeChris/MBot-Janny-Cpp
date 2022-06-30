@@ -150,13 +150,12 @@ namespace DiscordCoreAPI {
 																							   .limit = 100,
 																						   })
 																	.get();
-					
+
 							if (messageArray.size() == 0) {
 								break;
 							}
 							currentMessageId = messageArray.at(messageArray.size() - 1).id;
 							for (auto& value: messageArray) {
-
 								if (!value.timestamp.hasTimeElapsed(14)) {
 									messageIdsToDelete.push_back(value.id);
 								}
@@ -167,7 +166,7 @@ namespace DiscordCoreAPI {
 						}
 					} else if (newArgs.commandData.optionsArgs.size() >= 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
-							std::vector<Message>messageArray =
+							std::vector<Message> messageArray =
 								Messages::getMessagesAsync({ .beforeThisId = currentMessageId, .channelId = newArgs.eventData.getChannelId(), .limit = 100 }).get();
 							if (messageArray.size() == 0) {
 								break;
@@ -186,12 +185,12 @@ namespace DiscordCoreAPI {
 				} else {
 					if (newArgs.commandData.optionsArgs.size() < 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
-							std::vector<Message>messageArray = Messages::getMessagesAsync({
-																						.beforeThisId = currentMessageId,
-																						.channelId = newArgs.eventData.getChannelId(),
-																						.limit = 100,
-																					})
-															 .get();
+							std::vector<Message> messageArray = Messages::getMessagesAsync({
+																							   .beforeThisId = currentMessageId,
+																							   .channelId = newArgs.eventData.getChannelId(),
+																							   .limit = 100,
+																						   })
+																	.get();
 
 							if (messageArray.size() == 0) {
 								break;
@@ -208,12 +207,12 @@ namespace DiscordCoreAPI {
 						}
 					} else if (newArgs.commandData.optionsArgs.size() >= 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
-							std::vector<Message>messageArray = Messages::getMessagesAsync({
-																											  .beforeThisId = currentMessageId,
-																											  .channelId = newArgs.eventData.getChannelId(),
-																											  .limit = 100,
-																										  })
-																				   .get();
+							std::vector<Message> messageArray = Messages::getMessagesAsync({
+																							   .beforeThisId = currentMessageId,
+																							   .channelId = newArgs.eventData.getChannelId(),
+																							   .limit = 100,
+																						   })
+																	.get();
 							if (messageArray.size() == 0) {
 								break;
 							}

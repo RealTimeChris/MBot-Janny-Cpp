@@ -280,7 +280,6 @@ namespace DiscordCoreAPI {
 				reportException("DatabaseManagerAgent::run() Error: ");
 				return newData;
 			}
-			
 		}
 
 	  protected:
@@ -428,7 +427,7 @@ namespace DiscordCoreAPI {
 				guildData.memberCount = docValue.view()["memberCount"].get_int32().value;
 				for (auto& value: docValue.view()["deletionChannels"].get_array().value) {
 					DeletionChannelData newData;
-					newData.channelId = value.get_document().view()["channelId"].get_int64().value;					
+					newData.channelId = value.get_document().view()["channelId"].get_int64().value;
 					newData.currentlyBeingDeleted = value.get_document().view()["currentlyBeingDeleted"].get_bool().value;
 					newData.deletionMessageId = value.get_document().view()["deletionMessageId"].get_int64().value;
 					newData.numberOfMessagesToSave = value.get_document().view()["numberOfMessagesToSave"].get_int32().value;
@@ -439,7 +438,7 @@ namespace DiscordCoreAPI {
 				}
 				for (auto& value: docValue.view()["userBanInfo"].get_array().value) {
 					UserBanInfo newData;
-					newData.userId = value["userId"].get_int64().value;					
+					newData.userId = value["userId"].get_int64().value;
 					for (auto& value2: value["userBans"].get_array().value) {
 						BanInfoLite newData02;
 						newData02.userId = value2["userId"].get_int64().value;

@@ -75,7 +75,7 @@ namespace DiscordCoreAPI {
 				}
 
 				InputEventData newEvent01 = newArgs.eventData;
-				
+
 				GuildMember targetGuildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = guild.id }).get();
 				DiscordGuildMember discordGuildMember(targetGuildMember);
 				if (whatAreWeDoing == "add") {

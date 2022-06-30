@@ -261,7 +261,6 @@ namespace DiscordCoreAPI {
 								if (invites[y].code == discordGuildMember.data.invites[x].inviteCode) {
 									isItFound = true;
 									if (invites[y].uses >= discordGuildMember.data.invites[x].invitesUsed + 1) {
-
 										guildMemberInviterData = guildMemberNew;
 										bool areTheyFound = false;
 										for (auto& value02: discordGuildMember.data.invitedMemberIds) {
