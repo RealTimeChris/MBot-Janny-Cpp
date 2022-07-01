@@ -32,16 +32,15 @@ namespace DiscordCoreAPI {
 
 				Guild guild = Guilds::getCachedGuildAsync({ newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-				std::cout << "THE GUILD ID: " << guild.id << std::endl;
 				GetGuildMemberData dataPackage00{};
 				dataPackage00.guildMemberId = newArgs.eventData.getAuthorId();
 				dataPackage00.guildId = guild.id;
 				GuildMember sendingGuildMember = GuildMembers::getCachedGuildMemberAsync(dataPackage00).get();
 
 				bool doWeHaveAdminPerms = doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, sendingGuildMember);
-				RespondToInputEventData dataPackage{ newArgs.eventData };
+				RespondToInputEventData dataPackage{ std::ref(newArgs.eventData) };
 				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
-				newArgs.eventData = InputEvents::respondToInputEventAsync(dataPackage).get();
+				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				if (!doWeHaveAdminPerms) {
 					return;
 				}
@@ -62,7 +61,6 @@ namespace DiscordCoreAPI {
 					std::cmatch userIDMatch;
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();
-					std::cout << "THE USER ID REAL: " << userIDOne << std::endl;
 					userId = stoull(userIDOne);
 				} else if (newArgs.commandData.optionsArgs.size() > 0 && newArgs.commandData.subCommandName == "remove") {
 					whatAreWeDoing = "remove";
@@ -71,10 +69,8 @@ namespace DiscordCoreAPI {
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();
 					userId = stoull(userIDOne);
-					std::cout << "THE USER ID REAL: " << userId << std::endl;
 				}
-
-				InputEventData newEvent01 = newArgs.eventData;
+				InputEventData newEvent01 = newEvent;
 
 				GuildMember targetGuildMember = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = userId, .guildId = guild.id }).get();
 				DiscordGuildMember discordGuildMember(targetGuildMember);
@@ -85,6 +81,20 @@ namespace DiscordCoreAPI {
 					modifyData.guildMemberId = targetGuildMember.id;
 					modifyData.reason = ghostReason;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
+
+					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name + " for the following reason(s): " + ghostReason +
+						"\n Please, contact a moderator or admin to clear this issue up! Thanks!**\n------";
+					std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+					msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
+					msgEmbed->setColor(discordGuild.data.borderColor);
+					msgEmbed->setDescription(msgString);
+					msgEmbed->setTimeStamp(getTimeAndDate());
+					msgEmbed->setTitle("__**You\'ve been ghosted:**__");
+
+					auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
+					CreateMessageData dataPackage{ DmChannel.id };
+					dataPackage.addMessageEmbed(*msgEmbed);
+					Messages::createMessageAsync(dataPackage).get();
 
 					if (targetGuildMember.id == 0) {
 						std::string msgString = "------\n**Hello! There was an error while trying to ghost <@" + std::to_string(userId) + ">**\n------\n";
@@ -103,20 +113,6 @@ namespace DiscordCoreAPI {
 
 					discordGuild.data.ghostedIds.push_back(targetGuildMember.id);
 					discordGuild.writeDataToDB();
-
-					std::string msgString = "------\n**Hello! You've been REDACTED, on the server " + guild.name + " for the following reason(s): " + ghostReason +
-						"\n Please, contact a moderator or admin to clear this issue up! Thanks!**\n------";
-					std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-					msgEmbed->setAuthor(newArgs.discordCoreClient->getBotUser().userName, newArgs.discordCoreClient->getBotUser().avatar);
-					msgEmbed->setColor(discordGuild.data.borderColor);
-					msgEmbed->setDescription(msgString);
-					msgEmbed->setTimeStamp(getTimeAndDate());
-					msgEmbed->setTitle("__**You\'ve been ghosted:**__");
-
-					auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
-					CreateMessageData dataPackage{ DmChannel.id };
-					dataPackage.addMessageEmbed(*msgEmbed);
-					Messages::createMessageAsync(dataPackage).get();
 
 					std::string msgString2 =
 						"------\n**Hello! You've ghosted the following member:** <@" + std::to_string(targetGuildMember.id) + "> (" + targetGuildMember.userName + ")\n------";
@@ -162,7 +158,7 @@ namespace DiscordCoreAPI {
 					}
 					TimeoutGuildMemberData modifyData{};
 					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::None;
-					modifyData.guildId = newArgs.eventData.getGuildId();
+					modifyData.guildId = guild.id;
 					modifyData.reason = ghostReason;
 					modifyData.guildMemberId = targetGuildMember.id;
 					targetGuildMember = GuildMembers::timeoutGuildMemberAsync(modifyData).get();
