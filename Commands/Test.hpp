@@ -7,6 +7,7 @@
 
 namespace DiscordCoreAPI {
 
+
 	class Test : public BaseFunction {
 	  public:
 		Test() {
@@ -24,27 +25,58 @@ namespace DiscordCoreAPI {
 			return std::make_unique<Test>();
 		}
 
-		void execute(BaseFunctionArguments& newArgs) {
+		void execute(BaseFunctionArguments& argsNew) {
 			try {
-				RespondToInputEventData dataPackage{ newArgs.eventData };
-				File theFile{};
-				theFile.fileName = "Cran04.jpeg";
-				theFile.data = loadFileContents("C:/Users/Chris/Downloads/Cran04.jpeg");
-				dataPackage.addFile(theFile);
-				EmbedData theEmbed{};
-				theEmbed.description = "TESTING!";
-				theEmbed.image.url = "attachment://Cran04.jpeg";
-				dataPackage.addMessageEmbed(theEmbed);
-				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
-				auto inputsNew = InputEvents::respondToInputEventAsync(dataPackage).get();
+				GuildMember guildMember =
+					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = argsNew.eventData.getAuthorId(), .guildId = argsNew.eventData.getGuildId() }).get();
+				Guild guild = Guilds::getCachedGuildAsync({ .guildId = argsNew.eventData.getGuildId() }).get();
+				DiscordGuild discordGuild{ guild };
+				VoiceStateData voiceStateData{};
+				Channel channel = Channels::getCachedChannelAsync({ .channelId = argsNew.eventData.getChannelId() }).get();
+				bool areTheyACommander = doWeHaveAdminPermissions(argsNew, argsNew.eventData, discordGuild, channel, guildMember);
 
-				for (uint32_t x = 0; x < 50; x += 1) {
-					RespondToInputEventData dataPackageNew{ inputsNew };
-					dataPackageNew.addContent("POST NUMBER: " + std::to_string(x) +
-						"\n<t:" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()) + ":F>");
-					dataPackageNew.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-					InputEvents::respondToInputEventAsync(dataPackageNew);
+				if (!areTheyACommander) {
+					return;
 				}
+
+				if (guild.voiceStates.contains(guildMember.id)) {
+					voiceStateData = guild.voiceStates.at(guildMember.id);
+					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+					newEmbed->setAuthor(argsNew.eventData.getUserName(), argsNew.eventData.getAvatarUrl());
+					newEmbed->setDescription("------\n__**Enjoy!**__\n------");
+					newEmbed->setTimeStamp(getTimeAndDate());
+					newEmbed->setTitle("__**Joining Now:**__");
+					newEmbed->setColor(discordGuild.data.borderColor);
+					RespondToInputEventData dataPackage(argsNew.eventData);
+					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+					dataPackage.addMessageEmbed(*newEmbed);
+					auto newerEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+				} else {
+					std::unique_ptr<DiscordCoreAPI::EmbedData> newEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+					newEmbed->setAuthor(argsNew.eventData.getUserName(), argsNew.eventData.getAvatarUrl());
+					newEmbed->setDescription("------\n__**Sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
+					newEmbed->setTimeStamp(getTimeAndDate());
+					newEmbed->setTitle("__**Playing Issue:**__");
+					newEmbed->setColor(discordGuild.data.borderColor);
+					RespondToInputEventData dataPackage(argsNew.eventData);
+					dataPackage.setResponseType(InputEventResponseType::Follow_Up_Message);
+					dataPackage.addMessageEmbed(*newEmbed);
+					auto newerEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+					dataPackage.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+					newerEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
+					InputEvents::deleteInputEventResponseAsync(argsNew.eventData).get();
+					InputEvents::deleteInputEventResponseAsync(newerEvent, 20000);
+					return;
+				}
+
+				for (uint32_t x = 0; x < 100; x += 1) {
+					VoiceConnection* voiceConnection = guild.connectToVoice(guildMember.id, 0, true, false);
+					std::this_thread::sleep_for(250ms);
+					guild.disconnect();
+				}
+
+
+				return;
 			} catch (...) {
 				reportException("Test::execute()");
 			}
