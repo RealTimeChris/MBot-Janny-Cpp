@@ -366,7 +366,7 @@ namespace DiscordCoreAPI {
 						GuildMembers::getGuildMemberAsync({ .guildMemberId = returnData[0].interactionData->member.id, .guildId = discordGuild->data.guildId }).get();
 					theRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember, .guildId = discordGuild->data.guildId }).get();
 
-					for (auto value: returnData[0].values) {
+					for (auto& value: returnData[0].values) {
 						bool isItFound{ false };
 						if (value == "exit") {
 							doWeQuit = true;
