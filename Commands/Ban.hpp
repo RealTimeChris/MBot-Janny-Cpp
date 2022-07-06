@@ -29,13 +29,17 @@ namespace DiscordCoreAPI {
 		void execute(BaseFunctionArguments& newArgs) {
 			try {
 				Channel channel = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
+
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
+
 				GuildMember guildMember =
 					GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = newArgs.eventData.getAuthorId(), .guildId = newArgs.eventData.getGuildId() }).get();
+
 				if (!doWeHaveAdminPermissions(newArgs, newArgs.eventData, discordGuild, channel, guildMember)) {
 					return;
 				}
+
 				InputEventData newEvent = newArgs.eventData;
 				std::regex userIdRegex("\\d{18}");
 				std::regex digitDaysRegex("\\d{1}");

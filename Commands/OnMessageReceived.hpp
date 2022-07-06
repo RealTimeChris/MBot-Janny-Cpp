@@ -9,8 +9,7 @@
 
 namespace DiscordCoreAPI {
 
-	CoRoutine<void> onMessageReceived(DiscordCoreAPI::OnMessageCreationData dataPackage) {
-		co_await DiscordCoreAPI::NewThreadAwaitable<void>();
+	void onMessageReceived(DiscordCoreAPI::OnMessageCreationData dataPackage) {
 		if (dataPackage.message.content.find("discord.gg") != std::string::npos && dataPackage.message.author.id != stoull(std::string("898368255121559634")) &&
 			dataPackage.message.author.id != stoull(std::string("936263227417964604"))) {
 			DeleteMessageData deleteMessageData{};
@@ -21,7 +20,6 @@ namespace DiscordCoreAPI {
 			deleteMessageData.timeStamp = dataPackage.message.timestamp;
 			Messages::deleteMessageAsync(deleteMessageData).get();
 		}
-		co_return;
 	}
 
 }
