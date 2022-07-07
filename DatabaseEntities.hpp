@@ -311,7 +311,7 @@ namespace DiscordCoreAPI {
 			DiscordUserData userData{};
 			try {
 				userData.userName = docValue.view()["userName"].get_utf8().value.to_string();
-				userData.userId = static_cast<uint64_t>(docValue.view()["userId"].get_int64().value);
+				userData.userId = docValue.view()["userId"].get_int64().value;
 				auto botCommandersArray = docValue.view()["botCommanders"].get_array();
 				std::vector<uint64_t> newVector;
 				for (const auto& value: botCommandersArray.value) {

@@ -9,6 +9,7 @@
 
 namespace DiscordCoreAPI {
 
+	
 	bool checkForBotCommanderStatus(GuildMember guildMember, DiscordUser& discordUser) {
 		bool areWeACommander;
 		for (auto& value: discordUser.data.botCommanders) {
