@@ -48,12 +48,12 @@ namespace DiscordCoreAPI {
 				std::string whatAreWeDoing;
 				int32_t daysDigit = 0;
 
-				if (newArgs.commandData.optionsArgs.size() > 2) {
-					reason = newArgs.commandData.optionsArgs[2];
+				if (newArgs.optionsArgs.size() > 2) {
+					reason = newArgs.optionsArgs[2];
 				}
-				if (newArgs.commandData.optionsArgs.size() > 3) {
-					if (!std::regex_search(newArgs.commandData.optionsArgs[3], digitDaysRegex) || std::stoll(newArgs.commandData.optionsArgs[3]) > 7 ||
-						std::stoll(newArgs.commandData.optionsArgs[3]) < 0) {
+				if (newArgs.optionsArgs.size() > 3) {
+					if (!std::regex_search(newArgs.optionsArgs[3], digitDaysRegex) || std::stoll(newArgs.optionsArgs[3]) > 7 ||
+						std::stoll(newArgs.optionsArgs[3]) < 0) {
 						std::string msgString = "------\n**Please, enter a proper number of days for purging the user's messages (0-7) (!ban = @USERMENTION, "
 												"REASON, #OFDAYSTOPURGE)**\n------";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
@@ -69,11 +69,11 @@ namespace DiscordCoreAPI {
 						return;
 					} else {
 						std::cmatch dayDigitMatch;
-						std::regex_search(newArgs.commandData.optionsArgs[3].c_str(), dayDigitMatch, digitDaysRegex);
+						std::regex_search(newArgs.optionsArgs[3].c_str(), dayDigitMatch, digitDaysRegex);
 						daysDigit = stol(dayDigitMatch.str());
 					}
 				}
-				whatAreWeDoing = newArgs.commandData.subCommandName;
+				whatAreWeDoing = newArgs.subCommandName;
 				if (whatAreWeDoing == "add") {
 					GuildMember guildMember01 = GuildMembers::getCachedGuildMemberAsync({ .guildMemberId = stoull(userId), .guildId = newArgs.eventData.getGuildId() }).get();
 					GuildMember botGuildMember =

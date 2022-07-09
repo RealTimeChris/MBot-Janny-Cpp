@@ -48,7 +48,7 @@ namespace DiscordCoreAPI {
 				std::regex digitRegex("\\d{1,3}");
 				std::regex userIdRegex("\\d{18}");
 				std::cmatch digitMatch;
-				std::regex_search(newArgs.commandData.optionsArgs[0].c_str(), digitMatch, digitRegex);
+				std::regex_search(newArgs.optionsArgs[0].c_str(), digitMatch, digitRegex);
 				std::string digitString = digitMatch.str();
 				if (stol(digitString) < 2 || stol(digitString) > 100) {
 					std::string msgString = "------\n**Please, enter a proper amount of messages to delete! (2-100) (/purge = #OFMESSAGESTODELETE, @USERMENTION, TRUE/FALSE or "
@@ -65,7 +65,7 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(msgEmbed);
 					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
-				} else if (newArgs.commandData.optionsArgs.size() > 1 && !std::regex_search(newArgs.commandData.optionsArgs[1], userIdRegex)) {
+				} else if (newArgs.optionsArgs.size() > 1 && !std::regex_search(newArgs.optionsArgs[1], userIdRegex)) {
 					std::string msgString = "------\n**Please, enter a proper user mention! (/purge = #OFMESSAGESTODELETE, @USERMENTION, TRUE/FALSE or /purge "
 											"#OFMESSAGESTODELETE, @USERMENTION, TRUE/FALSE, where "
 											"@USERMENTION is optional - select it to only delete messages from that particular user.**\n------";
@@ -81,9 +81,9 @@ namespace DiscordCoreAPI {
 					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
-				if (newArgs.commandData.optionsArgs.size() > 2) {
+				if (newArgs.optionsArgs.size() > 2) {
 					std::string newString;
-					nlohmann::json newJson = nlohmann::json::parse(newArgs.commandData.optionsArgs[2]);
+					nlohmann::json newJson = nlohmann::json::parse(newArgs.optionsArgs[2]);
 					if (newJson.is_boolean()) {
 						bool newBool = newJson.get<bool>();
 						if (newBool) {
@@ -113,16 +113,16 @@ namespace DiscordCoreAPI {
 				dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
 				newEvent01 = InputEvents::respondToInputEventAsync(dataPackage).get();
 
-				if (newArgs.commandData.optionsArgs.size() > 1) {
+				if (newArgs.optionsArgs.size() > 1) {
 					std::cmatch userIdMatch;
-					std::regex_search(newArgs.commandData.optionsArgs[1].c_str(), userIdMatch, userIdRegex);
+					std::regex_search(newArgs.optionsArgs[1].c_str(), userIdMatch, userIdRegex);
 					userId = userIdMatch.str();
 				}
 
 				std::string msgString;
-				if (newArgs.commandData.optionsArgs.size() < 2) {
+				if (newArgs.optionsArgs.size() < 2) {
 					msgString = "------\n**Deleting " + std::to_string(stol(digitString)) + " messages.**\n------";
-				} else if (newArgs.commandData.optionsArgs.size() >= 2) {
+				} else if (newArgs.optionsArgs.size() >= 2) {
 					msgString = "------\n**Deleting " + std::to_string(stol(digitString)) + " messages, from user <@" + userId + ">.**\n------";
 				}
 
@@ -142,7 +142,7 @@ namespace DiscordCoreAPI {
 				std::vector<uint64_t> messageIdsToDelete;
 				uint64_t currentMessageId = newEvent.getMessageId();
 				if (deletePinned) {
-					if (newArgs.commandData.optionsArgs.size() < 2) {
+					if (newArgs.optionsArgs.size() < 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::vector<Message> messageArray = Messages::getMessagesAsync({
 																							   .beforeThisId = currentMessageId,
@@ -164,7 +164,7 @@ namespace DiscordCoreAPI {
 								}
 							}
 						}
-					} else if (newArgs.commandData.optionsArgs.size() >= 2) {
+					} else if (newArgs.optionsArgs.size() >= 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::vector<Message> messageArray =
 								Messages::getMessagesAsync({ .beforeThisId = currentMessageId, .channelId = newArgs.eventData.getChannelId(), .limit = 100 }).get();
@@ -183,7 +183,7 @@ namespace DiscordCoreAPI {
 						}
 					}
 				} else {
-					if (newArgs.commandData.optionsArgs.size() < 2) {
+					if (newArgs.optionsArgs.size() < 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::vector<Message> messageArray = Messages::getMessagesAsync({
 																							   .beforeThisId = currentMessageId,
@@ -205,7 +205,7 @@ namespace DiscordCoreAPI {
 								}
 							}
 						}
-					} else if (newArgs.commandData.optionsArgs.size() >= 2) {
+					} else if (newArgs.optionsArgs.size() >= 2) {
 						while (messageIdsToDelete.size() < messageLimit) {
 							std::vector<Message> messageArray = Messages::getMessagesAsync({
 																							   .beforeThisId = currentMessageId,
@@ -228,13 +228,13 @@ namespace DiscordCoreAPI {
 						}
 					}
 				}
-				if (newArgs.commandData.optionsArgs.size() < 2) {
+				if (newArgs.optionsArgs.size() < 2) {
 					if (messageIdsToDelete.size() < 2) {
 						msgString2 = "------\n**Deleted " + std::to_string(0) + " messages.**\n------";
 					} else {
 						msgString2 = "------\n**Deleted " + std::to_string(messageIdsToDelete.size()) + " messages.**\n------";
 					}
-				} else if (newArgs.commandData.optionsArgs.size() >= 2) {
+				} else if (newArgs.optionsArgs.size() >= 2) {
 					if (messageIdsToDelete.size() < 2) {
 						msgString2 = "------\n**Deleted " + std::to_string(0) + " messages, from the user <@" + userId + ">.**\n------";
 					} else {

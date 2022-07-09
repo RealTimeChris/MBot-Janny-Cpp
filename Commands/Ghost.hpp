@@ -49,22 +49,22 @@ namespace DiscordCoreAPI {
 				std::regex userIdRegexp("\\d{18}");
 				std::string ghostReason;
 				uint64_t userId{};
-				if (newArgs.commandData.subCommandName == "view") {
+				if (newArgs.subCommandName == "view") {
 					whatAreWeDoing = "viewing";
 					userId = newArgs.eventData.getAuthorId();
 				}
-				if (newArgs.commandData.optionsArgs.size() > 0 && newArgs.commandData.subCommandName == "add") {
+				if (newArgs.optionsArgs.size() > 0 && newArgs.subCommandName == "add") {
 					whatAreWeDoing = "add";
-					std::string argOne = newArgs.commandData.optionsArgs[0];
-					std::string argTwo = newArgs.commandData.optionsArgs[1];
+					std::string argOne = newArgs.optionsArgs[0];
+					std::string argTwo = newArgs.optionsArgs[1];
 					ghostReason = argTwo;
 					std::cmatch userIDMatch;
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();
 					userId = stoull(userIDOne);
-				} else if (newArgs.commandData.optionsArgs.size() > 0 && newArgs.commandData.subCommandName == "remove") {
+				} else if (newArgs.optionsArgs.size() > 0 && newArgs.subCommandName == "remove") {
 					whatAreWeDoing = "remove";
-					std::string argOne = newArgs.commandData.optionsArgs[0];
+					std::string argOne = newArgs.optionsArgs[0];
 					std::cmatch userIDMatch;
 					std::regex_search(argOne.c_str(), userIDMatch, userIdRegexp);
 					std::string userIDOne = userIDMatch.str();

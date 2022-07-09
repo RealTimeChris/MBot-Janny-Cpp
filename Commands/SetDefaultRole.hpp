@@ -84,18 +84,18 @@ namespace DiscordCoreAPI {
 
 				std::string whatAreWeDoing;
 				std::string roleId;
-				if (newArgs.commandData.subCommandName == "view") {
+				if (newArgs.subCommandName == "view") {
 					whatAreWeDoing = "view";
 				}
-				if (newArgs.commandData.optionsArgs.size() > 0) {
-					if (convertToLowerCase(newArgs.commandData.subCommandName) == "add") {
+				if (newArgs.optionsArgs.size() > 0) {
+					if (convertToLowerCase(newArgs.subCommandName) == "add") {
 						whatAreWeDoing = "add";
-					} else if (convertToLowerCase(newArgs.commandData.subCommandName) == "remove") {
+					} else if (convertToLowerCase(newArgs.subCommandName) == "remove") {
 						whatAreWeDoing = "remove";
 					}
 				}
-				if (newArgs.commandData.optionsArgs.size() > 0) {
-					roleId = newArgs.commandData.optionsArgs[0];
+				if (newArgs.optionsArgs.size() > 0) {
+					roleId = newArgs.optionsArgs[0];
 				}
 
 				std::vector<Role> roleArray = Roles::getGuildRolesAsync({ .guildId = newArgs.eventData.getGuildId() }).get();

@@ -49,9 +49,9 @@ namespace DiscordCoreAPI {
 				std::string whatAreWeDoing;
 				std::regex messageCountRegex("\\d{1,18}");
 				int32_t howManyBack = 0;
-				if (newArgs.commandData.subCommandName == "add" && newArgs.commandData.optionsArgs.size() < 2) {
-					if (!std::regex_search(newArgs.commandData.optionsArgs[1].c_str(), messageCountRegex) || std::stoll(newArgs.commandData.optionsArgs[1]) < 0 ||
-						std::stoll(newArgs.commandData.optionsArgs[1]) > 10000) {
+				if (newArgs.subCommandName == "add" && newArgs.optionsArgs.size() < 2) {
+					if (!std::regex_search(newArgs.optionsArgs[1].c_str(), messageCountRegex) || std::stoll(newArgs.optionsArgs[1]) < 0 ||
+						std::stoll(newArgs.optionsArgs[1]) > 10000) {
 						std::string msgString = "------\n**Please enter a valid number of messages back to save! (!setdeletionstatus = add/remove, "
 												"AMOUNTOFMESSAGESTOSAVE, NUMBEROFMINUTESTOWAITUNTILDELETED)**\n------";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
@@ -69,8 +69,8 @@ namespace DiscordCoreAPI {
 				}
 				int64_t numberOfMinutesToWait{ 0 };
 				try {
-					if (newArgs.commandData.optionsArgs.size() > 1) {
-						if (stoll(newArgs.commandData.optionsArgs[1]) <= 0) {
+					if (newArgs.optionsArgs.size() > 1) {
+						if (stoll(newArgs.optionsArgs[1]) <= 0) {
 							std::string msgString = "------\n**Please enter a valid number of minutes to save the messages for! (!setdeletionstatus = "
 													"add/remove, AMOUNTOFMESSAGESTOSAVE, NUMBEROFMINUTESTOWAITUNTILDELETED)**\n------";
 							std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
@@ -85,7 +85,7 @@ namespace DiscordCoreAPI {
 							auto event01 = InputEvents::respondToInputEventAsync(dataPackage).get();
 							return;
 						} else {
-							numberOfMinutesToWait = stoll(newArgs.commandData.optionsArgs[1]);
+							numberOfMinutesToWait = stoll(newArgs.optionsArgs[1]);
 						}
 					}
 				} catch (...) {
@@ -104,13 +104,13 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				if (newArgs.commandData.optionsArgs.size() > 1) {
-					whatAreWeDoing = convertToLowerCase(newArgs.commandData.subCommandName);
+				if (newArgs.optionsArgs.size() > 1) {
+					whatAreWeDoing = convertToLowerCase(newArgs.subCommandName);
 					std::cmatch howManyMatch;
-					std::regex_search(newArgs.commandData.optionsArgs[0].c_str(), howManyMatch, messageCountRegex);
+					std::regex_search(newArgs.optionsArgs[0].c_str(), howManyMatch, messageCountRegex);
 					howManyBack = ( int32_t )std::stoll(howManyMatch.str());
-				} else if (newArgs.commandData.optionsArgs.size() == 0) {
-					whatAreWeDoing = convertToLowerCase(newArgs.commandData.subCommandName);
+				} else if (newArgs.optionsArgs.size() == 0) {
+					whatAreWeDoing = convertToLowerCase(newArgs.subCommandName);
 					howManyBack = 0;
 				}
 

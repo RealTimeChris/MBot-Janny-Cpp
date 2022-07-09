@@ -46,15 +46,15 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				if (newArgs.commandData.optionsArgs.size() > 0) {
-					if (newArgs.commandData.optionsArgs[0] == "true") {
-						newArgs.commandData.optionsArgs[0] = "enable";
-					} else if (newArgs.commandData.optionsArgs[0] == "false") {
-						newArgs.commandData.optionsArgs[0] = "disable";
+				if (newArgs.optionsArgs.size() > 0) {
+					if (newArgs.optionsArgs[0] == "true") {
+						newArgs.optionsArgs[0] = "enable";
+					} else if (newArgs.optionsArgs[0] == "false") {
+						newArgs.optionsArgs[0] = "disable";
 					}
 				}
 
-				if (newArgs.commandData.optionsArgs.size() == 0) {
+				if (newArgs.optionsArgs.size() == 0) {
 					std::vector<EmbedFieldData> fields;
 					for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
 						if (Channels::getCachedChannelAsync({ .channelId = discordGuild.data.logs[x].loggingChannelId }).get().name == "") {
@@ -97,7 +97,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				else if (convertToLowerCase(newArgs.commandData.optionsArgs[0]) != "enable" && convertToLowerCase(newArgs.commandData.optionsArgs[0]) != "disable") {
+				else if (convertToLowerCase(newArgs.optionsArgs[0]) != "enable" && convertToLowerCase(newArgs.optionsArgs[0]) != "disable") {
 					std::string msgString = "------\n**Please, enter enable or disable for the first argument of this command! (!managelogs = "
 											"<enable/disable>, <logname>)**\n------";
 					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
@@ -111,7 +111,7 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
-				} else if (newArgs.commandData.optionsArgs[1] == "") {
+				} else if (newArgs.optionsArgs[1] == "") {
 					std::string msgString = "------\n**Please, enter a log name to disable or enable as the second argument of this command!";
 					std::unique_ptr<EmbedData> msgEmbed{ std::make_unique<EmbedData>() };
 					msgEmbed->setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
@@ -125,10 +125,10 @@ namespace DiscordCoreAPI {
 					InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else {
-					if (convertToLowerCase(newArgs.commandData.optionsArgs[0]) == "enable") {
+					if (convertToLowerCase(newArgs.optionsArgs[0]) == "enable") {
 						bool isItFound{ false };
 						for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
-							if (convertToLowerCase(newArgs.commandData.optionsArgs[1]) == discordGuild.data.logs[x].nameSmall) {
+							if (convertToLowerCase(newArgs.optionsArgs[1]) == discordGuild.data.logs[x].nameSmall) {
 								isItFound = true;
 								Channel channelNew = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 								discordGuild.data.logs[x].loggingChannelId = channelNew.id;
@@ -163,10 +163,10 @@ namespace DiscordCoreAPI {
 							dataPackage.addMessageEmbed(*msgEmbed);
 							InputEvents::respondToInputEventAsync(dataPackage).get();
 						}
-					} else if (convertToLowerCase(newArgs.commandData.optionsArgs[0]) == "disable") {
+					} else if (convertToLowerCase(newArgs.optionsArgs[0]) == "disable") {
 						bool isItFound{ false };
 						for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
-							if (convertToLowerCase(newArgs.commandData.optionsArgs[1]) == discordGuild.data.logs[x].nameSmall) {
+							if (convertToLowerCase(newArgs.optionsArgs[1]) == discordGuild.data.logs[x].nameSmall) {
 								isItFound = true;
 								Channel channelNew = Channels::getCachedChannelAsync({ .channelId = newArgs.eventData.getChannelId() }).get();
 								discordGuild.data.logs[x].loggingChannelId = 0;

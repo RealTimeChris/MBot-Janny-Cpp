@@ -6,6 +6,7 @@
 #pragma once
 
 #include "HelperFunctions.hpp"
+#include <regex>
 
 namespace DiscordCoreAPI {
 
@@ -45,7 +46,7 @@ namespace DiscordCoreAPI {
 				uint64_t userId{ 0 };
 				std::regex userIdRegex("\\d{18}");
 				std::cmatch userIDMatch{};
-				std::regex_search(newArgs.commandData.optionsArgs[0].c_str(), userIDMatch, userIdRegex);
+				std::regex_search(newArgs.optionsArgs[0].c_str(), userIDMatch, userIdRegex);
 				std::string userIDOne = userIDMatch.str();
 				userId = stoull(userIDOne);
 

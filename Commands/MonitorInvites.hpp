@@ -44,7 +44,7 @@ namespace DiscordCoreAPI {
 					return;
 				}
 
-				if (newArgs.commandData.optionsArgs[0] == "add") {
+				if (newArgs.optionsArgs[0] == "add") {
 					discordGuild.data.inviteReportingChannelId = newArgs.eventData.getChannelId();
 					discordGuild.writeDataToDB();
 					std::string msgString = "**------\nNice! You've activated invite tracking by adding the channel <#" + std::to_string(newArgs.eventData.getChannelId()) +
@@ -60,7 +60,7 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
-				} else if (newArgs.commandData.optionsArgs[0] == "remove") {
+				} else if (newArgs.optionsArgs[0] == "remove") {
 					discordGuild.data.inviteReportingChannelId = 0;
 					discordGuild.writeDataToDB();
 					std::string msgString = "**------\nNice! You've de-activated invite tracking by removing the channel <#" + std::to_string(newArgs.eventData.getChannelId()) +
@@ -76,7 +76,7 @@ namespace DiscordCoreAPI {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					InputEvents::respondToInputEventAsync(dataPackage).get();
 					return;
-				} else if (newArgs.commandData.optionsArgs[0] == "view") {
+				} else if (newArgs.optionsArgs[0] == "view") {
 					RespondToInputEventData dataPackage(newArgs.eventData);
 					dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
 					auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();

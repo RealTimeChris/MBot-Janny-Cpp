@@ -53,17 +53,17 @@ namespace DiscordCoreAPI {
 				uint64_t roleId{ 0 };
 				std::regex roleIdRegex{ "\\d{18}" };
 				std::string theMessage{ "" };
-				if (newArgs.commandData.subCommandName == "add") {
+				if (newArgs.subCommandName == "add") {
 					whatAreWeDoing = "add";
 					std::cmatch roleIdMatch{};
-					roleId = stoull(newArgs.commandData.optionsArgs[0]);
-				} else if (newArgs.commandData.subCommandName == "remove") {
+					roleId = stoull(newArgs.optionsArgs[0]);
+				} else if (newArgs.subCommandName == "remove") {
 					whatAreWeDoing = "remove";
 					std::cmatch roleIdMatch{};
-					roleId = stoull(newArgs.commandData.optionsArgs[0]);
-				} else if (newArgs.commandData.subCommandName == "instantiate") {
+					roleId = stoull(newArgs.optionsArgs[0]);
+				} else if (newArgs.subCommandName == "instantiate") {
 					whatAreWeDoing = "instantiate";
-					theMessage = newArgs.commandData.optionsArgs[0];
+					theMessage = newArgs.optionsArgs[0];
 				}
 				if (whatAreWeDoing == "add") {
 					bool isItFound{ false };
