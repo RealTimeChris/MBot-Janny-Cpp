@@ -320,7 +320,7 @@ namespace DiscordCoreAPI {
 					}
 				}
 				std::vector<Message> theMessagesFinal{};
-				theMessagesFinal.insert(theMessagesFinal.begin(), originalMessagesArray.rend(), originalMessagesArray.rbegin());
+				theMessagesFinal.insert(theMessagesFinal.begin(), originalMessagesArray.rbegin(), originalMessagesArray.rend());
 				std::vector<Message> messagesToDelete{};
 				for (uint64_t x = 0; x < originalMessagesArray.size(); x += 1) {
 					if (!originalMessagesArray[x].pinned &&
