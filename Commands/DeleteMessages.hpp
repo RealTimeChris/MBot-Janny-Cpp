@@ -338,14 +338,15 @@ namespace DiscordCoreAPI {
 					}
 				}
 
+				if (messagesToDelete.size() > 1) {
+					messagesToDelete.erase(messagesToDelete.begin());
+				}
 				for (int32_t x = 0; x < messagesToDelete.size(); x += 1) {
 					if (messagesToDelete[x].pinned) {
 						messagesToDelete.erase(messagesToDelete.begin() + x);
 					}
 				}
-				if (messagesToDelete.size() > 0) {
-					messagesToDelete.erase(messagesToDelete.begin());
-				}
+
 				std::vector<uint64_t> purgeVector{};
 				std::vector<Message> deleteVector{};
 				int32_t totalMessageCount{ 0 };
