@@ -343,7 +343,9 @@ namespace DiscordCoreAPI {
 						messagesToDelete.erase(messagesToDelete.begin() + x);
 					}
 				}
-
+				if (messagesToDelete.size() > 0) {
+					messagesToDelete.erase(messagesToDelete.begin());
+				}
 				std::vector<uint64_t> purgeVector{};
 				std::vector<Message> deleteVector{};
 				int32_t totalMessageCount{ 0 };
