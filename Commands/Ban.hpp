@@ -52,8 +52,7 @@ namespace DiscordCoreAPI {
 					reason = newArgs.optionsArgs[2];
 				}
 				if (newArgs.optionsArgs.size() > 3) {
-					if (!std::regex_search(newArgs.optionsArgs[3], digitDaysRegex) || std::stoll(newArgs.optionsArgs[3]) > 7 ||
-						std::stoll(newArgs.optionsArgs[3]) < 0) {
+					if (!std::regex_search(newArgs.optionsArgs[3], digitDaysRegex) || std::stoll(newArgs.optionsArgs[3]) > 7 || std::stoll(newArgs.optionsArgs[3]) < 0) {
 						std::string msgString = "------\n**Please, enter a proper number of days for purging the user's messages (0-7) (!ban = @USERMENTION, "
 												"REASON, #OFDAYSTOPURGE)**\n------";
 						std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
