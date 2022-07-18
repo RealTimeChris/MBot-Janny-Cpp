@@ -587,7 +587,6 @@ namespace DiscordCoreAPI {
 			this->getDataFromDB();
 			this->data.userId = userIdNew;
 			this->data.userName = userNameNew;
-			this->writeDataToDB();
 		}
 
 		void writeDataToDB() {
@@ -620,7 +619,6 @@ namespace DiscordCoreAPI {
 			this->data.guildId = guildData.id;
 			this->data.guildName = guildData.name;
 			this->data.memberCount = guildData.memberCount;
-			this->writeDataToDB();
 		}
 
 		void writeDataToDB() {
@@ -655,10 +653,9 @@ namespace DiscordCoreAPI {
 				this->data.guildMemberMention = "<@" + std::to_string(this->data.guildMemberId) + ">";
 			} else {
 				this->data.displayName = guildMemberData.nick;
-				this->data.guildMemberMention = "<@" + std::to_string(this->data.guildMemberId) + ">";
+				this->data.guildMemberMention = "<@!" + std::to_string(this->data.guildMemberId) + ">";
 			}
 			this->data.userName = guildMemberData.userName;
-			this->writeDataToDB();
 		}
 
 		void writeDataToDB() {
