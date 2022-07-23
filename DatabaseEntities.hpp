@@ -184,12 +184,11 @@ namespace DiscordCoreAPI {
 		}
 
 		static mongocxx::pool::entry getClient() {
-			std::lock_guard<std::mutex> workloadLock{ DatabaseManagerAgent::workloadMutex02 };
+			std::lock_guard<std::mutex> workloadLock{ DatabaseManagerAgent::workloadMutex01 };
 			return DatabaseManagerAgent::thePool.acquire();
 		}
 
 		static DatabaseReturnValue submitWorkloadAndGetResults(DatabaseWorkload workload) {
-			std::lock_guard<std::mutex> workloadLock{ DatabaseManagerAgent::workloadMutex01 };
 			DatabaseReturnValue newData{};
 			mongocxx::pool::entry thePtr = DatabaseManagerAgent::getClient();
 			try {
@@ -286,7 +285,6 @@ namespace DiscordCoreAPI {
 	  protected:
 		static mongocxx::instance instance;
 		static std::mutex workloadMutex01;
-		static std::mutex workloadMutex02;
 		static mongocxx::pool thePool;
 		static uint64_t botUserId;
 
@@ -679,7 +677,6 @@ namespace DiscordCoreAPI {
 	mongocxx::instance DatabaseManagerAgent::instance{};
 	mongocxx::pool DatabaseManagerAgent::thePool{ mongocxx::uri{} };
 	std::mutex DatabaseManagerAgent::workloadMutex01{};
-	std::mutex DatabaseManagerAgent::workloadMutex02{};
 	uint64_t DatabaseManagerAgent::botUserId{ 0 };
 	int32_t DiscordUser::guildCount{ 0 };
 
