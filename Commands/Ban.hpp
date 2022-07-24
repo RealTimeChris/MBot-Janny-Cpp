@@ -241,6 +241,7 @@ namespace DiscordCoreAPI {
 					auto returnValue =
 						moveThroughMessagePages(std::to_string(newArgs.eventData.getAuthorId()), InputEventData(newEvent), currentPage, pageEmbeds, false, 120000, true);
 					if (returnValue.buttonId == "exit" || returnValue.buttonId == "empty") {
+						std::cout << "WERE HERE THIS IS IT!" << std::endl;
 						InputEvents::deleteInputEventResponseAsync(returnValue.inputEventData);
 						return;
 					}

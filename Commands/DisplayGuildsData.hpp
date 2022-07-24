@@ -40,8 +40,7 @@ namespace DiscordCoreAPI {
 					std::string msgString = "__Guild Name:__ " + static_cast<std::string>(value.name) + "\n";
 					msgString += "__Guild ID:__ " + std::to_string(value.id) + "\n";
 					msgString += "__Member Count:__ " + std::to_string(value.memberCount) + "\n";
-
-					msgString += "__Joined At:__ " + value.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime) + "\n";
+					msgString += "__Joined At:__ " + static_cast<std::string>(value.joinedAt) + "\n";
 					User owner = Users::getUserAsync({ value.ownerId }).get();
 					msgString += "__Guild Owner:__ <@!" + std::to_string(value.ownerId) + "> " + static_cast<std::string>(owner.userName) + "#" +
 						static_cast<std::string>(owner.discriminator) + "\n";

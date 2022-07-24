@@ -34,7 +34,8 @@ namespace DiscordCoreAPI {
 				int64_t currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 				AuditLogEntryData auditLogEntry{};
 				for (auto& value: auditLogs.auditLogEntries) {
-					if (currentTime - value.createdTimeStamp.convertTimestampToMsInteger() < 15000) {
+					value.createdTimeStamp.convertTimeStampToTimeUnits(TimeFormat::LongDateTime);
+					if (currentTime - static_cast<uint64_t>(value.createdTimeStamp) < 15000) {
 						auditLogEntry = value;
 					}
 				}

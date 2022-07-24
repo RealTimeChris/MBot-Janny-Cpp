@@ -68,7 +68,7 @@ namespace DiscordCoreAPI {
 				fields.push_back(field3);
 				EmbedFieldData field4{};
 				field4.Inline = true;
-				field4.value = guildMember.joinedAt.getDateTimeStamp(TimeFormat::LongDateTime);
+				field4.value = static_cast<std::string>(guildMember.joinedAt);
 				field4.name = "__Joined:__";
 				fields.push_back(field4);
 				EmbedFieldData field5{};
