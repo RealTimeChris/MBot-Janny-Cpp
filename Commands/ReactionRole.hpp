@@ -152,8 +152,14 @@ namespace DiscordCoreAPI {
 						}
 					}
 					if (discordGuild->data.roleManager.theRoles.size() == 0) {
-						std::unique_ptr<Message> messageNew{ std::make_unique<Message>(
-							Messages::getMessageAsync({ .channelId = discordGuild->data.roleManager.channelId, .id = discordGuild->data.roleManager.messageId }).get()) };
+						std::unique_ptr<Message> messageNew{};
+						try {
+							messageNew = std::make_unique<Message>(
+								Messages::getMessageAsync({ .channelId = discordGuild->data.roleManager.channelId, .id = discordGuild->data.roleManager.messageId }).get());
+						} catch (...) {
+							reportException("getMessageAsync()");
+						}
+						
 						Messages::deleteMessageAsync({ .timeStamp = messageNew->timestamp, .channelId = messageNew->channelId, .messageId = messageNew->id, .reason = "Deleting!" })
 							.get();
 						discordGuild->data.roleManager.channelId = 0;
@@ -316,6 +322,7 @@ namespace DiscordCoreAPI {
 					for (int32_t y = currentPageIndex * 25; y < currentPageIndex * 25 + 25 && y < discordGuild.data.roleManager.theRoles.size(); y += 1) {
 						std::unique_ptr<SelectOptionData> newOption{ std::make_unique<SelectOptionData>() };
 						roleNew = Roles::getRoleAsync({ .guildId = discordGuild.data.guildId, .roleId = discordGuild.data.roleManager.theRoles[y] }).get();
+						std::cout << "ROLE ID: " << roleNew.id << std::endl;
 						newOption->emoji.name = roleNew.unicodeEmoji;
 						newOption->description = roleNew.name;
 						newOption->label = roleNew.name;
@@ -390,53 +397,56 @@ namespace DiscordCoreAPI {
 					GuildMember guildMember =
 						GuildMembers::getGuildMemberAsync({ .guildMemberId = returnData[0].interactionData->member.id, .guildId = discordGuild.data.guildId }).get();
 					theRoles = Roles::getGuildMemberRolesAsync({ .guildMember = guildMember, .guildId = discordGuild.data.guildId }).get();
+					for (auto& value01: returnData) {
+						for (auto& value02: value01.values) {
+							std::cout << "THE VALUE: " << value02 << std::endl;
+							bool isItFound{ false };
+							if (value02 == "exit") {
+								doWeQuit = true;
+								RespondToInputEventData dataPackage03(newEvent);
+								dataPackage03.setResponseType(InputEventResponseType::Edit_Follow_Up_Message);
+								dataPackage03.addMessageEmbed(messageEmbeds[currentPageIndex]);
+								InputEvents::respondToInputEventAsync(dataPackage03).get();
+								continue;
+							}
+							for (auto& value02: theRoles) {
+								if (value02.id == value02.id) {
+									isItFound = true;
+									break;
+								}
+							}
 
-					for (auto& value: returnData[0].values) {
-						std::cout << "THE VALUE: " << value << std::endl;
-						bool isItFound{ false };
-						if (value == "exit") {
-							doWeQuit = true;
-							RespondToInputEventData dataPackage03(newEvent);
-							dataPackage03.setResponseType(InputEventResponseType::Edit_Follow_Up_Message);
-							dataPackage03.addMessageEmbed(messageEmbeds[currentPageIndex]);
-							InputEvents::respondToInputEventAsync(dataPackage03).get();
-							continue;
-						}
-						for (auto& value02: theRoles) {
-							if (value02.id == stoull(value)) {
-								isItFound = true;
-								break;
+							if (isItFound) {
+								std::string msgString = "------\n**Sorry, but you already have a role called <@&" + value02 + ">!**\n------";
+								std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+								msgEmbed->setAuthor(inputData.getUserName(), inputData.getAvatarUrl());
+								msgEmbed->setColor(discordGuild.data.borderColor);
+								msgEmbed->setDescription(msgString);
+								msgEmbed->setTimeStamp(getTimeAndDate());
+								msgEmbed->setTitle("__**Role Granting Issue:**__");
+								RespondToInputEventData dataPackage02(eventNew);
+								dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+								dataPackage02.addMessageEmbed(*msgEmbed);
+								eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
+							} else {
+								Roles::addGuildMemberRoleAsync(
+									{ .guildId = inputData.getGuildId(), .userId = guildMember.id, .roleId = stoull(value02), .reason = "Role-granting." })
+									.get();
+								std::string msgString = "------\n**Nicely done! You've added the <@&" + value02 + "> role to yourself!**\n------";
+								std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
+								msgEmbed->setAuthor(inputData.getUserName(), inputData.getAvatarUrl());
+								msgEmbed->setColor(discordGuild.data.borderColor);
+								msgEmbed->setDescription(msgString);
+								msgEmbed->setTimeStamp(getTimeAndDate());
+								msgEmbed->setTitle("__**New Role Granted:**__");
+								RespondToInputEventData dataPackage02(eventNew);
+								dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
+								dataPackage02.addMessageEmbed(*msgEmbed);
+								eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
 							}
 						}
-
-						if (isItFound) {
-							std::string msgString = "------\n**Sorry, but you already have a role called <@&" + value + ">!**\n------";
-							std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-							msgEmbed->setAuthor(inputData.getUserName(), inputData.getAvatarUrl());
-							msgEmbed->setColor(discordGuild.data.borderColor);
-							msgEmbed->setDescription(msgString);
-							msgEmbed->setTimeStamp(getTimeAndDate());
-							msgEmbed->setTitle("__**Role Granting Issue:**__");
-							RespondToInputEventData dataPackage02(eventNew);
-							dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-							dataPackage02.addMessageEmbed(*msgEmbed);
-							eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
-						} else {
-							Roles::addGuildMemberRoleAsync({ .guildId = inputData.getGuildId(), .userId = guildMember.id, .roleId = stoull(value), .reason = "Role-granting." })
-								.get();
-							std::string msgString = "------\n**Nicely done! You've added the <@&" + value + "> role to yourself!**\n------";
-							std::unique_ptr<DiscordCoreAPI::EmbedData> msgEmbed{ std::make_unique<DiscordCoreAPI::EmbedData>() };
-							msgEmbed->setAuthor(inputData.getUserName(), inputData.getAvatarUrl());
-							msgEmbed->setColor(discordGuild.data.borderColor);
-							msgEmbed->setDescription(msgString);
-							msgEmbed->setTimeStamp(getTimeAndDate());
-							msgEmbed->setTitle("__**New Role Granted:**__");
-							RespondToInputEventData dataPackage02(eventNew);
-							dataPackage02.setResponseType(InputEventResponseType::Ephemeral_Follow_Up_Message);
-							dataPackage02.addMessageEmbed(*msgEmbed);
-							eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get().getInteractionData();
-						}
 					}
+					
 					if (doWeQuit) {
 						co_return;
 					} else {
