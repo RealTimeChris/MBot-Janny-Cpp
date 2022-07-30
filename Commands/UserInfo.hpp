@@ -76,7 +76,7 @@ namespace DiscordCoreAPI {
 				field5.value = guildMember.getCreatedAtTimestamp(TimeFormat::LongDateTime);
 				field5.name = "__Created At:__";
 				fields.push_back(field5);
-				Permissions permsString = Permissions::getCurrentChannelPermissions(guildMember, channel);
+				Permissions permsString = Permissions{ Permissions::getCurrentChannelPermissions(guildMember, channel) };
 				std::vector<std::string> permissionsArray = permsString.displayPermissions();
 				std::string msgString;
 				for (int32_t x = 0; x < permissionsArray.size(); x += 1) {
@@ -107,7 +107,7 @@ namespace DiscordCoreAPI {
 				msgEmbed.setColor(discordGuild.data.borderColor);
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**User Info:**__");
-				msgEmbed.setImage(guildMember.userAvatar);
+				msgEmbed.setImage(guildMember.userAvatar + "?size=4096");
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.fields = fields;
 				RespondToInputEventData dataPackage02(newArgs.eventData);

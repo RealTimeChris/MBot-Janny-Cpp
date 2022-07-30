@@ -57,7 +57,7 @@ namespace DiscordCoreAPI {
 				msgEmbed.setColor(discordGuild.data.borderColor);
 				msgEmbed.setDescription("<@" + std::to_string(guildMemberGet.id) + ">'s Avatar");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setImage(guildMemberGet.userAvatar);
+				msgEmbed.setImage(guildMemberGet.userAvatar + "?size=4096");
 				msgEmbed.setTitle("__**User Avatar:**__");
 				RespondToInputEventData dataPackage(newArgs.eventData);
 				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
