@@ -33,11 +33,11 @@ namespace DiscordCoreAPI {
 				auto newEvent = InputEvents::respondToInputEventAsync(dataPackage).get();
 				Guild guild = Guilds::getCachedGuildAsync({ .guildId = newArgs.eventData.getGuildId() }).get();
 				DiscordGuild discordGuild{ guild };
-				/*
+				
 				CreateGlobalApplicationCommandData reactionRoleData{};
 				reactionRoleData.dmPermission = false;
 				reactionRoleData.applicationId = newArgs.discordCoreClient->getBotUser().id;
-				reactionRoleData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				reactionRoleData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				reactionRoleData.description = "Setup or instantiate the 'reaction role' menu.";
 				reactionRoleData.name = "reactionrole";
 				reactionRoleData.type = ApplicationCommandType::Chat_Input;
@@ -79,7 +79,7 @@ namespace DiscordCoreAPI {
 				CreateGlobalApplicationCommandData registerSetDefaultRoleIdsData{};
 				registerSetDefaultRoleIdsData.dmPermission = false;
 				registerSetDefaultRoleIdsData.applicationId = newArgs.discordCoreClient->getBotUser().id;
-				registerSetDefaultRoleIdsData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				registerSetDefaultRoleIdsData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				registerSetDefaultRoleIdsData.description = "Sets a default role to be added to a new user, or removes one.";
 				registerSetDefaultRoleIdsData.name = "setdefaultrole";
 				registerSetDefaultRoleIdsData.type = ApplicationCommandType::Chat_Input;
@@ -116,13 +116,13 @@ namespace DiscordCoreAPI {
 				createBotInfoCommandData.dmPermission = true;
 				createBotInfoCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createBotInfoCommandData.description = "Displays info about the current bot.";
-				createBotInfoCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createBotInfoCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createBotInfoCommandData.name = "botinfo";
 				createBotInfoCommandData.type = ApplicationCommandType::Chat_Input;
 				ApplicationCommands::createGlobalApplicationCommandAsync(createBotInfoCommandData);
 
 				CreateGlobalApplicationCommandData createDisplayGuildsDataCommandData{};
-				createDisplayGuildsDataCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createDisplayGuildsDataCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createDisplayGuildsDataCommandData.dmPermission = true;
 				createDisplayGuildsDataCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createDisplayGuildsDataCommandData.description = "View the list of servers that this bot is in.";
@@ -135,7 +135,7 @@ namespace DiscordCoreAPI {
 				registerGhostCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				registerGhostCommandData.description = "Mutes/silences a server-member.";
 				registerGhostCommandData.name = "ghost";
-				registerGhostCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				registerGhostCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				registerGhostCommandData.type = ApplicationCommandType::Chat_Input;
 				ApplicationCommandOptionData createGhostOptionOne;
 				createGhostOptionOne.type = ApplicationCommandOptionType::Sub_Command;
@@ -177,7 +177,7 @@ namespace DiscordCoreAPI {
 				registerPurgeCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				registerPurgeCommandData.description = "Purges a bulk of messages, possibly from a particular user.";
 				registerPurgeCommandData.name = "purge";
-				registerPurgeCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				registerPurgeCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				registerPurgeCommandData.type = ApplicationCommandType::Chat_Input;
 				ApplicationCommandOptionData createPurgeOptionOne;
 				createPurgeOptionOne.type = ApplicationCommandOptionType::Integer;
@@ -204,7 +204,7 @@ namespace DiscordCoreAPI {
 				CreateGlobalApplicationCommandData registerServerInfoCommandData{};
 				registerServerInfoCommandData.dmPermission = false;
 				registerServerInfoCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
-				registerServerInfoCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				registerServerInfoCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				registerServerInfoCommandData.description = "Displays info about the current server.";
 				registerServerInfoCommandData.name = "serverinfo";
 				registerServerInfoCommandData.type = ApplicationCommandType::Chat_Input;
@@ -216,7 +216,7 @@ namespace DiscordCoreAPI {
 				createSetBorderColorCommandData.description = "Set the default color of borders.";
 				createSetBorderColorCommandData.name = "setbordercolor";
 				createSetBorderColorCommandData.type = ApplicationCommandType::Chat_Input;
-				createSetBorderColorCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createSetBorderColorCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				ApplicationCommandOptionData createSetBorderColoreOptionOne;
 				createSetBorderColoreOptionOne.type = ApplicationCommandOptionType::String;
 				createSetBorderColoreOptionOne.name = "botname";
@@ -237,7 +237,7 @@ namespace DiscordCoreAPI {
 
 				CreateGlobalApplicationCommandData createUserInfoCommandData{};
 				createUserInfoCommandData.dmPermission = false;
-				createUserInfoCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createUserInfoCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createUserInfoCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createUserInfoCommandData.type = ApplicationCommandType::Chat_Input;
 				createUserInfoCommandData.description = "Displays info about a chosen user.";
@@ -256,7 +256,7 @@ namespace DiscordCoreAPI {
 				createSetInvitesChannelCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createSetInvitesChannelCommandData.description = "Set the invite tracking channel and enables, or disables it.";
 				createSetInvitesChannelCommandData.name = "setinviteschannel";
-				createSetInvitesChannelCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createSetInvitesChannelCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createSetInvitesChannelCommandData.type = ApplicationCommandType::Chat_Input;
 				ApplicationCommandOptionData createSetInvitesChannelOptionOne;
 				createSetInvitesChannelOptionOne.type = ApplicationCommandOptionType::Sub_Command;
@@ -309,7 +309,7 @@ namespace DiscordCoreAPI {
 				createBanCommandData.dmPermission = false;
 				createBanCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createBanCommandData.description = "Ban a user or look at the banner's leaderboard.";
-				createBanCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createBanCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createBanCommandData.name = "ban";
 				createBanCommandData.type = ApplicationCommandType::Chat_Input;
 				ApplicationCommandOptionData createBanOptionThree;
@@ -346,7 +346,7 @@ namespace DiscordCoreAPI {
 
 				CreateGlobalApplicationCommandData createSetDeletionStatusCommandData{};
 				createSetDeletionStatusCommandData.dmPermission = false;
-				createSetDeletionStatusCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createSetDeletionStatusCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createSetDeletionStatusCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createSetDeletionStatusCommandData.description = "Enables or disables message-purging in a given channel.";
 				createSetDeletionStatusCommandData.name = "setdeletionstatus";
@@ -394,12 +394,12 @@ namespace DiscordCoreAPI {
 				createUserInfoData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createUserInfoData.type = ApplicationCommandType::User;
 				createUserInfoData.name = "User Info";
-				createUserInfoData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createUserInfoData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				ApplicationCommands::createGlobalApplicationCommandAsync(createUserInfoData);
 
 				CreateGlobalApplicationCommandData RegisterApplicationCommandsCommandData{};
 				RegisterApplicationCommandsCommandData.dmPermission = false;
-				RegisterApplicationCommandsCommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				RegisterApplicationCommandsCommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				RegisterApplicationCommandsCommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				RegisterApplicationCommandsCommandData.type = ApplicationCommandType::Chat_Input;
 				RegisterApplicationCommandsCommandData.description = "Register the programmatically designated slash commands.";
@@ -409,7 +409,7 @@ namespace DiscordCoreAPI {
 				CreateGlobalApplicationCommandData createTestData{};
 				createTestData.dmPermission = true;
 				createTestData.applicationId = newArgs.discordCoreClient->getBotUser().id;
-				createTestData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createTestData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createTestData.type = ApplicationCommandType::Chat_Input;
 				createTestData.name = "test";
 				createTestData.description = "Test command.";
@@ -427,7 +427,7 @@ namespace DiscordCoreAPI {
 				createManageLogsData.type = ApplicationCommandType::Chat_Input;
 				createManageLogsData.name = "managelogs";
 				createManageLogsData.description = "Check the status and/or set the status of various logs.";
-				createManageLogsData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createManageLogsData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				ApplicationCommandOptionData createManageLogsOptionOh;
 				createManageLogsOptionOh.type = ApplicationCommandOptionType::Sub_Command;
 				createManageLogsOptionOh.description = "View the currently enabled/disabled logs.";
@@ -483,7 +483,7 @@ namespace DiscordCoreAPI {
 
 				CreateGlobalApplicationCommandData createHelpData{};
 				createHelpData.dmPermission = true;
-				createHelpData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createHelpData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createHelpData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				createHelpData.type = ApplicationCommandType::Chat_Input;
 				createHelpData.name = "help";
@@ -493,11 +493,11 @@ namespace DiscordCoreAPI {
 				CreateGlobalApplicationCommandData createAvatarData{};
 				createAvatarData.dmPermission = false;
 				createAvatarData.applicationId = newArgs.discordCoreClient->getBotUser().id;
-				createAvatarData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createAvatarData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				createAvatarData.type = ApplicationCommandType::Chat_Input;
 				createAvatarData.description = "Displays the avatar of a chosen user.";
 				createAvatarData.name = "avatar";
-				createAvatarData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				createAvatarData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				ApplicationCommandOptionData createAvatarOptionOne{};
 				createAvatarOptionOne.type = ApplicationCommandOptionType::User;
 				createAvatarOptionOne.name = "user";
@@ -508,13 +508,13 @@ namespace DiscordCoreAPI {
 
 				CreateGlobalApplicationCommandData pushmecommandData{};
 				pushmecommandData.dmPermission = false;
-				pushmecommandData.defaultMemberPermissions = std::to_string(static_cast<int64_t>(Permission::Use_Application_Commands));
+				pushmecommandData.defaultMemberPermissions = Permission::Use_Application_Commands;
 				pushmecommandData.type = ApplicationCommandType::Chat_Input;
 				pushmecommandData.description = "Push me to find out!";
 				pushmecommandData.applicationId = newArgs.discordCoreClient->getBotUser().id;
 				ApplicationCommands::createGlobalApplicationCommandAsync(pushmecommandData);
 
-				*/
+				
 				EmbedData msgEmbed{};
 				msgEmbed.setAuthor(newArgs.eventData.getUserName(), newArgs.eventData.getAvatarUrl());
 				msgEmbed.setColor("FeFeFe");
