@@ -1,39 +1,39 @@
 // SetBorderColor.hpp - Header for the "set border color" command.
-// Jun 26, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// jun 26, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
-#include "./../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class SetBorderColor : public BaseFunction {
+	class set_border_color : public base_function {
 	  public:
-		SetBorderColor() {
+		set_border_color() {
 			this->commandName	  = "setbordercolor";
-			this->helpDescription = "Set the bot's default border color for message embeds.";
-			EmbedData msgEmbed;
-			msgEmbed.setDescription("------\nSimply enter /setbordercolor <HEXCOLORVALUE>!\n------");
-			msgEmbed.setTitle("__**Set Border Color Usage:**__");
+			this->helpDescription = "set the bot's default border color for message embeds.";
+			embed_data msgEmbed;
+			msgEmbed.setDescription("------\nSimply enter /setbordercolor <hexcolorvalue>!\n------");
+			msgEmbed.setTitle("__**set border color usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<SetBorderColor>();
+		unique_ptr<base_function> create() {
+			return makeUnique<set_border_color>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelData channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
-				GuildData guild{ argsNew.getInteractionData().guildId };
+				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				DiscordGuild discordGuild{ managerAgent, guild };
-				GuildMemberData guildMember{ argsNew.getGuildMemberData() };
+				discord_guild discordGuild{ managerAgent, guild };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 				auto inputEventData			 = argsNew.getInputEventData();
 				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(argsNew, inputEventData, discordGuild, channel, guildMember, true);
 				if (!doWeHaveAdminPermission) {
@@ -41,43 +41,43 @@ namespace DiscordCoreAPI {
 				}
 				jsonifier::string borderColor;
 
-				if (std::stoull(argsNew.getCommandArguments().values["hexcolorvalue"].value, 0, 16) < 0 ||
-					std::stoull(argsNew.getCommandArguments().values["hexcolorvalue"].value, 0, 16) > std::stoull("fefefe", 0, 16)) {
-					jsonifier::string msgString = "------\n**Please, enter a hex-color value between 0 and FeFeFe! (!setbordercolor = BOTNAME, HEXCOLORVALUE)**\n------";
-					EmbedData msgEmbed;
-					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed.setColor(discordGuild.data.borderColor);
+				if (jsonifier::strToUint64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) < 0 ||
+					jsonifier::strToUint64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) > jsonifier::strToUint64<16>("fefefe")) {
+					jsonifier::string msgString = "------\n**please, enter a hex-color value between 0 and fe_fe_fe! (!setbordercolor = botname, hexcolorvalue)**\n------";
+					embed_data msgEmbed;
+					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setColor("fefefe");
 					msgEmbed.setDescription(msgString);
 					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**Missing Or Invalid Arguments:**__");
-					RespondToInputEventData dataPackage(argsNew.getInputEventData());
-					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					msgEmbed.setTitle("__**missing or invalid arguments:**__");
+					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
-					auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+					auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else {
-					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].value;
+					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string();
 
 					discordGuild.data.borderColor = borderColor;
 					discordGuild.writeDataToDB(managerAgent);
 
-					EmbedData msgEmbed;
-					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed.setColor(discordGuild.data.borderColor);
-					msgEmbed.setDescription(
-						"Nicely done, you've updated the default border color for this bot!\n------\n__**Border Color Values:**__ " + discordGuild.data.borderColor + "\n------");
+					embed_data msgEmbed;
+					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setColor("fefefe");
+					msgEmbed.setDescription(jsonifier::string{
+						"nicely done, you've updated the default border color for this bot!\n------\n__**border color values:**__ " + discordGuild.data.borderColor + "\n------" });
 					msgEmbed.setTimeStamp(getTimeAndDate());
-					msgEmbed.setTitle("__**Updated Border Color:**__");
-					RespondToInputEventData dataPackage(argsNew.getInputEventData());
-					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					msgEmbed.setTitle("__**updated border color:**__");
+					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(msgEmbed);
-					auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+					auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
 			} catch (const std::exception& error) {
-				std::cout << "SetBorderColor::execute()" << error.what() << std::endl;
+				std::cout << "set_border_color::execute()" << error.what() << std::endl;
 			}
 		};
-		~SetBorderColor(){};
+		~set_border_color(){};
 	};
-};// namespace DiscordCoreAPI
+};// namespace discord_core_api

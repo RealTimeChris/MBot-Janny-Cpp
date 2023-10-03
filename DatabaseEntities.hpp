@@ -1,7 +1,7 @@
 // DatabaseEntities.hpp - Database stuff.
-// May 24, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// may 24, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
@@ -16,143 +16,143 @@
 
 #include <discordcoreapi/Index.hpp>
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	struct DiscordInviteData {
+	struct discord_invite_data {
 		jsonifier::string inviteCode{};
-		int32_t invitesUsed{ 0 };
-		int32_t maxInvites{ 0 };
+		int64_t invitesUsed{ 0 };
+		int64_t maxInvites{ 0 };
 	};
 
-	struct DeletionChannelData {
-		int32_t minutesToWaitUntilDeleted{ 0 };
+	struct deletion_channel_data {
+		int64_t minutesToWaitUntilDeleted{ 0 };
 		bool currentlyBeingDeleted{ false };
-		int32_t numberOfMessagesToSave{ 0 };
-		Snowflake deletionMessageId{ 0 };
-		Snowflake channelId{ 0 };
+		int64_t numberOfMessagesToSave{ 0 };
+		snowflake deletionMessageId{ 0 };
+		snowflake channelId{ 0 };
 	};
 
-	struct DiscordUserData {
+	struct discord_user_data {
 		jsonifier::vector<uint64_t> botCommanders{ 0, 0, 0 };
 		jsonifier::string userName{};
-		Snowflake userId{ 0 };
+		snowflake userId{ 0 };
 	};
 
-	struct BanInfoLite {
+	struct ban_info_lite {
 		jsonifier::string avatarUrl{};
 		jsonifier::string userName{};
 		jsonifier::string bannedAt{};
 		jsonifier::string reason{};
-		Snowflake userId{ 0 };
+		snowflake userId{ 0 };
 	};
 
-	struct UserBanInfo {
-		jsonifier::vector<BanInfoLite> userBans{};
-		Snowflake userId{ 0 };
+	struct user_ban_info {
+		jsonifier::vector<ban_info_lite> userBans{};
+		snowflake userId{ 0 };
 	};
 
-	struct RoleManager {
+	struct role_manager {
 		jsonifier::vector<uint64_t> theRoles{};
-		std::string message{};
-		Snowflake channelId{ 0 };
-		Snowflake messageId{ 0 };
+		jsonifier::string message{ "test" };
+		snowflake channelId{ 0 };
+		snowflake messageId{ 0 };
 	};
 
-	struct Log {
-		jsonifier::string loggingChannelName{};
-		Snowflake loggingChannelId{ 0 };
+	struct log {
+		jsonifier::string loggingChannelName{ "test" };
+		snowflake loggingChannelId{};
 		jsonifier::string nameSmall{};
-		jsonifier::string name{};
 		bool enabled{ false };
+		jsonifier::string name{};
 	};
 
-	struct DiscordGuildData {
-		DiscordGuildData() {
-			Log log{
+	struct discord_guild_data {
+		discord_guild_data() {
+			log log{
 				.loggingChannelName = "",
-				.loggingChannelId	= Snowflake{ 0 },
+				.loggingChannelId	= snowflake{ 0 },
 				.nameSmall			= "",
 				.name				= "",
 			};
-			log.name	  = "GuildData Ban Add";
+			log.name	  = "guild_data ban add";
 			log.nameSmall = "guildbanadd";
 			this->logs.emplace_back(log);
-			log.name	  = "GuildData Ban remove";
+			log.name	  = "guild_data ban remove";
 			log.nameSmall = "guildbanremove";
 			this->logs.emplace_back(log);
-			log.name	  = "GuildData Member Add";
+			log.name	  = "guild_data member add";
 			log.nameSmall = "guildmemberadd";
 			this->logs.emplace_back(log);
-			log.name	  = "GuildData Member remove";
+			log.name	  = "guild_data member remove";
 			log.nameSmall = "guildmemberremove";
 			this->logs.emplace_back(log);
-			log.name	  = "Display Name Change";
+			log.name	  = "display name change";
 			log.nameSmall = "displaynamechange";
 			this->logs.emplace_back(log);
-			log.name	  = "Nickname Change";
+			log.name	  = "nickname change";
 			log.nameSmall = "nicknamechange";
 			this->logs.emplace_back(log);
-			log.name	  = "RoleData Add Or remove";
+			log.name	  = "Role_Data add or remove";
 			log.nameSmall = "roleaddorremove";
 			this->logs.emplace_back(log);
-			log.name	  = "Invite Create";
+			log.name	  = "invite create";
 			log.nameSmall = "invitecreate";
 			this->logs.emplace_back(log);
-			log.name	  = "MessageData Delete";
+			log.name	  = "message_data delete";
 			log.nameSmall = "messagedelete";
 			this->logs.emplace_back(log);
-			log.name	  = "MessageData Delete Bulk";
+			log.name	  = "message_data delete bulk";
 			log.nameSmall = "messagedeletebulk";
 			this->logs.emplace_back(log);
-			log.name	  = "RoleData Create";
+			log.name	  = "Role_Data create";
 			log.nameSmall = "rolecreate";
 			this->logs.emplace_back(log);
-			log.name	  = "RoleData Delete";
+			log.name	  = "Role_Data delete";
 			log.nameSmall = "roledelete";
 			this->logs.emplace_back(log);
-			log.name	  = "Username Change";
+			log.name	  = "username change";
 			log.nameSmall = "usernamechange";
 			this->logs.emplace_back(log);
 		}
-		jsonifier::vector<DeletionChannelData> deletionChannels{};
-		Snowflake inviteReportingChannelId{ 0 };
-		jsonifier::vector<Snowflake> defaultRoleIds{};
-		jsonifier::vector<UserBanInfo> userBanInfo{};
-		jsonifier::vector<Snowflake> trackedUsers{};
-		jsonifier::string borderColor{ "FEFEFE" };
-		jsonifier::vector<Snowflake> ghostedIds{};
-		int32_t vanityInviteUses{ 0 };
-		uint32_t memberCount{ 0 };
-		RoleManager roleManager{};
+		jsonifier::vector<deletion_channel_data> deletionChannels{};
+		snowflake inviteReportingChannelId{ 0 };
+		jsonifier::vector<snowflake> defaultRoleIds{};
+		jsonifier::vector<user_ban_info> userBanInfo{};
+		jsonifier::vector<snowflake> trackedUsers{};
+		jsonifier::string borderColor{ "fefefe" };
+		jsonifier::vector<snowflake> ghostedIds{};
+		int64_t vanityInviteUses{ 0 };
+		uint64_t memberCount{ 0 };
+		role_manager roleManager{};
 		jsonifier::string guildName{};
-		jsonifier::vector<Log> logs{};
-		Snowflake guildId{ 0 };
+		jsonifier::vector<log> logs{};
+		snowflake guildId{ 0 };
 	};
 
-	/// A Permission overwrite, for a given ChannelData. \brief A Permission overwrite, for a given ChannelData.
-	struct PermissionOverWriteData {
-		PermissionOverwritesType type{};///< RoleData or UserData type.
-		Snowflake channelId{ 0 };///< ChannelData id for which ChannelData this overwrite beint64_ts to.
-		Permissions allow{};///< Collection of Permissions to allow.
-		Permissions deny{};///< Collection of Permissions to deny.
-		Snowflake id{ 0 };///< Snowflake of the permission overwrite.
+	/// a permission overwrite, for a given channel_data. \brief a permission overwrite, for a given channel_data.
+	struct permission_over_write_data {
+		permission_overwrites_type type{};///< Role_Data or user_data type.
+		snowflake channelId{ 0 };///< channel_data id for which channel_data this overwrite beint64_ts to.
+		permissions allow{};///< collection of permissions to allow.
+		permissions deny{};///< collection of permissions to deny.
+		snowflake id{ 0 };///< snowflake of the permission overwrite.
 	};
 
-	struct DiscordGuildMemberData {
-		jsonifier::vector<PermissionOverWriteData> previousPermissionOverwrites{};
-		jsonifier::vector<jsonifier::string> invitedMemberIds{};
-		jsonifier::vector<DiscordInviteData> invites{};
+	struct discord_guild_member_data {
+		jsonifier::vector<permission_over_write_data> previousPermissionOverwrites{};
+		jsonifier::vector<snowflake> invitedMemberIds{};
+		jsonifier::vector<discord_invite_data> invites{};
 		jsonifier::vector<uint64_t> previousRoleIds{};
 		jsonifier::string guildMemberMention{};
-		Snowflake guildMemberId{ 0 };
-		uint32_t totalInvites{ 0 };
+		snowflake guildMemberId{ 0 };
+		uint64_t totalInvites{ 0 };
 		jsonifier::string displayName{};
 		jsonifier::string globalId{};
 		jsonifier::string userName{};
-		Snowflake guildId{ 0 };
+		snowflake guildId{ 0 };
 	};
 
-	enum class DatabaseWorkloadType {
+	enum class database_workload_type {
 		Discord_User_Write		   = 0,
 		Discord_User_Read		   = 1,
 		Discord_Guild_Write		   = 2,
@@ -161,63 +161,63 @@ namespace DiscordCoreAPI {
 		Discord_Guild_Member_Read  = 5
 	};
 
-	struct DatabaseWorkload {
-		DiscordGuildMemberData guildMemberData{};
-		DatabaseWorkloadType workloadType{};
-		DiscordGuildData guildData{};
-		DiscordUserData userData{};
+	struct database_workload {
+		discord_guild_member_data guildMemberData{};
+		database_workload_type workloadType{};
+		discord_guild_data guildData{};
+		discord_user_data userData{};
 	};
 
-	struct DatabaseReturnValue {
-		DiscordGuildMemberData discordGuildMember{};
-		DiscordGuildData discordGuild{};
-		DiscordUserData discordUser{};
+	struct database_return_value {
+		discord_guild_member_data discordGuildMember{};
+		discord_guild_data discordGuild{};
+		discord_user_data discordUser{};
 	};
 
-	class DatabaseManagerAgent {
+	class database_manager_agent {
 	  public:
-		inline void initialize(Snowflake botUserIdNew) {
-			DatabaseManagerAgent::botUserId	   = botUserIdNew;
-			auto newClient					   = DatabaseManagerAgent::getClient();
-			mongocxx::database newDataBase	   = (*newClient)[DatabaseManagerAgent::botUserId.operator jsonifier::string().data()];
-			mongocxx::collection newCollection = newDataBase[DatabaseManagerAgent::botUserId.operator jsonifier::string().data()];
+		inline void initialize(snowflake botUserIdNew) {
+			database_manager_agent::botUserId	   = botUserIdNew;
+			auto newClient					   = database_manager_agent::getClient();
+			mongocxx::database newDataBase	   = (*newClient)[database_manager_agent::botUserId.operator jsonifier::string().data()];
+			mongocxx::collection newCollection = newDataBase[database_manager_agent::botUserId.operator jsonifier::string().data()];
 		}
 
 		inline mongocxx::pool::entry getClient() {
-			return DatabaseManagerAgent::thePool.acquire();
+			return database_manager_agent::thePool.acquire();
 		}
 
-		inline DatabaseReturnValue submitWorkloadAndGetResults(DatabaseWorkload workload) {
-			std::lock_guard<std::mutex> workloadLock{ DatabaseManagerAgent::workloadMutex01 };
-			while (DatabaseManagerAgent::botUserId == 0) {
+		inline database_return_value submitWorkloadAndGetResults(database_workload workload) {
+			std::lock_guard<std::mutex> workloadLock{ database_manager_agent::workloadMutex01 };
+			while (database_manager_agent::botUserId == 0) {
 				std::this_thread::sleep_for(1ms);
 			}
-			DatabaseReturnValue newData{};
-			mongocxx::pool::entry thePtr = DatabaseManagerAgent::getClient();
+			database_return_value newData{};
+			mongocxx::pool::entry thePtr = database_manager_agent::getClient();
 			try {
-				auto newDataBase   = (*thePtr)[DatabaseManagerAgent::botUserId.operator jsonifier::string().data()];
-				auto newCollection = newDataBase[DatabaseManagerAgent::botUserId.operator jsonifier::string().data()];
+				auto newDataBase   = (*thePtr)[database_manager_agent::botUserId.operator jsonifier::string().data()];
+				auto newCollection = newDataBase[database_manager_agent::botUserId.operator jsonifier::string().data()];
 				switch (workload.workloadType) {
-					case (DatabaseWorkloadType::Discord_User_Write): {
-						auto doc = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
+					case (database_workload_type::Discord_User_Write): {
+						auto doc = database_manager_agent::convertUserDataToDBDoc(workload.userData);
 						bsoncxx::builder::basic::document document{};
 						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.userData.userId.operator const uint64_t&()))));
 						auto resultNew	 = newCollection.find_one(document.view());
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (!resultNewer) {
-							auto doc02 = DatabaseManagerAgent::convertUserDataToDBDoc(workload.userData);
+							auto doc02 = database_manager_agent::convertUserDataToDBDoc(workload.userData);
 							newCollection.insert_one(std::move(doc02.extract()));
 							return newData;
 						}
 						break;
 					}
-					case (DatabaseWorkloadType::Discord_User_Read): {
+					case (database_workload_type::Discord_User_Read): {
 						bsoncxx::builder::basic::document document{};
 						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.userData.userId.operator const uint64_t&()))));
-						auto resultNew = newCollection.find_one(document.view());
+						auto resultNew = newCollection.find_one(document.view()); 
 						if (resultNew) {
-							DiscordUserData userData = DatabaseManagerAgent::parseUserData(*resultNew);
+							discord_user_data userData = database_manager_agent::parseUserData(*resultNew);
 							newData.discordUser		 = userData;
 							return newData;
 						} else {
@@ -225,25 +225,25 @@ namespace DiscordCoreAPI {
 						}
 						break;
 					}
-					case (DatabaseWorkloadType::Discord_Guild_Write): {
-						auto doc = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
+					case (database_workload_type::Discord_Guild_Write): {
+						auto doc = database_manager_agent::convertGuildDataToDBDoc(workload.guildData);
 						bsoncxx::builder::basic::document document{};
 						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.guildData.guildId.operator const uint64_t&()))));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (!resultNewer) {
-							auto doc02 = DatabaseManagerAgent::convertGuildDataToDBDoc(workload.guildData);
+							auto doc02 = database_manager_agent::convertGuildDataToDBDoc(workload.guildData);
 							newCollection.insert_one(std::move(doc02.extract()));
 							return newData;
 						}
 						break;
 					}
-					case (DatabaseWorkloadType::Discord_Guild_Read): {
+					case (database_workload_type::Discord_Guild_Read): {
 						bsoncxx::builder::basic::document document{};
 						document.append(bsoncxx::builder::basic::kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(workload.guildData.guildId.operator const uint64_t&()))));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew) {
-							DiscordGuildData guildData = DatabaseManagerAgent::parseGuildData(*resultNew);
+							discord_guild_data guildData = database_manager_agent::parseGuildData(*resultNew);
 							newData.discordGuild	   = guildData;
 							return newData;
 						} else {
@@ -251,25 +251,25 @@ namespace DiscordCoreAPI {
 						}
 						break;
 					}
-					case (DatabaseWorkloadType::Discord_Guild_Member_Write): {
-						auto doc = DatabaseManagerAgent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
+					case (database_workload_type::Discord_Guild_Member_Write): {
+						auto doc = database_manager_agent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
 						bsoncxx::builder::basic::document document{};
 						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId));
 						auto resultNewer = newCollection.find_one_and_replace(document.view(), std::move(doc.extract()),
 							mongocxx::v_noabi::options::find_one_and_replace{}.return_document(mongocxx::v_noabi::options::return_document::k_after));
 						if (!resultNewer) {
-							auto doc02 = DatabaseManagerAgent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
+							auto doc02 = database_manager_agent::convertGuildMemberDataToDBDoc(workload.guildMemberData);
 							newCollection.insert_one(std::move(doc02.extract()));
 							return newData;
 						}
 						break;
 					}
-					case (DatabaseWorkloadType::Discord_Guild_Member_Read): {
+					case (database_workload_type::Discord_Guild_Member_Read): {
 						bsoncxx::builder::basic::document document{};
 						document.append(bsoncxx::builder::basic::kvp("_id", workload.guildMemberData.globalId));
 						auto resultNew = newCollection.find_one(document.view());
 						if (resultNew) {
-							DiscordGuildMemberData guildMemberData = DatabaseManagerAgent::parseGuildMemberData(*resultNew);
+							discord_guild_member_data guildMemberData = database_manager_agent::parseGuildMemberData(*resultNew);
 							newData.discordGuildMember			   = guildMemberData;
 							return newData;
 						} else {
@@ -280,7 +280,7 @@ namespace DiscordCoreAPI {
 				}
 				return newData;
 			} catch (const std::runtime_error& error) {
-				std::cout << "DatabaseManagerAgent::run()" << error.what() << std::endl;
+				std::cout << "database_manager_agent::run()" << error.what() << std::endl;
 				return newData;
 			}
 		}
@@ -289,9 +289,68 @@ namespace DiscordCoreAPI {
 		mongocxx::instance instance{};
 		std::mutex workloadMutex01{};
 		mongocxx::pool thePool{};
-		Snowflake botUserId{};
+		snowflake botUserId{};
 
-		static bsoncxx::builder::basic::document convertUserDataToDBDoc(DiscordUserData discordUserData) {
+		template<typename value_type, typename value_type_to_search>
+		static void getValueIfNotNull(value_type& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind);
+
+		template<typename value_type_to_search>
+		static void getValueIfNotNull(jsonifier::string& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = jsonifier::string{ valueToSearch[valueToFind].get_string().value };
+			}
+		}
+
+		template<typename value_type_to_search> static void getValueIfNotNull(snowflake& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = valueToSearch[valueToFind].get_int64().value;
+			}
+		}
+
+		template<jsonifier::concepts::enum_t enum_type, typename value_type_to_search>
+		static void getValueIfNotNull(enum_type& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = static_cast<enum_type>(valueToSearch[valueToFind].get_int64().value);
+			}
+		}
+
+		template<typename value_type_to_search> static void getValueIfNotNull(permissions& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = valueToSearch[valueToFind].get_int64().value;
+			}
+		}
+
+		template<typename value_type_to_search> static void getValueIfNotNull(int64_t& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = valueToSearch[valueToFind].get_int64().value;
+			}
+		}
+
+		template<typename value_type_to_search> static void getValueIfNotNull(uint64_t& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = valueToSearch[valueToFind].get_int64().value;
+			}
+		}
+
+		template<typename value_type_to_search> static void getValueIfNotNull(int32_t& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = valueToSearch[valueToFind].get_int64().value;
+			}
+		}
+
+		template<typename value_type_to_search> static void getValueIfNotNull(uint32_t& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = valueToSearch[valueToFind].get_int64().value;
+			}
+		}
+
+		template<typename value_type_to_search> static void getValueIfNotNull(bool& value, value_type_to_search&& valueToSearch, const jsonifier::string& valueToFind) {
+			if (valueToSearch[valueToFind].type() != bsoncxx::v_noabi::type::k_null) {
+				value = valueToSearch[valueToFind].get_bool().value;
+			}
+		}
+
+		static bsoncxx::builder::basic::document convertUserDataToDBDoc(discord_user_data discordUserData) {
 			bsoncxx::builder::basic::document buildDoc;
 			try {
 				using bsoncxx::builder::basic::kvp;
@@ -305,16 +364,17 @@ namespace DiscordCoreAPI {
 				}));
 				return buildDoc;
 			} catch (const std::exception& error) {
-				std::cout << "DatabaseManagerAgent::convertUserDataToDBDoc()" << error.what() << std::endl;
+				std::cout << "database_manager_agent::convertUserDataToDBDoc()" << error.what() << std::endl;
 				return buildDoc;
 			}
 		}
 
-		static DiscordUserData parseUserData(bsoncxx::document::value docValue) {
-			DiscordUserData userData{};
+		static discord_user_data parseUserData(bsoncxx::document::value docValue) {
+			discord_user_data userData{};
 			try {
-				userData.userName		= docValue.view()["userName"].get_utf8().value;
-				userData.userId			= static_cast<uint64_t>(docValue.view()["userId"].get_int64().value);
+				getValueIfNotNull(userData.userName, docValue.view(), "userName");
+				getValueIfNotNull(userData.userId, docValue.view(), "userId");
+
 				auto botCommandersArray = docValue.view()["botCommanders"].get_array();
 				jsonifier::vector<uint64_t> newVector;
 				for (const auto& value: botCommandersArray.value) {
@@ -323,20 +383,20 @@ namespace DiscordCoreAPI {
 				userData.botCommanders = newVector;
 				return userData;
 			} catch (const std::exception& error) {
-				std::cout << "DatabaseManagerAgent::parseUserData()" << error.what() << std::endl;
+				std::cout << "database_manager_agent::parseUserData()" << error.what() << std::endl;
 				return userData;
 			}
 		}
 
-		static bsoncxx::builder::basic::document convertGuildDataToDBDoc(DiscordGuildData discordGuildData) {
+		static bsoncxx::builder::basic::document convertGuildDataToDBDoc(discord_guild_data discordGuildData) {
 			bsoncxx::builder::basic::document buildDoc;
 			try {
 				using bsoncxx::builder::basic::kvp;
 				buildDoc.append(kvp("_id", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.guildId.operator const uint64_t&()))));
 				buildDoc.append(kvp("guildId", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.guildId.operator const uint64_t&()))));
 				buildDoc.append(kvp("guildName", discordGuildData.guildName));
-				buildDoc.append(kvp("memberCount", bsoncxx::types::b_int32(static_cast<int32_t>(discordGuildData.memberCount))));
-				buildDoc.append(kvp("vanityInviteUses", bsoncxx::types::b_int32(static_cast<int32_t>(discordGuildData.vanityInviteUses))));
+				buildDoc.append(kvp("memberCount", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.memberCount))));
+				buildDoc.append(kvp("vanityInviteUses", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildData.vanityInviteUses))));
 				buildDoc.append(kvp("borderColor", discordGuildData.borderColor));
 				buildDoc.append(kvp("roleManager", [discordGuildData](bsoncxx::builder::basic::sub_document sub_document01) {
 					sub_document01.append(kvp("theRoles", [discordGuildData](bsoncxx::builder::basic::sub_array sub_array01) {
@@ -344,9 +404,9 @@ namespace DiscordCoreAPI {
 							sub_array01.append(bsoncxx::types::b_int64(static_cast<int64_t>(value)));
 						}
 					}));
-					auto theValue = static_cast<Snowflake>(discordGuildData.roleManager.channelId);
+					auto theValue = static_cast<snowflake>(discordGuildData.roleManager.channelId);
 					sub_document01.append(kvp("channelId", bsoncxx::types::b_int64(static_cast<int64_t>(theValue.operator const uint64_t&()))));
-					theValue = static_cast<Snowflake>(discordGuildData.roleManager.messageId);
+					theValue = static_cast<snowflake>(discordGuildData.roleManager.messageId);
 					sub_document01.append(kvp("messageId", bsoncxx::types::b_int64(static_cast<int64_t>(theValue.operator const uint64_t&()))));
 
 					sub_document01.append(kvp("message", bsoncxx::types::b_utf8{ discordGuildData.roleManager.message }));
@@ -373,7 +433,7 @@ namespace DiscordCoreAPI {
 								kvp("currentlyBeingDeleted", bsoncxx::types::b_bool(static_cast<uint64_t>(value.currentlyBeingDeleted))),
 								kvp("deletionMessageId", bsoncxx::types::b_int64(static_cast<int64_t>(value.deletionMessageId.operator const uint64_t&()))),
 								kvp("numberOfMessagesToSave", value.numberOfMessagesToSave),
-								kvp("minutesToWaitUntilDeleted", bsoncxx::types::b_int32(static_cast<int32_t>(value.minutesToWaitUntilDeleted))));
+								kvp("minutesToWaitUntilDeleted", bsoncxx::types::b_int64(static_cast<int64_t>(value.minutesToWaitUntilDeleted))));
 						});
 					}
 				}));
@@ -413,53 +473,55 @@ namespace DiscordCoreAPI {
 				}));
 				return buildDoc;
 			} catch (const std::exception& error) {
-				std::cout << "DatabaseManagerAgent::convertGuildDataToDBDoc()" << error.what() << std::endl;
+				std::cout << "database_manager_agent::convertGuildDataToDBDoc()" << error.what() << std::endl;
 				return buildDoc;
 			}
 		};
 
-		static DiscordGuildData parseGuildData(bsoncxx::document::value docValue) {
-			DiscordGuildData guildData{};
+		static discord_guild_data parseGuildData(bsoncxx::document::value docValue) {
+			discord_guild_data guildData{};
 			try {
-				guildData.inviteReportingChannelId = static_cast<uint64_t>(docValue.view()["inviteReportingChannelId"].get_int64().value);
+				getValueIfNotNull(guildData.inviteReportingChannelId, docValue.view(), "inviteReportingChannelId");
 				if (docValue.view()["ghostedIds"].type() == bsoncxx::v_noabi::type::k_array) {
 					for (auto& value: docValue.view()["ghostedIds"].get_array().value) {
-						guildData.ghostedIds.emplace_back(Snowflake{ static_cast<size_t>(value.get_value().get_int64().value) });
+						guildData.ghostedIds.emplace_back(snowflake{ static_cast<size_t>(value.get_value().get_int64().value) });
 					}
 				}
 
-				guildData.borderColor	   = docValue.view()["borderColor"].get_utf8().value;
-				guildData.vanityInviteUses = docValue.view()["vanityInviteUses"].get_int32().value;
-				guildData.guildName		   = docValue.view()["guildName"].get_utf8().value;
-				guildData.guildId		   = static_cast<uint64_t>(docValue.view()["guildId"].get_int64().value);
-				guildData.memberCount	   = static_cast<uint32_t>(docValue.view()["memberCount"].get_int32().value);
+				getValueIfNotNull(guildData.borderColor, docValue.view(), "borderColor");
+				getValueIfNotNull(guildData.vanityInviteUses, docValue.view(), "vanityInviteUses");
+				getValueIfNotNull(guildData.guildName, docValue.view(), "guildName");
+				getValueIfNotNull(guildData.guildId, docValue.view(), "guildId");
+				getValueIfNotNull(guildData.memberCount, docValue.view(), "memberCount");
+
 				for (auto& value: docValue.view()["deletionChannels"].get_array().value) {
-					DeletionChannelData newData;
-					newData.channelId			   = static_cast<uint64_t>(value.get_document().view()["channelId"].get_int64().value);
-					newData.currentlyBeingDeleted  = value.get_document().view()["currentlyBeingDeleted"].get_bool().value;
-					newData.deletionMessageId	   = static_cast<uint64_t>(value.get_document().view()["deletionMessageId"].get_int64().value);
-					newData.numberOfMessagesToSave = value.get_document().view()["numberOfMessagesToSave"].get_int32().value;
+					deletion_channel_data newData;
+					getValueIfNotNull(newData.channelId, value.get_document().view(), "channelId");
+					getValueIfNotNull(newData.currentlyBeingDeleted, value.get_document().view(), "currentlyBeingDeleted");
+					getValueIfNotNull(newData.deletionMessageId, value.get_document().view(), "deletionMessageId");
+					getValueIfNotNull(newData.numberOfMessagesToSave, value.get_document().view(), "numberOfMessagesToSave");
+
 					if (value.get_document().view()["minutesToWaitUntilDeleted"].type() != bsoncxx::v_noabi::type::k_null) {
-						newData.minutesToWaitUntilDeleted = value.get_document().view()["minutesToWaitUntilDeleted"].get_int32().value;
+						newData.minutesToWaitUntilDeleted = value.get_document().view()["minutesToWaitUntilDeleted"].get_int64().value;
 					}
 					guildData.deletionChannels.emplace_back(newData);
 				}
 				for (auto& value: docValue.view()["userBanInfo"].get_array().value) {
-					UserBanInfo newData;
+					user_ban_info newData;
 					newData.userId = static_cast<uint64_t>(value["userId"].get_int64().value);
 					for (auto& value2: value["userBans"].get_array().value) {
-						BanInfoLite newData02;
-						newData02.userId	= static_cast<uint64_t>(value2["userId"].get_int64().value);
-						newData02.userName	= value2["userName"].get_utf8().value;
-						newData02.avatarUrl = value2["avatarUrl"].get_utf8().value;
-						newData02.bannedAt	= value2["bannedAt"].get_utf8().value;
-						newData02.reason	= value2["reason"].get_utf8().value;
+						ban_info_lite newData02;
+						getValueIfNotNull(newData02.userId, value2, "userId");
+						getValueIfNotNull(newData02.userName, value2, "userName");
+						getValueIfNotNull(newData02.avatarUrl, value2, "avatarUrl");
+						getValueIfNotNull(newData02.bannedAt, value2, "bannedAt");
+						getValueIfNotNull(newData02.reason, value2, "reason");
 						newData.userBans.emplace_back(newData02);
 					}
 					guildData.userBanInfo.emplace_back(newData);
 				}
 				for (auto& value: docValue.view()["trackedUsers"].get_array().value) {
-					guildData.trackedUsers.emplace_back(Snowflake{ static_cast<size_t>(value.get_int64().value) });
+					guildData.trackedUsers.emplace_back(snowflake{ static_cast<size_t>(value.get_int64().value) });
 				}
 				auto roleManager = docValue.view()["roleManager"].get_document();
 				if (roleManager.view()["theRoles"].type() == bsoncxx::v_noabi::type::k_array) {
@@ -468,20 +530,20 @@ namespace DiscordCoreAPI {
 					}
 				}
 
-				guildData.roleManager.channelId = static_cast<uint64_t>(roleManager.view()["channelId"].get_int64().value);
-				guildData.roleManager.messageId = static_cast<uint64_t>(roleManager.view()["messageId"].get_int64().value);
-				//guildData.roleManager.message	= roleManager.view()["message"].get_utf8().value;
+				getValueIfNotNull(guildData.roleManager.channelId, roleManager.view(), "channelId");
+				getValueIfNotNull(guildData.roleManager.messageId, roleManager.view(), "messageId");
+				getValueIfNotNull(guildData.roleManager.message, roleManager.view(), "message");
 				for (auto& value: docValue.view()["defaultRoleIds"].get_array().value) {
-					guildData.defaultRoleIds.emplace_back(Snowflake{ static_cast<uint64_t>(value.get_int64().value) });
+					guildData.defaultRoleIds.emplace_back(snowflake{ static_cast<uint64_t>(value.get_int64().value) });
 				}
 				for (auto& value: docValue.view()["logs"].get_array().value) {
-					Log newData;
-					newData.enabled			   = value.get_document().value["enabled"].get_bool().value;
-					newData.loggingChannelId   = static_cast<uint64_t>(value.get_document().value["loggingChannelId"].get_int64().value);
-					newData.loggingChannelName = value.get_document().value["loggingChannelName"].get_utf8().value;
-					newData.name			   = value.get_document().value["name"].get_utf8().value;
-					newData.nameSmall		   = value.get_document().value["nameSmall"].get_utf8().value;
-					for (uint32_t y = 0; y < guildData.logs.size(); y += 1) {
+					log newData;
+					getValueIfNotNull(newData.enabled, value.get_document().value, "enabled");
+					getValueIfNotNull(newData.loggingChannelId, value.get_document().value, "loggingChannelId");
+					getValueIfNotNull(newData.loggingChannelName, value.get_document().value, "loggingChannelName");
+					getValueIfNotNull(newData.name, value.get_document().value, "name");
+					getValueIfNotNull(newData.nameSmall, value.get_document().value, "nameSmall");
+					for (uint64_t y = 0; y < guildData.logs.size(); y += 1) {
 						if (guildData.logs[y].nameSmall == newData.nameSmall) {
 							guildData.logs[y] = newData;
 						}
@@ -489,12 +551,12 @@ namespace DiscordCoreAPI {
 				}
 				return guildData;
 			} catch (const std::exception& error) {
-				std::cout << "DatabaseManagerAgent::parseGuildData()" << error.what() << std::endl;
+				std::cout << "database_manager_agent::parseGuildData()" << error.what() << std::endl;
 				return guildData;
 			}
 		};
 
-		static bsoncxx::builder::basic::document convertGuildMemberDataToDBDoc(DiscordGuildMemberData discordGuildMemberData) {
+		static bsoncxx::builder::basic::document convertGuildMemberDataToDBDoc(discord_guild_member_data discordGuildMemberData) {
 			bsoncxx::builder::basic::document buildDoc;
 			try {
 				using bsoncxx::builder::basic::kvp;
@@ -505,21 +567,21 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("globalId", discordGuildMemberData.globalId));
 				buildDoc.append(kvp("userName", discordGuildMemberData.userName));
 				buildDoc.append(kvp("displayName", discordGuildMemberData.displayName));
-				buildDoc.append(kvp("totalInvites", bsoncxx::types::b_int32(static_cast<int32_t>(discordGuildMemberData.totalInvites))));
+				buildDoc.append(kvp("totalInvites", bsoncxx::types::b_int64(static_cast<int64_t>(discordGuildMemberData.totalInvites))));
 				buildDoc.append(kvp("previousPermissionOverwrites", [discordGuildMemberData](bsoncxx::builder::basic::sub_array subArray) {
-					for (PermissionOverWriteData value: discordGuildMemberData.previousPermissionOverwrites) {
+					for (permission_over_write_data value: discordGuildMemberData.previousPermissionOverwrites) {
 						subArray.append([value](bsoncxx::builder::basic::sub_document subDocument) {
 							subDocument.append(
-								kvp("allow", bsoncxx::types::b_int64(static_cast<int64_t>(std::stoull(Permissions{ value.deny }.operator jsonifier::string().data())))),
+								kvp("allow", bsoncxx::types::b_int64(static_cast<int64_t>(jsonifier::strToUint64(permissions{ value.deny }.operator jsonifier::string().data())))),
 								kvp("type", bsoncxx::types::b_int64(static_cast<int64_t>(value.type))),
-								kvp("deny", bsoncxx::types::b_int64(static_cast<int64_t>(std::stoull(Permissions{ value.deny }.operator jsonifier::string().data())))),
+								kvp("deny", bsoncxx::types::b_int64(static_cast<int64_t>(jsonifier::strToUint64(permissions{ value.deny }.operator jsonifier::string().data())))),
 								kvp("id", jsonifier::toString(static_cast<uint64_t>(value.id))));
 						});
 					}
 				}));
 				buildDoc.append(kvp("invitedMemberIds", [&](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildMemberData.invitedMemberIds) {
-						subArray.append(value);
+						subArray.append(value.operator jsonifier::string());
 					}
 				}));
 				buildDoc.append(kvp("previousRoleIds", [&](bsoncxx::builder::basic::sub_array subArray) {
@@ -530,65 +592,65 @@ namespace DiscordCoreAPI {
 				buildDoc.append(kvp("invites", [discordGuildMemberData](bsoncxx::builder::basic::sub_array subArray) {
 					for (auto& value: discordGuildMemberData.invites) {
 						subArray.append([value](bsoncxx::builder::basic::sub_document subDocument) {
-							subDocument.append(kvp("inviteCode", value.inviteCode), kvp("invitesUsed", bsoncxx::types::b_int32(static_cast<int32_t>(value.invitesUsed))),
-								kvp("maxInvites", bsoncxx::types::b_int32(static_cast<int32_t>(value.maxInvites))));
+							subDocument.append(kvp("inviteCode", value.inviteCode), kvp("invitesUsed", bsoncxx::types::b_int64(static_cast<int64_t>(value.invitesUsed))),
+								kvp("maxInvites", bsoncxx::types::b_int64(static_cast<int64_t>(value.maxInvites))));
 						});
 					}
 				}));
 				return buildDoc;
 			} catch (const std::exception& error) {
-				std::cout << "DatabaseManagerAgent::convertGuildMemberDataToDBDoc()" << error.what() << std::endl;
+				std::cout << "database_manager_agent::convertGuildMemberDataToDBDoc()" << error.what() << std::endl;
 				return buildDoc;
 			}
 		};
 
-		static DiscordGuildMemberData parseGuildMemberData(bsoncxx::document::value docValue) {
-			DiscordGuildMemberData guildMemberData{};
+		static discord_guild_member_data parseGuildMemberData(bsoncxx::document::value docValue) {
+			discord_guild_member_data guildMemberData{};
 			try {
-				guildMemberData.guildMemberMention = docValue.view()["guildMemberMention"].get_utf8().value;
-				guildMemberData.guildId			   = static_cast<uint64_t>(docValue.view()["guildId"].get_int64().value);
-				guildMemberData.displayName		   = docValue.view()["displayName"].get_utf8().value;
-				guildMemberData.globalId		   = docValue.view()["globalId"].get_utf8().value;
-				guildMemberData.guildMemberId	   = static_cast<uint64_t>(docValue.view()["guildMemberId"].get_int64().value);
-				guildMemberData.userName		   = docValue.view()["userName"].get_utf8().value;
-				guildMemberData.totalInvites	   = static_cast<uint32_t>(docValue.view()["totalInvites"].get_int32().value);
+				getValueIfNotNull(guildMemberData.guildMemberMention, docValue.view(), "guildMemberMention");
+				getValueIfNotNull(guildMemberData.guildId, docValue.view(), "guildId");
+				getValueIfNotNull(guildMemberData.displayName, docValue.view(), "displayName");
+				getValueIfNotNull(guildMemberData.globalId, docValue.view(), "globalId");
+				getValueIfNotNull(guildMemberData.guildMemberId, docValue.view(), "guildMemberId");
+				getValueIfNotNull(guildMemberData.userName, docValue.view(), "userName");
+				getValueIfNotNull(guildMemberData.totalInvites, docValue.view(), "totalInvites");
 				for (auto& value: docValue.view()["previousRoleIds"].get_array().value) {
 					guildMemberData.previousRoleIds.emplace_back(static_cast<uint64_t>(value.get_int64().value));
 				}
 				for (auto& value: docValue.view()["invitedMemberIds"].get_array().value) {
-					guildMemberData.invitedMemberIds.emplace_back(static_cast<jsonifier::string>(value.get_utf8().value));
+					guildMemberData.invitedMemberIds.emplace_back(static_cast<jsonifier::string>(value.get_string().value));
 				}
 				for (auto& value: docValue.view()["previousPermissionOverwrites"].get_array().value) {
-					PermissionOverWriteData newOverWriteData{};
-					newOverWriteData.allow = static_cast<uint64_t>(value.get_document().view()["allow"].get_int64().value);
-					newOverWriteData.deny  = static_cast<uint64_t>(value.get_document().view()["deny"].get_int64().value);
-					newOverWriteData.id	   = std::stoull(jsonifier::string{ value.get_document().view()["id"].get_utf8().value }.data());
-					newOverWriteData.type  = static_cast<PermissionOverwritesType>(value.get_document().view()["type"].get_int32().value);
+					permission_over_write_data newOverWriteData{};
+					getValueIfNotNull(newOverWriteData.allow, value.get_document().view(), "allow");
+					getValueIfNotNull(newOverWriteData.deny, value.get_document().view(), "deny");
+					getValueIfNotNull(newOverWriteData.id, value.get_document().view(), "id");
+					getValueIfNotNull(newOverWriteData.type, value.get_document().view(), "type");
 					guildMemberData.previousPermissionOverwrites.emplace_back(newOverWriteData);
 				}
 
 				for (auto& value: docValue.view()["invites"].get_array().value) {
-					DiscordInviteData newData{};
-					newData.inviteCode	= value.get_document().view()["inviteCode"].get_utf8().value;
-					newData.invitesUsed = value.get_document().view()["invitesUsed"].get_int32().value;
-					newData.maxInvites	= value.get_document().view()["maxInvites"].get_int32().value;
+					discord_invite_data newData{};
+					getValueIfNotNull(newData.inviteCode, value.get_document().view(), "inviteCode");
+					getValueIfNotNull(newData.invitesUsed, value.get_document().view(), "invitesUsed");
+					getValueIfNotNull(newData.maxInvites, value.get_document().view(), "maxInvites");
 					guildMemberData.invites.emplace_back(newData);
 				}
 				return guildMemberData;
 			} catch (const std::exception& error) {
-				std::cout << "DatabaseManagerAgent::parseGuildMemberData()" << error.what() << std::endl;
+				std::cout << "database_manager_agent::parseGuildMemberData()" << error.what() << std::endl;
 				return guildMemberData;
 			}
 		};
 	};
 
-	class DiscordUser {
+	class discord_user {
 	  public:
-		static int32_t guildCount;
+		static int64_t guildCount;
 
-		DiscordUserData data{};
+		discord_user_data data{};
 
-		inline DiscordUser(DatabaseManagerAgent& other, jsonifier::string userNameNew, Snowflake userIdNew) {
+		inline discord_user(database_manager_agent& other, jsonifier::string userNameNew, snowflake userIdNew) {
 			this->data.userId	= userIdNew;
 			this->data.userName = userNameNew;
 			this->getDataFromDB(other);
@@ -596,16 +658,16 @@ namespace DiscordCoreAPI {
 			this->data.userName = userNameNew;
 		}
 
-		inline void writeDataToDB(DatabaseManagerAgent& other) {
-			DatabaseWorkload workload{};
-			workload.workloadType = DatabaseWorkloadType::Discord_User_Write;
+		inline void writeDataToDB(database_manager_agent& other) {
+			database_workload workload{};
+			workload.workloadType = database_workload_type::Discord_User_Write;
 			workload.userData	  = this->data;
 			other.submitWorkloadAndGetResults(workload);
 		}
 
-		inline void getDataFromDB(DatabaseManagerAgent& other) {
-			DatabaseWorkload workload{};
-			workload.workloadType = DatabaseWorkloadType::Discord_User_Read;
+		inline void getDataFromDB(database_manager_agent& other) {
+			database_workload workload{};
+			workload.workloadType = database_workload_type::Discord_User_Read;
 			workload.userData	  = this->data;
 			auto result			  = other.submitWorkloadAndGetResults(workload);
 			if (result.discordUser.userId != 0) {
@@ -614,12 +676,12 @@ namespace DiscordCoreAPI {
 		}
 	};
 
-	class DiscordGuild {
+	class discord_guild {
 	  public:
-		inline DiscordGuild() noexcept = default;
-		DiscordGuildData data{};
+		inline discord_guild() noexcept = default;
+		discord_guild_data data{};
 
-		inline DiscordGuild(DatabaseManagerAgent& other, GuildCacheData guildData) {
+		inline discord_guild(database_manager_agent& other, guild_cache_data guildData) {
 			this->data.guildId	   = guildData.id;
 			this->data.guildName   = guildData.name;
 			this->data.memberCount = guildData.memberCount;
@@ -629,16 +691,16 @@ namespace DiscordCoreAPI {
 			this->data.memberCount = guildData.memberCount;
 		}
 
-		inline void writeDataToDB(DatabaseManagerAgent& other) {
-			DatabaseWorkload workload{};
-			workload.workloadType = DatabaseWorkloadType::Discord_Guild_Write;
+		inline void writeDataToDB(database_manager_agent& other) {
+			database_workload workload{};
+			workload.workloadType = database_workload_type::Discord_Guild_Write;
 			workload.guildData	  = this->data;
 			other.submitWorkloadAndGetResults(workload);
 		}
 
-		inline void getDataFromDB(DatabaseManagerAgent& other) {
-			DatabaseWorkload workload{};
-			workload.workloadType = DatabaseWorkloadType::Discord_Guild_Read;
+		inline void getDataFromDB(database_manager_agent& other) {
+			database_workload workload{};
+			workload.workloadType = database_workload_type::Discord_Guild_Read;
 			workload.guildData	  = this->data;
 			auto result			  = other.submitWorkloadAndGetResults(workload);
 			if (result.discordGuild.guildId != 0) {
@@ -647,11 +709,13 @@ namespace DiscordCoreAPI {
 		}
 	};
 
-	class DiscordGuildMember {
+	class discord_guild_member {
 	  public:
-		DiscordGuildMemberData data{};
+		discord_guild_member_data data{};
 
-		inline DiscordGuildMember(DatabaseManagerAgent& other, GuildMemberCacheData guildMemberData) {
+		inline discord_guild_member() noexcept = default;
+
+		inline discord_guild_member(database_manager_agent& other, guild_member_cache_data guildMemberData) {
 			this->data.guildMemberId = guildMemberData.user.id;
 			this->data.guildId		 = guildMemberData.guildId.operator const uint64_t&();
 			this->data.globalId		 = this->data.guildId.operator jsonifier::string() + " + " + this->data.guildMemberId;
@@ -666,16 +730,16 @@ namespace DiscordCoreAPI {
 			this->data.userName = guildMemberData.getUserData().userName;
 		}
 
-		inline void writeDataToDB(DatabaseManagerAgent& other) {
-			DatabaseWorkload workload{};
-			workload.workloadType	 = DatabaseWorkloadType::Discord_Guild_Member_Write;
+		inline void writeDataToDB(database_manager_agent& other) {
+			database_workload workload{};
+			workload.workloadType	 = database_workload_type::Discord_Guild_Member_Write;
 			workload.guildMemberData = this->data;
 			other.submitWorkloadAndGetResults(workload);
 		}
 
-		inline void getDataFromDB(DatabaseManagerAgent& other) {
-			DatabaseWorkload workload{};
-			workload.workloadType	 = DatabaseWorkloadType::Discord_Guild_Member_Read;
+		inline void getDataFromDB(database_manager_agent& other) {
+			database_workload workload{};
+			workload.workloadType	 = database_workload_type::Discord_Guild_Member_Read;
 			workload.guildMemberData = this->data;
 			auto result				 = other.submitWorkloadAndGetResults(workload);
 			if (result.discordGuildMember.globalId != "") {
@@ -684,5 +748,5 @@ namespace DiscordCoreAPI {
 		}
 	};
 
-	inline static DatabaseManagerAgent managerAgent{};
+	inline static database_manager_agent managerAgent{};
 }

@@ -1,39 +1,39 @@
 // Ghost.hpp - Header for the "ghost" command.
-// Jul 31, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// jul 31, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
-#include "./../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class Ghost : public BaseFunction {
+	class ghost : public base_function {
 	  public:
-		Ghost() {
+		ghost() {
 			this->commandName	  = "ghost";
-			this->helpDescription = "'Ghosts' or 'unghosts' a server memeber.";
-			EmbedData msgEmbed{};
-			msgEmbed.setDescription("------\nEnter /ghost add, REASON, @USERMENTION or /ghost remove, @USERMENTION, /ghost view.\n------");
-			msgEmbed.setTitle("__**Ghost Usage:**__");
+			this->helpDescription = "'ghosts' or 'unghosts' a server memeber.";
+			embed_data msgEmbed{};
+			msgEmbed.setDescription("------\nEnter /ghost add, reason, @usermention or /ghost remove, @usermention, /ghost view.\n------");
+			msgEmbed.setTitle("__**ghost usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<Ghost>();
+		unique_ptr<base_function> create() {
+			return makeUnique<ghost>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelData channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
-				GuildData guild{ argsNew.getInteractionData().guildId };
-				DiscordGuild discordGuild{ managerAgent, guild };
+				guild_data guild{ argsNew.getInteractionData().guildId };
+				discord_guild discordGuild{ managerAgent, guild };
 
-				GuildMemberData sendingGuildMember = argsNew.getGuildMemberData();
+				guild_member_data sendingGuildMember = argsNew.getGuildMemberData();
 
 				auto inputEventData			 = argsNew.getInputEventData();
 				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(argsNew, inputEventData, discordGuild, channel, sendingGuildMember, true);
@@ -43,80 +43,79 @@ namespace DiscordCoreAPI {
 				}
 				jsonifier::string whatAreWeDoing{};
 				jsonifier::string ghostReason{};
-				Snowflake userId{};
+				snowflake userId{};
 				if (argsNew.getSubCommandName() == "view") {
 					whatAreWeDoing = "viewing";
 					userId		   = sendingGuildMember.user.id;
 				}
 				if (argsNew.getCommandArguments().values.size() > 0 && argsNew.getSubCommandName() == "add") {
 					whatAreWeDoing		  = "add";
-					jsonifier::string argOne	  = argsNew.getCommandArguments().values["user"].value;
-					jsonifier::string argTwo	  = argsNew.getCommandArguments().values["reason"].value;
+					size_t argOne				  = argsNew.getCommandArguments().values["user"].value.operator size_t();
+					jsonifier::string argTwo	  = argsNew.getCommandArguments().values["reason"].value.operator jsonifier::string();
 					ghostReason			  = argTwo;
-					jsonifier::string userIDOne = argOne;
-					userId						  = std::stoull(userIDOne.data());
+					userId						  = argOne;
 				} else if (argsNew.getCommandArguments().values.size() > 0 && argsNew.getSubCommandName() == "remove") {
 					whatAreWeDoing		  = "remove";
-					jsonifier::string argOne	  = argsNew.getCommandArguments().values["user"].value;
+					jsonifier::string argOne	  = argsNew.getCommandArguments().values["user"].value.operator jsonifier::string();
 					jsonifier::string userIDOne = argOne;
-					userId						  = std::stoull(userIDOne.data());
+					userId						  = jsonifier::strToUint64(userIDOne);
 				}
-				InputEventData newEvent01 = argsNewer;
+				input_event_data newEvent01 = argsNewer;
 
-				GuildMemberData targetGuildMember = GuildMembers::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
-				DiscordGuildMember discordGuildMember(managerAgent, targetGuildMember);
+				guild_member_data targetGuildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
+				discord_guild_member discordGuildMember(managerAgent, targetGuildMember);
 				if (whatAreWeDoing == "add") {
-					TimeoutGuildMemberData modifyData{};
-					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::Week;
+					timeout_guild_member_data modifyData{};
+					modifyData.numOfMinutesToTimeoutFor = timeout_durations::Week;
 					modifyData.guildId					= guild.id;
 					modifyData.guildMemberId			= targetGuildMember.user.id;
 					modifyData.reason					= ghostReason;
-					targetGuildMember					= GuildMembers::timeoutGuildMemberAsync(modifyData).get();
+					targetGuildMember					= guild_members::timeoutGuildMemberAsync(modifyData).get();
 
-					jsonifier::string msgString = "------\n**Hello! You've been REDACTED, on the server " + jsonifier::string{ guild.name } + " for the following reason(s): " + ghostReason +
-						"\n Please, contact a moderator or admin to clear this issue up! Thanks!**\n------";
-					UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-					msgEmbed->setAuthor(DiscordCoreClient::getInstance()->getBotUser().userName, DiscordCoreClient::getInstance()->getBotUser().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed->setColor(discordGuild.data.borderColor);
+					jsonifier::string msgString = "------\n**hello! you've been redacted, on the server " + jsonifier::string{ guild.name } + " for the following reason(s): " + ghostReason +
+						"\n please, contact a moderator or admin to clear this issue up! thanks!**\n------";
+					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+					msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
-					msgEmbed->setTitle("__**You\'ve been ghosted:**__");
+					msgEmbed->setTitle("__**you\'ve been ghosted:**__");
 
-					auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
-					CreateMessageData dataPackage{ DmChannel.id };
+					auto dm_channel = channels::createDMChannelAsync({ .userId = userId }).get();
+					create_message_data dataPackage{ dm_channel.id };
 					dataPackage.addMessageEmbed(*msgEmbed);
-					Messages::createMessageAsync(dataPackage).get();
+					messages::createMessageAsync(dataPackage).get();
 
 					if (targetGuildMember.user.id == 0) {
-						jsonifier::string msgStringNew = "------\n**Hello! There was an error while trying to ghost <@" + userId + ">**\n------\n";
-						UniquePtr<EmbedData> msgEmbedNew{ makeUnique<EmbedData>() };
-						msgEmbedNew->setAuthor(DiscordCoreClient::getInstance()->getBotUser().userName, DiscordCoreClient::getInstance()->getBotUser().getUserImageUrl(UserImageTypes::Avatar));
-						msgEmbedNew->setColor(discordGuild.data.borderColor);
+						jsonifier::string msgStringNew = "------\n**hello! there was an error while trying to ghost <@" + userId + ">**\n------\n";
+						unique_ptr<embed_data> msgEmbedNew{ makeUnique<embed_data>() };
+						msgEmbedNew->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+						msgEmbedNew->setColor("fefefe");
 						msgEmbedNew->setDescription(msgStringNew);
 						msgEmbedNew->setTimeStamp(getTimeAndDate());
-						msgEmbedNew->setTitle("__**Ghosting Error:**__");
-						RespondToInputEventData dataPackage01(newEvent01);
-						dataPackage01.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+						msgEmbedNew->setTitle("__**ghosting error:**__");
+						respond_to_input_event_data dataPackage01(newEvent01);
+						dataPackage01.setResponseType(input_event_response_type::Edit_Interaction_Response);
 						dataPackage01.addMessageEmbed(*msgEmbedNew);
-						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage01).get();
+						auto eventNew = input_events::respondToInputEventAsync(dataPackage01).get();
 						return;
 					}
 
 					discordGuild.data.ghostedIds.emplace_back(targetGuildMember.user.id);
 					discordGuild.writeDataToDB(managerAgent);
 
-					jsonifier::string msgString2 = "------\n**Hello! You've ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
+					jsonifier::string msgString2 = "------\n**hello! you've ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
 						jsonifier::string{ targetGuildMember.getUserData().userName } + ")\n------";
-					EmbedData msgEmbed2;
-					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl(GuildMemberImageTypes::Avatar));
-					msgEmbed2.setColor(discordGuild.data.borderColor);
+					embed_data msgEmbed2;
+					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar));
+					msgEmbed2.setColor("fefefe");
 					msgEmbed2.setDescription(msgString2);
 					msgEmbed2.setTimeStamp(getTimeAndDate());
-					msgEmbed2.setTitle("__**New Server Member Ghosted:**__");
-					RespondToInputEventData dataPackage02(newEvent01);
-					dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					msgEmbed2.setTitle("__**new server member ghosted:**__");
+					respond_to_input_event_data dataPackage02(newEvent01);
+					dataPackage02.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed2);
-					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
+					auto eventNew = input_events::respondToInputEventAsync(dataPackage02).get();
 				} else if (whatAreWeDoing == "viewing") {
 					jsonifier::string msgString = "------\n";
 
@@ -126,16 +125,16 @@ namespace DiscordCoreAPI {
 
 					msgString += "------";
 
-					UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed->setColor(discordGuild.data.borderColor);
+					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
-					msgEmbed->setTitle("__**Currently Ghosted Members:**__");
-					RespondToInputEventData dataPackage01(newEvent01);
-					dataPackage01.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					msgEmbed->setTitle("__**currently ghosted members:**__");
+					respond_to_input_event_data dataPackage01(newEvent01);
+					dataPackage01.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage01.addMessageEmbed(*msgEmbed);
-					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage01).get();
+					auto eventNew = input_events::respondToInputEventAsync(dataPackage01).get();
 					return;
 				} else if (whatAreWeDoing == "remove") {
 					bool isItThere{ false };
@@ -147,62 +146,62 @@ namespace DiscordCoreAPI {
 							break;
 						}
 					}
-					TimeoutGuildMemberData modifyData{};
-					modifyData.numOfMinutesToTimeoutFor = TimeoutDurations::None;
+					timeout_guild_member_data modifyData{};
+					modifyData.numOfMinutesToTimeoutFor = timeout_durations::None;
 					modifyData.guildId					= guild.id;
 					modifyData.reason					= ghostReason;
 					modifyData.guildMemberId			= targetGuildMember.user.id;
-					targetGuildMember					= GuildMembers::timeoutGuildMemberAsync(modifyData).get();
+					targetGuildMember					= guild_members::timeoutGuildMemberAsync(modifyData).get();
 
 					if (targetGuildMember.user.id == 0 || !isItThere) {
-						jsonifier::string msgString = "------\n**Hello! There was an error while trying to un-ghost <@" + userId + ">**\n------\n";
-						UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-						msgEmbed->setAuthor(DiscordCoreClient::getInstance()->getBotUser().userName, DiscordCoreClient::getInstance()->getBotUser().getUserImageUrl(UserImageTypes::Avatar));
-						msgEmbed->setColor(discordGuild.data.borderColor);
+						jsonifier::string msgString = "------\n**hello! there was an error while trying to un-ghost <@" + userId + ">**\n------\n";
+						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+						msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setColor("fefefe");
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setTimeStamp(getTimeAndDate());
-						msgEmbed->setTitle("__**Un-Ghosting Error:**__");
-						RespondToInputEventData dataPackage(newEvent01);
-						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+						msgEmbed->setTitle("__**un-ghosting error:**__");
+						respond_to_input_event_data dataPackage(newEvent01);
+						dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
+						auto eventNew = input_events::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 
 					discordGuild.data.ghostedIds.erase(discordGuild.data.ghostedIds.begin() + index);
 					discordGuild.writeDataToDB(managerAgent);
-					jsonifier::string msgString = "------\n**Hello! You\'ve had your redacted status removed! Have a great day!**\n------";
-					UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-					msgEmbed->setAuthor(DiscordCoreClient::getInstance()->getBotUser().userName, DiscordCoreClient::getInstance()->getBotUser().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed->setColor(discordGuild.data.borderColor);
+					jsonifier::string msgString = "------\n**hello! you\'ve had your redacted status removed! have a great day!**\n------";
+					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+					msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
-					msgEmbed->setTitle("__**You\'ve been un-ghosted:**__");
+					msgEmbed->setTitle("__**you\'ve been un-ghosted:**__");
 
-					auto DmChannel = Channels::createDMChannelAsync({ .userId = userId }).get();
-					CreateMessageData dataPackage{ DmChannel.id };
+					auto dm_channel = channels::createDMChannelAsync({ .userId = userId }).get();
+					create_message_data dataPackage{ dm_channel.id };
 					dataPackage.addMessageEmbed(*msgEmbed);
-					Messages::createMessageAsync(dataPackage).get();
+					messages::createMessageAsync(dataPackage).get();
 
-					jsonifier::string msgString2 = "------\n**Hello! You've un-ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
+					jsonifier::string msgString2 = "------\n**hello! you've un-ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
 						jsonifier::string{ targetGuildMember.getUserData().userName } + ")\n------";
-					EmbedData msgEmbed2;
-					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl(GuildMemberImageTypes::Avatar));
-					msgEmbed2.setColor(discordGuild.data.borderColor);
+					embed_data msgEmbed2;
+					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar));
+					msgEmbed2.setColor("fefefe");
 					msgEmbed2.setDescription(msgString2);
 					msgEmbed2.setTimeStamp(getTimeAndDate());
-					msgEmbed2.setTitle("__**New Server Member Un-Ghosted:**__");
-					RespondToInputEventData dataPackage02(newEvent01);
-					dataPackage02.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					msgEmbed2.setTitle("__**new server member un-ghosted:**__");
+					respond_to_input_event_data dataPackage02(newEvent01);
+					dataPackage02.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage02.addMessageEmbed(msgEmbed2);
-					auto eventNew = InputEvents::respondToInputEventAsync(dataPackage02).get();
+					auto eventNew = input_events::respondToInputEventAsync(dataPackage02).get();
 					return;
 				}
 				return;
 			} catch (const std::exception& error) {
-				std::cout << "Ghost::execute()" << error.what() << std::endl;
+				std::cout << "ghost::execute()" << error.what() << std::endl;
 			}
 		}
-		~Ghost(){};
+		~ghost(){};
 	};
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api

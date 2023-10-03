@@ -1,7 +1,7 @@
 // CommandsList.hpp - Commands! All of them!
-// May 28, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// may 28, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 

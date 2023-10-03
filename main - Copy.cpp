@@ -1,154 +1,159 @@
 ﻿// main.cpp - Main entry point.
-// Jun 17, 2021
-// Chris M.
-// https://github.com/RealTimeChris
-#ifndef AVX_TYPE
-	#define AVX_TYPE 126
-#endif
-#include "Commands/CommandsList.hpp"
+// jun 17, 2021
+// chris m.
+// https://github.com/real_time_chris
 
-DiscordCoreAPI::CoRoutine<void> onGuildCreation(DiscordCoreAPI::OnGuildCreationData dataPackage) {
-	co_await DiscordCoreAPI::NewThreadAwaitable<void>();
-	DiscordCoreAPI::DiscordGuild discordGuild{ DiscordCoreAPI::managerAgent, dataPackage.value };
-	discordGuild.getDataFromDB(DiscordCoreAPI::managerAgent);
-	for (auto& value : discordGuild.data.deletionChannels) {
+#include "commands/CommandsList.hpp"
+
+discord_core_api::co_routine<void> onGuildCreation(discord_core_api::on_guild_creation_data dataPackage) {
+	co_await discord_core_api::newThreadAwaitable<void>();
+	discord_core_api::discord_guild discordGuild{discord_core_api::managerAgent, dataPackage.value };
+	discordGuild.getDataFromDB(discord_core_api::managerAgent);
+	for (auto& value: discordGuild.data.deletionChannels) {
 		value.currentlyBeingDeleted = false;
 	}
-	discordGuild.writeDataToDB(DiscordCoreAPI::managerAgent);
+	discordGuild.writeDataToDB(discord_core_api::managerAgent);
 
-	for (auto& value : dataPackage.value.members) {
-		auto guildMemberNew = DiscordCoreAPI::GuildMembers::getCachedGuildMember({ .guildMemberId = value.user.id, .guildId = dataPackage.value.id });
-		for (auto& value02 : discordGuild.data.defaultRoleIds) {
+	for (auto& value: dataPackage.value.members) {
+		auto guildMemberNew = discord_core_api::guild_members::getCachedGuildMember({ .guildMemberId = value.user.id, .guildId = dataPackage.value.id });
+		for (auto& value02: discordGuild.data.defaultRoleIds) {
 			bool isItFound{ false };
-			for (auto& value03 : guildMemberNew.roles) {
+			for (auto& value03: guildMemberNew.roles) {
 				if (value03 == value02) {
 					isItFound = true;
 				}
 			}
 			if (!isItFound) {
-				DiscordCoreAPI::AddGuildMemberRoleData dataPackage02{};
+				discord_core_api::add_guild_member_role_data dataPackage02{};
 				dataPackage02.guildId = discordGuild.data.guildId;
-				dataPackage02.reason  = "Default Role!";
-				dataPackage02.roleId  = value02;
-				dataPackage02.userId  = value.user.id;
-				DiscordCoreAPI::Roles::addGuildMemberRoleAsync(dataPackage02).get();
+				dataPackage02.reason = "default role!";
+				dataPackage02.roleId = value02;
+				dataPackage02.userId = value.user.id;
+				discord_core_api::roles::addGuildMemberRoleAsync(dataPackage02).get();
 			}
 		}
 
-		DiscordCoreAPI::DiscordGuildMember guildMember{ DiscordCoreAPI::managerAgent, guildMemberNew };
-		guildMember.writeDataToDB(DiscordCoreAPI::managerAgent);
+		discord_core_api::discord_guild_member guildMember{ discord_core_api::managerAgent, guildMemberNew };
+		guildMember.writeDataToDB(discord_core_api::managerAgent);
 	}
 	co_return;
 }
 
-DiscordCoreAPI::CoRoutine<void> onGuildMemberAdd(DiscordCoreAPI::OnGuildMemberAddData dataPackage) {
-	co_await DiscordCoreAPI::NewThreadAwaitable<void>();
-	DiscordCoreAPI::addNewUserRoleAsync(dataPackage.value).get();
+discord_core_api::co_routine<void> onGuildMemberAdd(discord_core_api::on_guild_member_add_data dataPackage) {
+	co_await discord_core_api::newThreadAwaitable<void>();
+	discord_core_api::addNewUserRoleAsync(dataPackage.value).get();
 	co_return;
 }
 
-DiscordCoreAPI::CoRoutine<void> onInviteCreation(DiscordCoreAPI::OnInviteCreationData dataPackage) {
-	co_await DiscordCoreAPI::NewThreadAwaitable<void>();
-	DiscordCoreAPI::MonitorInvites::execute(dataPackage);
+discord_core_api::co_routine<void> onInviteCreation(discord_core_api::on_invite_creation_data dataPackage) {
+	co_await discord_core_api::newThreadAwaitable<void>();
+	discord_core_api::monitor_invites::execute(dataPackage);
 	co_return;
 }
 
-DiscordCoreAPI::CoRoutine<void> onInviteDeletion(DiscordCoreAPI::OnInviteDeletionData dataPackage) {
-	co_await DiscordCoreAPI::NewThreadAwaitable<void>();
-	DiscordCoreAPI::MonitorInvites::execute(dataPackage);
+discord_core_api::co_routine<void> onInviteDeletion(discord_core_api::on_invite_deletion_data dataPackage) {
+	co_await discord_core_api::newThreadAwaitable<void>();
+	discord_core_api::monitor_invites::execute(dataPackage);
 	co_return;
 }
 
-void onBoot02(DiscordCoreAPI::DiscordCoreClient*) {
-	jsonifier::vector<DiscordCoreAPI::GuildData> guilds = DiscordCoreAPI::Guilds::getAllGuildsAsync();
-	for (auto& value : guilds) {
-		DiscordCoreAPI::MonitorInvites::updateInvitesDataBaseToWrap(value.id);
+void onBoot02(discord_core_api::discord_core_client*) {
+	jsonifier::vector<discord_core_api::guild_data> guilds = discord_core_api::guilds::getAllGuildsAsync();
+	for (auto& value: guilds) {
+		discord_core_api::monitor_invites::updateInvitesDataBaseToWrap(value.id);
 	}
 }
 
-void onBoot00(DiscordCoreAPI::DiscordCoreClient* args) {
+void onBoot00(discord_core_api::discord_core_client* args) {
 	auto botUser = args->getBotUser();
-	DiscordCoreAPI::managerAgent.initialize(botUser.id);
-	DiscordCoreAPI::DiscordUser theUser{ DiscordCoreAPI::managerAgent, botUser.userName, botUser.id };
+	discord_core_api::managerAgent.initialize(botUser.id);
+	discord_core_api::discord_user theUser{ discord_core_api::managerAgent, botUser.userName, botUser.id };
 }
 
 int32_t main() {
-	DiscordCoreAPI::UniquePtr<jsonifier::vector<int32_t>> uniquePtr{ std::make_unique<jsonifier::vector<int32_t>>() };
-	jsonifier::vector<DiscordCoreAPI::RepeatedFunctionData> functionVector{};
-	DiscordCoreAPI::RepeatedFunctionData function01{};
-	function01.function		= &onBoot00;
+	jsonifier::vector<int32_t> uniquePtr{};
+	jsonifier::vector<discord_core_api::repeated_function_data> functionVector{};
+	discord_core_api::repeated_function_data function01{};
+	function01.function = &onBoot00;
 	function01.intervalInMs = 2500;
-	function01.repeated		= false;
+	function01.repeated = false;
 	functionVector.emplace_back(function01);
-	DiscordCoreAPI::RepeatedFunctionData function03{};
-	function03.function		= &onBoot02;
+	discord_core_api::repeated_function_data function03{};
+	function03.function = &onBoot02;
 	function03.intervalInMs = 15000;
-	function03.repeated		= false;
+	function03.repeated = false;
 	functionVector.emplace_back(function03);
-	DiscordCoreAPI::RepeatedFunctionData function04{};
-	function04.function		= &DiscordCoreAPI::deleteMessages;
+	discord_core_api::repeated_function_data function04{};
+	function04.function = &discord_core_api::deleteMessages;
 	function04.intervalInMs = 60000;
-	function04.repeated		= true;
+	function04.repeated = true;
 	functionVector.emplace_back(function04);
-	DiscordCoreAPI::RegisterApplicationCommands theData{};
-	DiscordCoreAPI::ShardingOptions shardOptions{};
+	discord_core_api::register_application_commands theData{};
+	discord_core_api::sharding_options shardOptions{};
 	shardOptions.numberOfShardsForThisProcess = 1;
-	shardOptions.startingShard				  = 0;
-	shardOptions.totalNumberOfShards		  = 1;
-	DiscordCoreAPI::LoggingOptions logOptions{};
-	logOptions.logWebSocketSuccessMessages = true;
-	logOptions.logWebSocketErrorMessages   = true;
-	logOptions.logGeneralErrorMessages	   = true;
-	logOptions.logHttpsErrorMessages	   = true;
-	logOptions.logHttpsSuccessMessages	   = true;
-	DiscordCoreAPI::DiscordCoreClientConfig clientConfig{};
-	// clientConfig.connectionAddress = "192.168.0.10";
-	clientConfig.botToken						= "";
-	clientConfig.logOptions						= logOptions;
-	clientConfig.shardOptions					= shardOptions;
-	clientConfig.cacheOptions.cacheChannels		= true;
-	clientConfig.cacheOptions.cacheGuilds		= true;
-	clientConfig.cacheOptions.cacheUsers		= true;
-	clientConfig.cacheOptions.cacheRoles		= true;
+	shardOptions.startingShard = 0;
+	shardOptions.totalNumberOfShards = 1;
+	discord_core_api::logging_options logOptions{};
+	logOptions.logWebSocketErrorMessages = true;
+	logOptions.logGeneralErrorMessages	 = true;
+	logOptions.logHttpsErrorMessages	 = true;
+	discord_core_api::discord_core_client_config clientConfig{};
+	//clientConfig.connectionAddress = "192.168.0.10";
+	clientConfig.botToken = "";
+	clientConfig.logOptions = logOptions;
+	clientConfig.shardOptions = shardOptions;
+	clientConfig.cacheOptions.cacheChannels = true;
+	clientConfig.cacheOptions.cacheGuilds = true;
+	clientConfig.cacheOptions.cacheUsers = true;
+	clientConfig.cacheOptions.cacheRoles = true;
 	clientConfig.cacheOptions.cacheGuildMembers = true;
-	clientConfig.functionsToExecute				= functionVector;
-	jsonifier::vector<DiscordCoreAPI::ActivityData> activities{};
-	DiscordCoreAPI::ActivityData activity{};
-	activity.name = "/help for my commands!";
-	activity.type = DiscordCoreAPI::ActivityType::Game;
+	clientConfig.functionsToExecute = functionVector;
+	jsonifier::vector<discord_core_api::activity_data> activities{};
+	discord_core_api::activity_data activity{};
+	activity.type  = discord_core_api::activity_type::custom;
+	activity.state = "enter /help for a list of my commands!";
+	activity.name  = "enter /help for a list of my commands!";
 	activities.emplace_back(activity);
 	clientConfig.presenceData.activities = activities;
 	clientConfig.presenceData.afk		 = false;
-	clientConfig.textFormat				 = DiscordCoreAPI::TextFormat::Etf;
-	clientConfig.presenceData.since		 = 0;
-	clientConfig.presenceData.status	 = DiscordCoreAPI::PresenceUpdateState::Online;
-	auto thePtr							 = DiscordCoreAPI::makeUnique<DiscordCoreAPI::DiscordCoreClient>(clientConfig);
+	clientConfig.textFormat				 = discord_core_api::text_format::etf;
+	auto thePtr = discord_core_api::makeUnique<discord_core_api::discord_core_client>(clientConfig);
 	thePtr->getEventManager().onInviteCreation(onInviteCreation);
 	thePtr->getEventManager().onInviteDeletion(onInviteDeletion);
 	thePtr->getEventManager().onGuildCreation(onGuildCreation);
 	thePtr->getEventManager().onGuildMemberAdd(onGuildMemberAdd);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "avatar" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::Avatar>(), theData.createAvatarData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "ban" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::Ban>(), theData.createBanCommandData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "botinfo" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::BotInfo>(), theData.createBotInfoCommandData);
-	thePtr->registerFunction(
-		jsonifier::vector<jsonifier::string>{ "displayguildsdata" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::DisplayGuildsData>(), theData.createDisplayGuildsDataCommandData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "disconnect" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::Disconnect>(), theData.createDisconnectData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "ghost" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::Ghost>(), theData.createGhostCommandData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "help" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::Help>(), theData.createHelpData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "managelogs" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::ManageLogs>(), theData.createManageLogsData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "purge" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::Purge>(), theData.createPurgeCommandData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "serverinfo" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::ServerInfo>(), theData.createServerInfoCommandData);
-	thePtr->registerFunction(
-		jsonifier::vector<jsonifier::string>{ "setbordercolor" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::SetBorderColor>(), theData.createSetBorderColorCommandData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "setdefaultrole" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::SetDefaultRole>(), theData.createSetDefaultRoleIdsData);
-	thePtr->registerFunction(
-		jsonifier::vector<jsonifier::string>{ "setdeletionstatus" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::SetDeletionStatus>(), theData.createSetDeletionStatusCommandData);
-	thePtr->registerFunction(
-		jsonifier::vector<jsonifier::string>{ "setinviteschannel" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::SetInvitesChannel>(), theData.createSetInvitesChannelCommandData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "streamaudio" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::StreamAudio>(), theData.createStreamAudioData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "test" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::Test>(), theData.createTestData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "pushme" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::PushMe>(), theData.createPushmeCommandData);
-	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "userinfo", "user info" }, DiscordCoreAPI::makeUnique<DiscordCoreAPI::UserInfo>(), theData.createUserInfoData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "avatar" }, discord_core_api::makeUnique<discord_core_api::Avatar>(), theData.createAvatarData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "ban" }, discord_core_api::makeUnique<discord_core_api::ban>(), theData.createBanCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "botinfo" }, discord_core_api::makeUnique<discord_core_api::bot_info>(),
+		theData.createBotInfoCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "displayguildsdata" }, discord_core_api::makeUnique<discord_core_api::display_guilds_data>(),
+		theData.createDisplayGuildsDataCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "disconnect" }, discord_core_api::makeUnique<discord_core_api::disconnect>(),
+		theData.createDisconnectData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "ghost" }, discord_core_api::makeUnique<discord_core_api::ghost>(),
+		theData.createGhostCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "help" }, discord_core_api::makeUnique<discord_core_api::help>(), theData.createHelpData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "managelogs" }, discord_core_api::makeUnique<discord_core_api::manage_logs>(),
+		theData.createManageLogsData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "purge" }, discord_core_api::makeUnique<discord_core_api::purge>(),
+		theData.createPurgeCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "serverinfo" }, discord_core_api::makeUnique<discord_core_api::server_info>(),
+		theData.createServerInfoCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "setbordercolor" }, discord_core_api::makeUnique<discord_core_api::set_border_color>(),
+		theData.createSetBorderColorCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "setdefaultrole" }, discord_core_api::makeUnique<discord_core_api::set_default_role>(),
+		theData.createSetDefaultRoleIdsData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "setdeletionstatus" }, discord_core_api::makeUnique<discord_core_api::set_deletion_status>(),
+		theData.createSetDeletionStatusCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "setinviteschannel" }, discord_core_api::makeUnique<discord_core_api::set_invites_channel>(),
+		theData.createSetInvitesChannelCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "streamaudio" }, discord_core_api::makeUnique<discord_core_api::stream_audio>(),
+		theData.createStreamAudioData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "test" }, discord_core_api::makeUnique<discord_core_api::test>(), theData.createTestData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "pushme" }, discord_core_api::makeUnique<discord_core_api::push_me>(),
+		theData.createPushmeCommandData);
+	thePtr->registerFunction(jsonifier::vector<jsonifier::string>{ "userinfo", "user info" }, discord_core_api::makeUnique<discord_core_api::user_info>(),
+		theData.createUserInfoData);
 	thePtr->runBot();
 	return 0;
 }
