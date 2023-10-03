@@ -42,7 +42,7 @@ generate_product_version(
 
 add_executable(
 	"${PROJECT_NAME}"
-	"./../main.cpp"
+	"./../Janny.cpp"
 	"${PRODUCT_INFO}"
 )
 

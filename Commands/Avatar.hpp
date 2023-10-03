@@ -1,63 +1,63 @@
 // Avatar.hpp - Header for the getUserImageUrl(UserImageTypes::Avatar) command.
-// Nov 10, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// nov 10, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
-#include "./../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 #include <regex>
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class Avatar : public BaseFunction {
+	class avatar : public base_function {
 	  public:
-		Avatar() {
-			this->commandName	  = "getUserImageUrl(UserImageTypes::Avatar)";
-			this->helpDescription = "Displays a user's getUserImageUrl(UserImageTypes::Avatar).";
-			this->helpEmbed.setTitle("__**Avatar Usage:**__");
+		avatar() {
+			this->commandName	  = "getUserImageUrl(user_image_types::Avatar)";
+			this->helpDescription = "displays a user's getUserImageUrl(user_image_types::Avatar).";
+			this->helpEmbed.setTitle("__**avatar usage:**__");
 			this->helpEmbed.setTimeStamp(getTimeAndDate());
-			this->helpEmbed.setColor("FeFeFe");
-			this->helpEmbed.setDescription("------\nEnter /getUserImageUrl(UserImageTypes::Avatar) @USERMENTION.\n------");
+			this->helpEmbed.setColor("fe_fe_fe");
+			this->helpEmbed.setDescription("------\nEnter /getUserImageUrl(user_image_types::Avatar) @usermention.\n------");
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<Avatar>();
+		unique_ptr<base_function> create() {
+			return makeUnique<avatar>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelData channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
 
-				GuildData guild{ argsNew.getInteractionData().guildId };
+				guild_data guild{ argsNew.getInteractionData().guildId };
 
-				DiscordGuild discordGuild{ managerAgent, guild };
+				discord_guild discordGuild{ managerAgent, guild };
 
-				GuildMemberData guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 				auto newString = argsNew.getCommandArguments().values["user"].value.operator jsonifier::string();
-				Snowflake userId{ std::stoull(newString.substr(1, newString.size() - 2).data()) };
+				snowflake userId{ jsonifier::strToUint64(newString.substr(1, newString.size() - 2)) };
 
-				GuildMemberData guildMemberGet{ GuildMembers::getGuildMemberAsync({ .guildMemberId = userId, .guildId = guild.id }).get() };
+				guild_member_data guildMemberGet{ guild_members::getGuildMemberAsync({ .guildMemberId = userId, .guildId = guild.id }).get() };
 
-				EmbedData msgEmbed{};
-				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-				msgEmbed.setColor(discordGuild.data.borderColor);
-				msgEmbed.setDescription("<@" + guildMemberGet.user.id + ">'s Avatar");
+				embed_data msgEmbed{};
+				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setColor("fefefe");
+				msgEmbed.setDescription("<@" + guildMemberGet.user.id + ">'s avatar");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setImage(guildMemberGet.getUserData().getUserImageUrl(UserImageTypes::Avatar) + "?size=4096");
-				msgEmbed.setTitle("__**UserData Avatar:**__");
-				RespondToInputEventData dataPackage(argsNew.getInputEventData());
-				dataPackage.setResponseType(InputEventResponseType::Interaction_Response);
+				msgEmbed.setImage(guildMemberGet.getUserData().getUserImageUrl(user_image_types::Avatar) + "?size=4096");
+				msgEmbed.setTitle("__**user_data avatar:**__");
+				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+				dataPackage.setResponseType(input_event_response_type::Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
-				auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
+				auto eventNew = input_events::respondToInputEventAsync(dataPackage).get();
 
 				return;
 			} catch (const std::exception& error) {
-				std::cout << "Avatar::execute()" << error.what() << std::endl;
+				std::cout << "avatar::execute()" << error.what() << std::endl;
 			}
 		}
-		~Avatar(){};
+		~avatar(){};
 	};
 
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api

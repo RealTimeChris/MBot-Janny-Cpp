@@ -1,23 +1,23 @@
 // SetDefaultRole.hpp - Header for the "add new user role" command.
-// Sep 4, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// sep 4, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
-#include "./../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	void addNewUserRolesAsync(GuildData guild) {
+	void addNewUserRolesAsync(guild_data guild) {
 		try {
-			DiscordGuild discordGuild{ managerAgent, guild };
+			discord_guild discordGuild{ managerAgent, guild };
 			for (auto& value: guild.members) {
-				GetGuildMemberData theData{};
+				get_guild_member_data theData{};
 				theData.guildId		  = guild.id;
 				theData.guildMemberId = value.user.id;
-				auto guildMemberNew	  = GuildMembers::getCachedGuildMember(theData);
-				DiscordGuildMember guildMember(managerAgent, guildMemberNew);
+				auto guildMemberNew	  = guild_members::getCachedGuildMember(theData);
+				discord_guild_member guildMember(managerAgent, guildMemberNew);
 				if (guildMember.data.previousRoleIds.size() == 0) {
 					for (auto& value01: discordGuild.data.defaultRoleIds) {
 						bool isItFound = false;
@@ -28,7 +28,7 @@ namespace DiscordCoreAPI {
 							}
 						}
 						if (!isItFound) {
-							Roles::addGuildMemberRoleAsync({ .guildId = guild.id, .reason = "New User.", .userId = value.user.id.operator const uint64_t&(), .roleId = value01 })
+							roles::addGuildMemberRoleAsync({ .guildId = guild.id, .reason = "new user.", .userId = value.user.id.operator const uint64_t&(), .roleId = value01 })
 								.get();
 						}
 					}
@@ -36,47 +36,47 @@ namespace DiscordCoreAPI {
 			}
 			return;
 		} catch (const std::exception& error) {
-			std::cout << "addNewUserRolesAsync Error: " << error.what() << std::endl;
+			std::cout << "addNewUserRolesAsync error: " << error.what() << std::endl;
 		}
 	}
 
-	CoRoutine<void> addNewUserRoleAsync(const GuildMemberData guildMember) {
-		co_await NewThreadAwaitable<void>();
-		GuildData guild = Guilds::getCachedGuild({ .guildId = guildMember.guildId });
-		DiscordGuild discordGuild{ managerAgent, guild };
+	co_routine<void> addNewUserRoleAsync(const guild_member_data guildMember) {
+		co_await newThreadAwaitable<void>();
+		guild_data guild = guilds::getCachedGuild({ .guildId = guildMember.guildId });
+		discord_guild discordGuild{ managerAgent, guild };
 
 		for (auto& value: discordGuild.data.defaultRoleIds) {
-			Roles::addGuildMemberRoleAsync({ .guildId = guild.id, .reason = "New User.", .userId = guildMember.user.id, .roleId = value }).get();
+			roles::addGuildMemberRoleAsync({ .guildId = guild.id, .reason = "new user.", .userId = guildMember.user.id, .roleId = value }).get();
 		}
 	}
 
-	class SetDefaultRole : public BaseFunction {
+	class set_default_role : public base_function {
 	  public:
-		SetDefaultRole() {
+		set_default_role() {
 			this->commandName	  = "setdefaultrole";
-			this->helpDescription = "Sets the default role(s) to add to new users.";
-			EmbedData msgEmbed{};
+			this->helpDescription = "sets the default role(s) to add to new users.";
+			embed_data msgEmbed{};
 			msgEmbed.setDescription(
 				"------\nJust enter /setdefaultrole view to view the current list of default roles!\nEnter /setdefaultrole add, rolename to add a role as a default \
                 for when someone new joins the server.\n/setdefaultrole = remove, rolename to remove a role from the list.\n------");
-			msgEmbed.setTitle("__**Add New UserData RoleData Usage:**__");
+			msgEmbed.setTitle("__**add new user_data Role_Data usage:**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<SetDefaultRole>();
+		unique_ptr<base_function> create() {
+			return makeUnique<set_default_role>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelData channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
-				GuildData guild{ argsNew.getInteractionData().guildId };
-				DiscordGuild discordGuild{ managerAgent, guild };
+				guild_data guild{ argsNew.getInteractionData().guildId };
+				discord_guild discordGuild{ managerAgent, guild };
 
-				GuildMemberData guildMember{ argsNew.getGuildMemberData() };
+				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 
 				auto inputEventData			 = argsNew.getInputEventData();
 				bool doWeHaveAdminPermission = doWeHaveAdminPermissions(argsNew, inputEventData, discordGuild, channel, guildMember, true);
@@ -86,7 +86,7 @@ namespace DiscordCoreAPI {
 				}
 
 				jsonifier::string whatAreWeDoing{};
-				Snowflake roleId{};
+				snowflake roleId{};
 				if (argsNew.getSubCommandName() == "view") {
 					whatAreWeDoing = "view";
 				}
@@ -98,10 +98,10 @@ namespace DiscordCoreAPI {
 					}
 				}
 				if (argsNew.getCommandArguments().values.size() > 0) {
-					roleId = std::stoull(argsNew.getCommandArguments().values["role"].value.operator jsonifier::string().data());
+					roleId = jsonifier::strToUint64(argsNew.getCommandArguments().values["role"].value.operator jsonifier::string());
 				}
 
-				jsonifier::vector<RoleData> roleArray = Roles::getGuildRolesAsync({ .guildId = guild.id }).get();
+				jsonifier::vector<role_data> roleArray = roles::getGuildRolesAsync({ .guildId = guild.id }).get();
 
 				jsonifier::vector<bool> isItFoundReal;
 				for (int32_t x = 0; x < discordGuild.data.defaultRoleIds.size(); x += 1) {
@@ -120,7 +120,7 @@ namespace DiscordCoreAPI {
 						}
 					}
 					if (isItFoundFinal == false) {
-						std::cout << "Removing a missing guild role from the list of defaults." << std::endl;
+						std::cout << "removing a missing guild role from the list of defaults." << std::endl;
 						discordGuild.data.defaultRoleIds.erase(discordGuild.data.defaultRoleIds.begin() + x);
 						discordGuild.writeDataToDB(managerAgent);
 					}
@@ -143,20 +143,20 @@ namespace DiscordCoreAPI {
 						msgString = "------\n__You don't have any default roles!__\n------";
 					}
 
-					UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed->setColor(discordGuild.data.borderColor);
-					msgEmbed->setTitle("__**Default Roles:**__");
+					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setColor("fefefe");
+					msgEmbed->setTitle("__**default roles:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setDescription(msgString);
-					RespondToInputEventData dataPackage(argsNew.getInputEventData());
-					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+					auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
 
-				RoleData currentRole = Roles::getRoleAsync({ .guildId = guild.id, .roleId = roleId }).get();
+				role_data currentRole = roles::getRoleAsync({ .guildId = guild.id, .roleId = roleId }).get();
 
 				bool isItFound = false;
 				for (auto& value: roleArray) {
@@ -167,41 +167,42 @@ namespace DiscordCoreAPI {
 				}
 
 				if (!isItFound) {
-					jsonifier::string msgString = "------\n**Sorry, but the role you entered could not be found! Check spelling and case!**\n------";
-					UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed->setColor(discordGuild.data.borderColor);
-					msgEmbed->setTitle("__**RoleData Issue:**__");
+					jsonifier::string msgString = "------\n**sorry, but the role you entered could not be found! check spelling and case!**\n------";
+					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setColor("fefefe");
+					msgEmbed->setTitle("__**Role_Data issue:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setDescription(msgString);
-					RespondToInputEventData dataPackage(argsNew.getInputEventData());
-					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+					auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
 
 				if (whatAreWeDoing == "add") {
 					for (int32_t x = 0; x < discordGuild.data.defaultRoleIds.size(); x += 1) {
 						if (currentRole.id == discordGuild.data.defaultRoleIds[x]) {
-							jsonifier::string msgString = "------\n**Hey! It looks like you've already added that role!**\n------";
-							UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-							msgEmbed->setColor(discordGuild.data.borderColor);
-							msgEmbed->setTitle("__**RoleData Issue:**__");
+							jsonifier::string msgString = "------\n**hey! it looks like you've already added that role!**\n------";
+							unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+							msgEmbed->setColor("fefefe");
+							msgEmbed->setTitle("__**Role_Data issue:**__");
 							msgEmbed->setTimeStamp(getTimeAndDate());
 							msgEmbed->setDescription(msgString);
-							RespondToInputEventData dataPackage(argsNew.getInputEventData());
-							dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+							respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+							dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 							dataPackage.addMessageEmbed(*msgEmbed);
-							auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+							auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 							return;
 						}
 					}
 
-					GuildMemberData botGuildMember = GuildMembers::getCachedGuildMember({ .guildMemberId = DiscordCoreClient::getInstance()->getBotUser().id, .guildId = guild.id });
-					jsonifier::vector<RoleData> highestBotRoles = Roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = guild.id }).get();
-					RoleData highestBotRole;
+					guild_member_data botGuildMember =
+						guild_members::getCachedGuildMember({ .guildMemberId = discord_core_client::getInstance()->getBotUser().id, .guildId = guild.id });
+					jsonifier::vector<role_data> highestBotRoles = roles::getGuildMemberRolesAsync({ .guildMember = botGuildMember, .guildId = guild.id }).get();
+					role_data highestBotRole;
 					int32_t currentPosition = 0;
 					for (auto& value: highestBotRoles) {
 						if (value.position > currentPosition) {
@@ -210,35 +211,35 @@ namespace DiscordCoreAPI {
 						}
 					}
 
-					if (currentRole.position > highestBotRole.position || currentRole.getFlagValue(RoleFlags::Managed)) {
-						jsonifier::string msgString = "------\n**Sorry, but that is either a managed role or it is higher than my highest role! I cannot use it!**\n------";
-						UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-						msgEmbed->setColor(discordGuild.data.borderColor);
-						msgEmbed->setTitle("__**RoleData Issue:**__");
+					if (currentRole.position > highestBotRole.position || currentRole.getFlagValue(role_flags::managed)) {
+						jsonifier::string msgString = "------\n**sorry, but that is either a managed role or it is higher than my highest role! i cannot use it!**\n------";
+						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setColor("fefefe");
+						msgEmbed->setTitle("__**Role_Data issue:**__");
 						msgEmbed->setTimeStamp(getTimeAndDate());
 						msgEmbed->setDescription(msgString);
-						RespondToInputEventData dataPackage(argsNew.getInputEventData());
-						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+						respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+						dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+						auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 
 					discordGuild.data.defaultRoleIds.emplace_back(currentRole.id);
 					discordGuild.writeDataToDB(managerAgent);
 
-					jsonifier::string msgString = "\n------\n__**RoleData:**__ <@&" + currentRole.id + "> \n------";
-					UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed->setColor(discordGuild.data.borderColor);
-					msgEmbed->setTitle("__**New Default RoleData Added:**__");
+					jsonifier::string msgString = "\n------\n__**Role_Data:**__ <@&" + currentRole.id + "> \n------";
+					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setColor("fefefe");
+					msgEmbed->setTitle("__**new default Role_Data added:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setDescription(msgString);
-					RespondToInputEventData dataPackage(argsNew.getInputEventData());
-					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+					auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
 				if (whatAreWeDoing == "remove") {
@@ -252,39 +253,39 @@ namespace DiscordCoreAPI {
 					}
 
 					if (!isItFound) {
-						jsonifier::string msgString = "------\n**Sorry, but the role you entered could not be found! Check spelling and case!**\n------";
-						UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-						msgEmbed->setColor(discordGuild.data.borderColor);
-						msgEmbed->setTitle("__**Missing/Invalud Arguments:**__");
+						jsonifier::string msgString = "------\n**sorry, but the role you entered could not be found! check spelling and case!**\n------";
+						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setColor("fefefe");
+						msgEmbed->setTitle("__**missing/invalud arguments:**__");
 						msgEmbed->setTimeStamp(getTimeAndDate());
 						msgEmbed->setDescription(msgString);
-						RespondToInputEventData dataPackage(argsNew.getInputEventData());
-						dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+						respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+						dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 						dataPackage.addMessageEmbed(*msgEmbed);
-						auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+						auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 						return;
 					}
 
-					jsonifier::string msgString = "\n------\n__**RoleData**__: <@&" + currentRole.id + ">\n------";
+					jsonifier::string msgString = "\n------\n__**Role_Data**__: <@&" + currentRole.id + ">\n------";
 
-					UniquePtr<EmbedData> msgEmbed{ makeUnique<EmbedData>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-					msgEmbed->setColor(discordGuild.data.borderColor);
-					msgEmbed->setTitle("__**Default RoleData removed:**__");
+					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setColor("fefefe");
+					msgEmbed->setTitle("__**default Role_Data removed:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setDescription(msgString);
-					RespondToInputEventData dataPackage(argsNew.getInputEventData());
-					dataPackage.setResponseType(InputEventResponseType::Edit_Interaction_Response);
+					respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+					dataPackage.setResponseType(input_event_response_type::Edit_Interaction_Response);
 					dataPackage.addMessageEmbed(*msgEmbed);
-					auto argsNewer = InputEvents::respondToInputEventAsync(dataPackage).get();
+					auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				}
 			} catch (const std::exception& error) {
-				std::cout << "SetDefaultRole::execute()" << error.what() << std::endl;
+				std::cout << "set_default_role::execute()" << error.what() << std::endl;
 			}
 		}
-		~SetDefaultRole(){};
+		~set_default_role(){};
 	};
 
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api

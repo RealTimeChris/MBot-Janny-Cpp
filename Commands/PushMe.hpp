@@ -1,85 +1,85 @@
 // PushMe.hpp - Header for the "PushMe" command.
-// Jul 31, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// jul 31, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
-#include "./../HelperFunctions.hpp"
+#include "HelperFunctions.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	class PushMe : public BaseFunction {
+	class push_me : public base_function {
 	  public:
-		PushMe() {
+		push_me() {
 			this->commandName	  = "pushme";
-			this->helpDescription = "Push me to find out!";
-			EmbedData msgEmbed{};
-			msgEmbed.setDescription("Enter /pushme");
-			msgEmbed.setTitle("__**PushMe Usage**__");
+			this->helpDescription = "push me to find out!";
+			embed_data msgEmbed{};
+			msgEmbed.setDescription("enter /pushme");
+			msgEmbed.setTitle("__**push_me usage**__");
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setColor("FeFeFe");
+			msgEmbed.setColor("fe_fe_fe");
 			this->helpEmbed = msgEmbed;
 		}
 
-		UniquePtr<BaseFunction> create() {
-			return makeUnique<PushMe>();
+		unique_ptr<base_function> create() {
+			return makeUnique<push_me>();
 		}
 
-		void execute(BaseFunctionArguments& argsNew) {
+		void execute(const base_function_arguments& argsNew) {
 			try {
-				ChannelData channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
-				GuildData guild{ argsNew.getInteractionData().guildId };
-				DiscordGuild discordGuild{ managerAgent, guild };
+				guild_data guild{ argsNew.getInteractionData().guildId };
+				discord_guild discordGuild{ managerAgent, guild };
 
-				GuildMemberData guildMember = GuildMembers::getCachedGuildMember({ .guildMemberId = argsNew.getUserData().id, .guildId = guild.id });
+				guild_member_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = argsNew.getUserData().id, .guildId = guild.id });
 
-				jsonifier::string msgString = "------\n__**Push Me!**__\n------";
-				EmbedData msgEmbed{};
-				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Avatar));
-				msgEmbed.setColor(discordGuild.data.borderColor);
+				jsonifier::string msgString = "------\n__**push me!**__\n------";
+				embed_data msgEmbed{};
+				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setColor("fefefe");
 				msgEmbed.setDescription(msgString);
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setTitle("__**PushMe:**__");
-				RespondToInputEventData dataPackage(argsNew.getInputEventData());
-				dataPackage.addButton(false, "push_me", "Press-Me", ButtonStyle::Success, "✅");
-				dataPackage.setResponseType(InputEventResponseType::Ephemeral_Interaction_Response);
+				msgEmbed.setTitle("__**push_me:**__");
+				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
+				dataPackage.addButton(false, "push_me", "press-me", button_style::Success, "✅");
+				dataPackage.setResponseType(input_event_response_type::Ephemeral_Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);
-				auto eventNew = InputEvents::respondToInputEventAsync(dataPackage).get();
+				auto eventNew = input_events::respondToInputEventAsync(dataPackage).get();
 
-				ButtonCollector buttonCollector{ eventNew };
-				auto createResponseData = makeUnique<CreateInteractionResponseData>();
-				auto embedData			= makeUnique<EmbedData>();
-				embedData->setColor("FEFEFE");
-				embedData->setTitle("__**Permissions Issue:**__");
+				button_collector buttonCollector{ eventNew };
+				auto createResponseData = makeUnique<create_interaction_response_data>();
+				auto embedData			= makeUnique<embed_data>();
+				embedData->setColor("fefefe");
+				embedData->setTitle("__**permissions issue:**__");
 				embedData->setTimeStamp(getTimeAndDate());
-				embedData->setDescription("Sorry, but that button can only be pressed by <@" + argsNew.getUserData().id + ">!");
+				embedData->setDescription("sorry, but that button can only be pressed by <@" + argsNew.getUserData().id + ">!");
 				createResponseData->addMessageEmbed(*embedData);
-				createResponseData->setResponseType(InteractionCallbackType::Channel_Message_With_Source);
+				createResponseData->setResponseType(interaction_callback_type::Channel_Message_With_Source);
 				createResponseData->setFlags(64);
 				auto resultData = buttonCollector.collectButtonData(false, 120000, 1, *createResponseData, argsNew.getUserData().id).get();
 				if (resultData[0].buttonId == "push_me") {
-					TimeoutGuildMemberData dataPackage02{};
+					timeout_guild_member_data dataPackage02{};
 					dataPackage02.guildId				   = guild.id;
 					dataPackage02.guildMemberId			   = argsNew.getUserData().id;
-					dataPackage02.numOfMinutesToTimeoutFor = TimeoutDurations::Five_Minutes;
-					dataPackage02.reason				   = "PRESSED THE BUTTTON!";
-					GuildMembers::timeoutGuildMemberAsync(dataPackage02).get();
+					dataPackage02.numOfMinutesToTimeoutFor = timeout_durations::Five_Minutes;
+					dataPackage02.reason				   = "pressed the buttton!";
+					guild_members::timeoutGuildMemberAsync(dataPackage02).get();
 				}
 
-				RespondToInputEventData dataPackage03{ *resultData[0].interactionData };
+				respond_to_input_event_data dataPackage03{ *resultData[0].interactionData };
 				dataPackage03.addMessageEmbed(msgEmbed);
-				dataPackage03.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-				InputEvents::respondToInputEventAsync(dataPackage03).get();
+				dataPackage03.setResponseType(input_event_response_type::Edit_Interaction_Response);
+				input_events::respondToInputEventAsync(dataPackage03).get();
 
 				return;
 
 			} catch (const std::exception& error) {
-				std::cout << "PushMe::execute()" << error.what() << std::endl;
+				std::cout << "push_me::execute()" << error.what() << std::endl;
 			}
 		}
-		~PushMe(){};
+		~push_me(){};
 	};
 
-}// namespace DiscordCoreAPI
+}// namespace discord_core_api

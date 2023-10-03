@@ -1,15 +1,15 @@
 // HelperFunctions.hpp - Header for some helper functions.
-// May 28, 2021
-// Chris M.
-// https://github.com/RealTimeChris
+// may 28, 2021
+// chris m.
+// https://github.com/real_time_chris
 
 #pragma once
 
 #include "DatabaseEntities.hpp"
 
-namespace DiscordCoreAPI {
+namespace discord_core_api {
 
-	bool checkForBotCommanderStatus(GuildMemberData guildMember, DiscordUser& discordUser) {
+	bool checkForBotCommanderStatus(guild_member_data guildMember, discord_user& discordUser) {
 		bool areWeACommander;
 		for (auto& value: discordUser.data.botCommanders) {
 			if (guildMember.user.id == value) {
@@ -21,20 +21,21 @@ namespace DiscordCoreAPI {
 		return false;
 	}
 
-	bool doWeHaveAdminPermissions(BaseFunctionArguments& argsNew, InputEventData& eventData, DiscordGuild discordGuild, ChannelData& channel, GuildMemberData& guildMember,
+	bool doWeHaveAdminPermissions(const base_function_arguments& argsNew, input_event_data& eventData, discord_guild discordGuild, channel_data& channel, guild_member_data& guildMember,
 		bool isItEphemeral, bool displayResponse = true) {
-		RespondToInputEventData dataPackage{ eventData };
+		respond_to_input_event_data dataPackage{ eventData };
 		if (isItEphemeral) {
-			dataPackage.setResponseType(InputEventResponseType::Ephemeral_Deferred_Response);
+			dataPackage.setResponseType(input_event_response_type::Ephemeral_Deferred_Response);
 		} else {
-			dataPackage.setResponseType(InputEventResponseType::Deferred_Response);
+			dataPackage.setResponseType(input_event_response_type::Deferred_Response);
 		}
-		InputEvents::respondToInputEventAsync(dataPackage).get();
-		bool doWeHaveAdmin = Permissions{ guildMember.permissions }.checkForPermission(guildMember, channel, Permission::Administrator);
+		input_events::respondToInputEventAsync(dataPackage).get();
+		bool doWeHaveAdmin = permissions{ guildMember.permissions }.checkForPermission(guildMember, channel, permission::administrator);
 		if (doWeHaveAdmin) {
 			return true;
 		}
-		DiscordUser discordUser(managerAgent, DiscordCoreClient::getInstance()->getBotUser().userName, DiscordCoreClient::getInstance()->getBotUser().id);
+		discord_user discordUser(managerAgent, jsonifier::string{ discord_core_client::getInstance()->getBotUser().id.operator jsonifier::string() },
+			discord_core_client::getInstance()->getBotUser().id);
 		bool areWeACommander = checkForBotCommanderStatus(guildMember, discordUser);
 
 		if (areWeACommander) {
@@ -42,17 +43,17 @@ namespace DiscordCoreAPI {
 		}
 
 		if (displayResponse) {
-			jsonifier::string msgString = "------\n**Sorry, but you don't have the permissions required for that!**\n------";
-			EmbedData msgEmbed{};
-			msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(UserImageTypes::Default_Avatar));
-			msgEmbed.setColor(discordGuild.data.borderColor);
+			jsonifier::string msgString = "------\n**sorry, but you don't have the permissions required for that!**\n------";
+			embed_data msgEmbed{};
+			msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Default_Avatar));
+			msgEmbed.setColor("fefefe");
 			msgEmbed.setDescription(msgString);
 			msgEmbed.setTimeStamp(getTimeAndDate());
-			msgEmbed.setTitle("__**Permissions Issue:**__");
-			RespondToInputEventData dataPackageNew{ eventData };
+			msgEmbed.setTitle("__**permissions issue:**__");
+			respond_to_input_event_data dataPackageNew{ eventData };
 			dataPackageNew.addMessageEmbed(msgEmbed);
-			dataPackageNew.setResponseType(InputEventResponseType::Edit_Interaction_Response);
-			eventData = InputEvents::respondToInputEventAsync(dataPackageNew).get();
+			dataPackageNew.setResponseType(input_event_response_type::Edit_Interaction_Response);
+			eventData = input_events::respondToInputEventAsync(dataPackageNew).get();
 		}
 		return false;
 	}
