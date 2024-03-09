@@ -50,13 +50,13 @@ namespace discord_core_api {
 				}
 				if (argsNew.getCommandArguments().values.size() > 0 && argsNew.getSubCommandName() == "add") {
 					whatAreWeDoing		  = "add";
-					size_t argOne				  = argsNew.getCommandArguments().values["user"].value.operator size_t();
-					jsonifier::string argTwo	  = argsNew.getCommandArguments().values["reason"].value.operator jsonifier::string();
+					size_t argOne				  = argsNew.getCommandArguments().values["user"].operator size_t();
+					jsonifier::string argTwo	  = argsNew.getCommandArguments().values["reason"].operator jsonifier::string();
 					ghostReason			  = argTwo;
 					userId						  = argOne;
 				} else if (argsNew.getCommandArguments().values.size() > 0 && argsNew.getSubCommandName() == "remove") {
 					whatAreWeDoing		  = "remove";
-					jsonifier::string argOne	  = argsNew.getCommandArguments().values["user"].value.operator jsonifier::string();
+					jsonifier::string argOne	  = argsNew.getCommandArguments().values["user"].operator jsonifier::string();
 					jsonifier::string userIDOne = argOne;
 					userId						  = jsonifier::strToUint64(userIDOne);
 				}

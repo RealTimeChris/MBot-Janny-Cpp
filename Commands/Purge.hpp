@@ -46,7 +46,7 @@ namespace discord_core_api {
 				bool doWeHaveUser{ false };
 				uint64_t userId{};
 				if (argsNew.getCommandArguments().values.contains("user_id")) {
-					userId = argsNew.getCommandArguments().values["user_id"].value.operator size_t();
+					userId = argsNew.getCommandArguments().values["user_id"].operator size_t();
 					user_data user{};
 					try {
 						user = users::getCachedUser({ .userId = userId });
@@ -76,11 +76,11 @@ namespace discord_core_api {
 				}
 				if (argsNew.getCommandArguments().values.contains("user")) {
 					doWeHaveUser = true;
-					userId		 = argsNew.getCommandArguments().values["user"].value.operator size_t();
+					userId		 = argsNew.getCommandArguments().values["user"].operator size_t();
 				}
 
 				if (argsNew.getCommandArguments().values.contains("deletepinned")) {
-					bool newString = argsNew.getCommandArguments().values["deletepinned"].value.operator bool();
+					bool newString = argsNew.getCommandArguments().values["deletepinned"].operator bool();
 					if (newString ) {
 						deletePinned = true;
 					} else {
@@ -90,14 +90,14 @@ namespace discord_core_api {
 				input_event_data newEvent01{ argsNew.getInputEventData() };
 
 				if (argsNew.getCommandArguments().values.size() > 1) {
-					if (argsNew.getCommandArguments().values["user"].value.operator size_t() != 0) {
-						userId = argsNew.getCommandArguments().values["user"].value.operator size_t();
+					if (argsNew.getCommandArguments().values["user"].operator size_t() != 0) {
+						userId = argsNew.getCommandArguments().values["user"].operator size_t();
 					} else {
-						userId = argsNew.getCommandArguments().values["user_id"].value.operator size_t();
+						userId = argsNew.getCommandArguments().values["user_id"].operator size_t();
 					}
 				}
 
-				uint32_t messageLimit = argsNew.getCommandArguments().values["amount"].value.operator size_t();
+				uint32_t messageLimit = argsNew.getCommandArguments().values["amount"].operator size_t();
 				jsonifier::string msgString;
 				if (!doWeHaveUser) {
 					msgString = "------\n**deleting " + jsonifier::toString(messageLimit) + " messages.**\n------";
@@ -140,7 +140,10 @@ namespace discord_core_api {
 							if (messageArray.size() == 0 || messageCollectedCount >= messageLimit) {
 								break;
 							}
-							if (messageArray[x].timeStamp.hasTimeElapsed(14, 0, 0)) {
+							std::cout << "CURRENT TIMESTAMP (ORIGINAL): " << messageArray[x].id.getCreatedAtTimeStamp() << std::endl;
+							std::cout << "CURRENT TIMESTAMP: " << time_stamp{ messageArray[x].id.getCreatedAtTimeStamp() } << std::endl;
+							std::cout << "CURRENT ID: " << messageArray[x].id.operator jsonifier::string() << std::endl;
+							if (time_stamp{ messageArray[x].id.getCreatedAtTimeStamp() }.hasTimeElapsed(14, 0, 0)) {
 								if (deletePinned) {
 									messageIdsToDeleteFinal.emplace_back(messageArray[x].id);
 									++messageCollectedCount;
@@ -168,7 +171,10 @@ namespace discord_core_api {
 							if (messageArray.size() == 0 || messageCollectedCount >= messageLimit) {
 								break;
 							}
-							if (messageArray[x].timeStamp.hasTimeElapsed(14, 0, 0)) {
+							std::cout << "CURRENT TIMESTAMP (ORIGINAL): " << messageArray[x].id.getCreatedAtTimeStamp() << std::endl;
+							std::cout << "CURRENT TIMESTAMP: " << time_stamp{ messageArray[x].id.getCreatedAtTimeStamp() } << std::endl;
+							std::cout << "CURRENT ID: " << messageArray[x].id.operator jsonifier::string() << std::endl;
+							if (time_stamp{ messageArray[x].id.getCreatedAtTimeStamp() }.hasTimeElapsed(14, 0, 0)) {
 								if (userId == messageArray[x].author.id) {
 									if (deletePinned) {
 										messageIdsToDeleteFinal.emplace_back(messageArray[x].id);

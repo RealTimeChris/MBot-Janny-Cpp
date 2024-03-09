@@ -44,9 +44,9 @@ namespace discord_core_api {
 				}
 				jsonifier::string setToWhat{};
 				if (argsNew.getCommandArguments().values.size() > 0) {
-					if (argsNew.getCommandArguments().values["settowhat"].value.operator bool() == true) {
+					if (argsNew.getCommandArguments().values["settowhat"].operator bool() == true) {
 						setToWhat = "enable";
-					} else if (argsNew.getCommandArguments().values["settowhat"].value.operator bool() == false) {
+					} else if (argsNew.getCommandArguments().values["settowhat"].operator bool() == false) {
 						setToWhat = "disable";
 					}
 				}
@@ -108,7 +108,7 @@ namespace discord_core_api {
 					dataPackage.addMessageEmbed(*msgEmbed);
 					input_events::respondToInputEventAsync(dataPackage).get();
 					return;
-				} else if (argsNew.getCommandArguments().values["group1option"].value.operator jsonifier::string() == "") {
+				} else if (argsNew.getCommandArguments().values["group1option"].operator jsonifier::string() == "") {
 					jsonifier::string msgString = "------\n**please, enter a log name to disable or enable as the second argument of this command!";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
 					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
@@ -125,7 +125,7 @@ namespace discord_core_api {
 					if (setToWhat == "enable") {
 						bool isItFound{ false };
 						for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
-							if (convertToLowerCase(argsNew.getCommandArguments().values["group1option"].value.operator jsonifier::string()) == discordGuild.data.logs[x].nameSmall) {
+							if (convertToLowerCase(argsNew.getCommandArguments().values["group1option"].operator jsonifier::string()) == discordGuild.data.logs[x].nameSmall) {
 								isItFound									 = true;
 								channel_data channelNew						 = channels::getCachedChannel({ .channelId = channel.id });
 								discordGuild.data.logs[x].loggingChannelId	 = channelNew.id;
@@ -164,7 +164,7 @@ namespace discord_core_api {
 					} else if (setToWhat == "disable") {
 						bool isItFound{ false };
 						for (int32_t x = 0; x < discordGuild.data.logs.size(); x += 1) {
-							if (convertToLowerCase(argsNew.getCommandArguments().values["group1option"].value.operator jsonifier::string()) ==
+							if (convertToLowerCase(argsNew.getCommandArguments().values["group1option"].operator jsonifier::string()) ==
 								discordGuild.data.logs[x].nameSmall) {
 								isItFound									 = true;
 								channel_data channelNew						 = channels::getCachedChannel({ .channelId = argsNew.getChannelData().id });

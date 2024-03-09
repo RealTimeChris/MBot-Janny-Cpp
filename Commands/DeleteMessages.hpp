@@ -52,7 +52,7 @@ namespace discord_core_api {
 				int64_t numberOfMinutesToWait{ 0 };
 				try {
 					if (argsNew.getCommandArguments().values.size() > 1) {
-						if (argsNew.getCommandArguments().values["minutestosave"].value.operator std::streamoff() <= 0) {
+						if (argsNew.getCommandArguments().values["minutestosave"].operator std::streamoff() <= 0) {
 							jsonifier::string msgString = "------\n**please enter a valid number of minutes to save the messages for! (!setdeletionstatus = "
 													"add/remove, amountofmessagestosave, numberofminutestowaituntildeleted)**\n------";
 							unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
@@ -67,7 +67,7 @@ namespace discord_core_api {
 							auto event01 = input_events::respondToInputEventAsync(dataPackage).get();
 							return;
 						} else {
-							numberOfMinutesToWait = argsNew.getCommandArguments().values["minutestosave"].value.operator size_t();
+							numberOfMinutesToWait = argsNew.getCommandArguments().values["minutestosave"].operator size_t();
 						}
 					}
 				} catch (const std::exception&) {
@@ -89,7 +89,7 @@ namespace discord_core_api {
 				if (argsNew.getCommandArguments().values.size() > 1) {
 					whatAreWeDoing = convertToLowerCase(argsNew.getSubCommandName());
 					std::cmatch howManyMatch;
-					howManyBack = argsNew.getCommandArguments().values["quantity"].value.operator size_t();
+					howManyBack = argsNew.getCommandArguments().values["quantity"].operator size_t();
 				} else if (argsNew.getCommandArguments().values.size() >= 0) {
 					whatAreWeDoing = convertToLowerCase(argsNew.getSubCommandName());
 					howManyBack	   = 0;

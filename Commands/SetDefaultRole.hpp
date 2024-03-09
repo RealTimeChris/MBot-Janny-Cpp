@@ -98,7 +98,7 @@ namespace discord_core_api {
 					}
 				}
 				if (argsNew.getCommandArguments().values.size() > 0) {
-					roleId = jsonifier::strToUint64(argsNew.getCommandArguments().values["role"].value.operator jsonifier::string());
+					roleId = argsNew.getCommandArguments().values["role"].operator size_t();
 				}
 
 				jsonifier::vector<role_data> roleArray = roles::getGuildRolesAsync({ .guildId = guild.id }).get();

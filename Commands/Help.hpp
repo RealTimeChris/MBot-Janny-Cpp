@@ -42,7 +42,7 @@ namespace discord_core_api {
 							currentHelpPage += 1;
 						}
 						jsonifier::string newString;
-						newString.pushBack(( char )toupper(value->commandName[0]));
+						newString.emplace_back(( char )toupper(value->commandName[0]));
 						newString += value->commandName.substr(1, value->commandName.size() - 1);
 						select_option_data newData;
 						newData.label		= newString;
@@ -66,9 +66,9 @@ namespace discord_core_api {
 						counter += 1;
 					}
 					select_option_data newData;
-					newData.label		= "Go Back";
-					newData.description = "go back to the previous menu.";
-					newData.value		= "go back";
+					newData.label		= "Go back";
+					newData.description = "Go back to the previous menu";
+					newData.value		= "Go back";
 					newData.emoji.name	= "❌";
 					jsonifier::vector<jsonifier::vector<select_option_data>> selectOptionsNew;
 					for (auto& value: selectOptions) {

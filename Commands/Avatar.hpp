@@ -35,8 +35,8 @@ namespace discord_core_api {
 				discord_guild discordGuild{ managerAgent, guild };
 
 				guild_member_data guildMember{ argsNew.getGuildMemberData() };
-				auto newString = argsNew.getCommandArguments().values["user"].value.operator jsonifier::string();
-				snowflake userId{ jsonifier::strToUint64(newString.substr(1, newString.size() - 2)) };
+				auto newString = argsNew.getCommandArguments().values["user"].operator jsonifier::string();
+				snowflake userId{ jsonifier::strToUint64(newString) };
 
 				guild_member_data guildMemberGet{ guild_members::getGuildMemberAsync({ .guildMemberId = userId, .guildId = guild.id }).get() };
 
@@ -46,7 +46,7 @@ namespace discord_core_api {
 				msgEmbed.setDescription("<@" + guildMemberGet.user.id + ">'s avatar");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setImage(guildMemberGet.getUserData().getUserImageUrl(user_image_types::Avatar) + "?size=4096");
-				msgEmbed.setTitle("__**user_data avatar:**__");
+				msgEmbed.setTitle("__**User Avatar:**__");
 				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 				dataPackage.setResponseType(input_event_response_type::Interaction_Response);
 				dataPackage.addMessageEmbed(msgEmbed);

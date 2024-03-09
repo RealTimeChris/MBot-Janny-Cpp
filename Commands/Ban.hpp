@@ -69,11 +69,11 @@ namespace discord_core_api {
 				int32_t daysDigit = 0;
 
 				if (argsNew.getCommandArguments().values.size() > 2 && argsNew.getCommandArguments().values.contains("reason")) {
-					reason = argsNew.getCommandArguments().values["reason"].value.operator jsonifier::string();
+					reason = argsNew.getCommandArguments().values["reason"].operator jsonifier::string();
 				}
 				if (argsNew.getCommandArguments().values.size() > 3) {
-					if (argsNew.getCommandArguments().values["numberofdaystopurge"].value.operator size_t() > 7 ||
-						argsNew.getCommandArguments().values["numberofdaystopurge"].value.operator size_t() < 0) {
+					if (argsNew.getCommandArguments().values["numberofdaystopurge"].operator size_t() > 7 ||
+						argsNew.getCommandArguments().values["numberofdaystopurge"].operator size_t() < 0) {
 						jsonifier::string msgString = "------\n**please, enter a proper number of days for purging the user's messages (0-7) (!ban = @usermention, "
 												"reason, #ofdaystopurge)**\n------";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
@@ -88,7 +88,7 @@ namespace discord_core_api {
 						argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 						return;
 					} else {
-						daysDigit = argsNew.getCommandArguments().values["numberofdaystopurge"].value.operator size_t();
+						daysDigit = argsNew.getCommandArguments().values["numberofdaystopurge"].operator size_t();
 					}
 				}
 				whatAreWeDoing = argsNew.getSubCommandName();

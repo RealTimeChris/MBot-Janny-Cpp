@@ -30,10 +30,8 @@ namespace discord_core_api {
 			try {
 				channel_data channel{ argsNew.getChannelData() };
 
-
 				guild_data guild{ argsNew.getInteractionData().guildId };
 				discord_guild discordGuild{ managerAgent, guild };
-
 				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 
 				snowflake currentVoiceChannelId{};
@@ -53,10 +51,10 @@ namespace discord_core_api {
 					return;
 				}
 				stream_info theInfo{};
-				theInfo.address = argsNew.getCommandArguments().values["connectionip"].value.operator jsonifier::string();
+				theInfo.address = argsNew.getCommandArguments().values["connectionip"].operator jsonifier::string();
 				theInfo.port	= 51072;
 				theInfo.type	= stream_type::client;
-				if (argsNew.getCommandArguments().values["botaudio"].value == "1") {
+				if (argsNew.getCommandArguments().values["botaudio"].operator jsonifier::string() == "1") {
 					theInfo.streamBotAudio = true;
 				} else {
 					theInfo.streamBotAudio = false;

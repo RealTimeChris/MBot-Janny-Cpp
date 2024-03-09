@@ -33,7 +33,7 @@ namespace discord_core_api {
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
 				discord_guild discordGuild{ managerAgent, guild };
-				snowflake userId{ jsonifier::strToUint64(argsNew.getCommandArguments().values["user"].value.operator jsonifier::string()) };
+				snowflake userId{ jsonifier::strToUint64(argsNew.getCommandArguments().values["user"].operator jsonifier::string()) };
 				guild_member_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
 				user_data theUser			= users::getUserAsync({ .userId = argsNew.getUserData().id }).get();
 				jsonifier::vector<embed_field_data> fields;

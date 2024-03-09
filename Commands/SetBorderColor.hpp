@@ -41,8 +41,8 @@ namespace discord_core_api {
 				}
 				jsonifier::string borderColor;
 
-				if (jsonifier::strToUint64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) < 0 ||
-					jsonifier::strToUint64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string()) > jsonifier::strToUint64<16>("fefefe")) {
+				if (jsonifier::strToUint64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string()) < 0 ||
+					jsonifier::strToUint64<16>(argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string()) > jsonifier::strToUint64<16>("fefefe")) {
 					jsonifier::string msgString = "------\n**please, enter a hex-color value between 0 and fe_fe_fe! (!setbordercolor = botname, hexcolorvalue)**\n------";
 					embed_data msgEmbed;
 					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
@@ -56,7 +56,7 @@ namespace discord_core_api {
 					auto argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 					return;
 				} else {
-					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].value.operator jsonifier::string();
+					borderColor = argsNew.getCommandArguments().values["hexcolorvalue"].operator jsonifier::string();
 
 					discordGuild.data.borderColor = borderColor;
 					discordGuild.writeDataToDB(managerAgent);
