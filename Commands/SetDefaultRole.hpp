@@ -98,7 +98,7 @@ namespace discord_core_api {
 					}
 				}
 				if (argsNew.getCommandArguments().values.size() > 0) {
-					roleId = jsonifier::strToUint64(argsNew.getCommandArguments().values["role"].value.operator jsonifier::string());
+					roleId = argsNew.getCommandArguments().values["role"].operator size_t();
 				}
 
 				jsonifier::vector<role_data> roleArray = roles::getGuildRolesAsync({ .guildId = guild.id }).get();
@@ -144,7 +144,7 @@ namespace discord_core_api {
 					}
 
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setTitle("__**default roles:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -169,7 +169,7 @@ namespace discord_core_api {
 				if (!isItFound) {
 					jsonifier::string msgString = "------\n**sorry, but the role you entered could not be found! check spelling and case!**\n------";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setTitle("__**Role_Data issue:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -186,7 +186,7 @@ namespace discord_core_api {
 						if (currentRole.id == discordGuild.data.defaultRoleIds[x]) {
 							jsonifier::string msgString = "------\n**hey! it looks like you've already added that role!**\n------";
 							unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 							msgEmbed->setColor("fefefe");
 							msgEmbed->setTitle("__**Role_Data issue:**__");
 							msgEmbed->setTimeStamp(getTimeAndDate());
@@ -214,7 +214,7 @@ namespace discord_core_api {
 					if (currentRole.position > highestBotRole.position || currentRole.getFlagValue(role_flags::managed)) {
 						jsonifier::string msgString = "------\n**sorry, but that is either a managed role or it is higher than my highest role! i cannot use it!**\n------";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setColor("fefefe");
 						msgEmbed->setTitle("__**Role_Data issue:**__");
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -231,7 +231,7 @@ namespace discord_core_api {
 
 					jsonifier::string msgString = "\n------\n__**Role_Data:**__ <@&" + currentRole.id + "> \n------";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setTitle("__**new default Role_Data added:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -255,7 +255,7 @@ namespace discord_core_api {
 					if (!isItFound) {
 						jsonifier::string msgString = "------\n**sorry, but the role you entered could not be found! check spelling and case!**\n------";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setColor("fefefe");
 						msgEmbed->setTitle("__**missing/invalud arguments:**__");
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -270,7 +270,7 @@ namespace discord_core_api {
 					jsonifier::string msgString = "\n------\n__**Role_Data**__: <@&" + currentRole.id + ">\n------";
 
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setTitle("__**default Role_Data removed:**__");
 					msgEmbed->setTimeStamp(getTimeAndDate());

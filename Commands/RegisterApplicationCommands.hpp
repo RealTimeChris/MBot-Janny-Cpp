@@ -450,13 +450,13 @@ namespace discord_core_api {
 			createAvatarData.dmPermission			  = false;
 			createAvatarData.defaultMemberPermissions = permission::Use_Application_Commands;
 			createAvatarData.type					  = application_command_type::Chat_Input;
-			createAvatarData.description			  = "displays the getUserImageUrl(user_image_types::Avatar) of a chosen user.";
+			createAvatarData.description			  = "displays the getUserImageUrl<user_image_types::Avatar>() of a chosen user.";
 			createAvatarData.name					  = "avatar";
 			createAvatarData.defaultMemberPermissions = permission::Use_Application_Commands;
 			application_command_option_data createAvatarOptionOne{};
 			createAvatarOptionOne.type		  = application_command_option_type::User_Data;
 			createAvatarOptionOne.name		  = "user";
-			createAvatarOptionOne.description = "which of the users to view the getUserImageUrl(user_image_types::Avatar) of.";
+			createAvatarOptionOne.description = "which of the users to view the getUserImageUrl<user_image_types::Avatar>() of.";
 			createAvatarOptionOne.required	  = true;
 			createAvatarData.options.emplace_back(createAvatarOptionOne);
 

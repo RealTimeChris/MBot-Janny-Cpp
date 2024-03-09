@@ -30,10 +30,8 @@ namespace discord_core_api {
 			try {
 				channel_data channel{ argsNew.getChannelData() };
 
-
 				guild_data guild{ argsNew.getInteractionData().guildId };
 				discord_guild discordGuild{ managerAgent, guild };
-
 				guild_member_data guildMember{ argsNew.getGuildMemberData() };
 
 				snowflake currentVoiceChannelId{};
@@ -41,7 +39,7 @@ namespace discord_core_api {
 					currentVoiceChannelId = guildMember.getVoiceStateData().channelId;
 				} else {
 					discord_core_api::unique_ptr<embed_data> newEmbed{ discord_core_api::makeUnique<embed_data>() };
-					newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed->setDescription("------\n__**sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed->setTimeStamp(getTimeAndDate());
 					newEmbed->setTitle("__**playing issue:**__");
@@ -53,10 +51,10 @@ namespace discord_core_api {
 					return;
 				}
 				stream_info theInfo{};
-				theInfo.address = argsNew.getCommandArguments().values["connectionip"].value.operator jsonifier::string();
+				theInfo.address = argsNew.getCommandArguments().values["connectionip"].operator jsonifier::string();
 				theInfo.port	= 51072;
 				theInfo.type	= stream_type::client;
-				if (argsNew.getCommandArguments().values["botaudio"].value == "1") {
+				if (argsNew.getCommandArguments().values["botaudio"].operator jsonifier::string() == "1") {
 					theInfo.streamBotAudio = true;
 				} else {
 					theInfo.streamBotAudio = false;
@@ -64,7 +62,7 @@ namespace discord_core_api {
 				voice_connection& voiceConnection = guild.connectToVoice(guildMember.user.id, 0, false, false, theInfo);
 				if (!voiceConnection.areWeConnected()) {
 					discord_core_api::unique_ptr<embed_data> newEmbed{ discord_core_api::makeUnique<embed_data>() };
-					newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed->setDescription("------\n__**sorry, but there is no voice connection that is currently held by me!**__\n------");
 					newEmbed->setTimeStamp(getTimeAndDate());
 					newEmbed->setTitle("__**connection issue:**__");
@@ -78,7 +76,7 @@ namespace discord_core_api {
 
 				if (guildMember.getVoiceStateData().channelId == 0 || guildMember.getVoiceStateData().channelId != voiceConnection.getChannelId()) {
 					discord_core_api::unique_ptr<embed_data> newEmbed{ discord_core_api::makeUnique<embed_data>() };
-					newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed->setDescription("------\n__**sorry, but you need to be in a correct voice channel to issue those commands!**__\n------");
 					newEmbed->setTimeStamp(getTimeAndDate());
 					newEmbed->setTitle("__**playing issue:**__");
@@ -94,7 +92,7 @@ namespace discord_core_api {
 				discord_core_client::getSongAPI(guild.id).play();
 
 				discord_core_api::unique_ptr<embed_data> newEmbed{ discord_core_api::makeUnique<embed_data>() };
-				newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl(user_image_types::Avatar));
+				newEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				newEmbed->setDescription("------\n__**congratulations - you've been connected to an audio channel to stream audio!**__\n------");
 				newEmbed->setTimeStamp(getTimeAndDate());
 				newEmbed->setTitle("__**streaming audio:**__");

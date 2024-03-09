@@ -42,13 +42,13 @@ namespace discord_core_api {
 							currentHelpPage += 1;
 						}
 						jsonifier::string newString;
-						newString.pushBack(( char )toupper(value->commandName[0]));
+						newString.emplace_back(( char )toupper(value->commandName[0]));
 						newString += value->commandName.substr(1, value->commandName.size() - 1);
 						select_option_data newData;
 						newData.label		= newString;
 						newData.description = value->helpDescription;
 						newData.value		= convertToLowerCase(newString);
-						value->helpEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						value->helpEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						newData.emoji.name = "✅";
 						bool doWeContinue{ false };
 						for (auto& value02: selectOptions) {
@@ -66,9 +66,9 @@ namespace discord_core_api {
 						counter += 1;
 					}
 					select_option_data newData;
-					newData.label		= "Go Back";
-					newData.description = "go back to the previous menu.";
-					newData.value		= "go back";
+					newData.label		= "Go back";
+					newData.description = "Go back to the previous menu";
+					newData.value		= "Go back";
 					newData.emoji.name	= "❌";
 					jsonifier::vector<jsonifier::vector<select_option_data>> selectOptionsNew;
 					for (auto& value: selectOptions) {
@@ -79,7 +79,7 @@ namespace discord_core_api {
 					uint64_t counter02{ 0 };
 					jsonifier::string messageNew = "------\nSelect which page of help items you would like to view, by clicking a button below!\n------";
 					embed_data newEmbed{};
-					newEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					newEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					newEmbed.setColor("fefefe");
 					newEmbed.setTimeStamp(getTimeAndDate());
 					newEmbed.setDescription(messageNew);
@@ -129,7 +129,7 @@ namespace discord_core_api {
 					jsonifier::vector<respond_to_input_event_data> editInteractionResponseData00;
 					for (auto& value: selectOptionsNew) {
 						embed_data msgEmbed00;
-						msgEmbed00.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed00.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed00.setColor("fefefe");
 						msgEmbed00.setTimeStamp(getTimeAndDate());
 						msgEmbed00.setDescription(msgString);
@@ -145,7 +145,7 @@ namespace discord_core_api {
 					if (buttonData.size() > 0) {
 						if (buttonData.at(0).buttonId == "exit" || buttonData.at(0).buttonId == "empty") {
 							embed_data msgEmbed00;
-							msgEmbed00.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+							msgEmbed00.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 							msgEmbed00.setColor("fefefe");
 							msgEmbed00.setTimeStamp(getTimeAndDate());
 							msgEmbed00.setDescription(messageNew);

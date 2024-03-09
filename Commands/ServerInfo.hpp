@@ -103,11 +103,10 @@ namespace discord_core_api {
 
 				embed_data msgEmbed{};
 				msgEmbed.fields = fields;
-				std::cout << "CURRENT SPLASH URL: " << guild.getGuildImageUrl(guild_image_types::Splash) << std::endl;
-				msgEmbed.setImage(guild.getGuildImageUrl(guild_image_types::Splash));
+				msgEmbed.setImage(guild.getGuildImageUrl<guild_image_types::Icon>() + "?size=4096");
 				msgEmbed.setTitle("__**server info:**__");
 				msgEmbed.setTimeStamp(getTimeAndDate());
-				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.setColor("fefefe");
 				respond_to_input_event_data dataPackage(argsNew.getInputEventData());
 				dataPackage.setResponseType(input_event_response_type::Interaction_Response);

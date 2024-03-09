@@ -39,7 +39,7 @@ namespace discord_core_api {
 
 				if (guild.areWeConnected()) {
 					embed_data msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setDescription("------\n__**i'm disconnecting from the voice channel!**__\n------");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**disconnected:**__");
@@ -52,7 +52,7 @@ namespace discord_core_api {
 					guild.disconnect();
 				} else {
 					embed_data msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setDescription("------\n__**i was already disconnected!**__\n------");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setTitle("__**disconnected:**__");

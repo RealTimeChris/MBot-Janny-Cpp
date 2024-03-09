@@ -50,13 +50,13 @@ namespace discord_core_api {
 				}
 				if (argsNew.getCommandArguments().values.size() > 0 && argsNew.getSubCommandName() == "add") {
 					whatAreWeDoing		  = "add";
-					size_t argOne				  = argsNew.getCommandArguments().values["user"].value.operator size_t();
-					jsonifier::string argTwo	  = argsNew.getCommandArguments().values["reason"].value.operator jsonifier::string();
+					size_t argOne				  = argsNew.getCommandArguments().values["user"].operator size_t();
+					jsonifier::string argTwo	  = argsNew.getCommandArguments().values["reason"].operator jsonifier::string();
 					ghostReason			  = argTwo;
 					userId						  = argOne;
 				} else if (argsNew.getCommandArguments().values.size() > 0 && argsNew.getSubCommandName() == "remove") {
 					whatAreWeDoing		  = "remove";
-					jsonifier::string argOne	  = argsNew.getCommandArguments().values["user"].value.operator jsonifier::string();
+					jsonifier::string argOne	  = argsNew.getCommandArguments().values["user"].operator jsonifier::string();
 					jsonifier::string userIDOne = argOne;
 					userId						  = jsonifier::strToUint64(userIDOne);
 				}
@@ -75,7 +75,7 @@ namespace discord_core_api {
 					jsonifier::string msgString = "------\n**hello! you've been redacted, on the server " + jsonifier::string{ guild.name } + " for the following reason(s): " + ghostReason +
 						"\n please, contact a moderator or admin to clear this issue up! thanks!**\n------";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -89,7 +89,7 @@ namespace discord_core_api {
 					if (targetGuildMember.user.id == 0) {
 						jsonifier::string msgStringNew = "------\n**hello! there was an error while trying to ghost <@" + userId + ">**\n------\n";
 						unique_ptr<embed_data> msgEmbedNew{ makeUnique<embed_data>() };
-						msgEmbedNew->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+						msgEmbedNew->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbedNew->setColor("fefefe");
 						msgEmbedNew->setDescription(msgStringNew);
 						msgEmbedNew->setTimeStamp(getTimeAndDate());
@@ -107,7 +107,7 @@ namespace discord_core_api {
 					jsonifier::string msgString2 = "------\n**hello! you've ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
 						jsonifier::string{ targetGuildMember.getUserData().userName } + ")\n------";
 					embed_data msgEmbed2;
-					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar));
+					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl<guild_member_image_types::Avatar>());
 					msgEmbed2.setColor("fefefe");
 					msgEmbed2.setDescription(msgString2);
 					msgEmbed2.setTimeStamp(getTimeAndDate());
@@ -126,7 +126,7 @@ namespace discord_core_api {
 					msgString += "------";
 
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -156,7 +156,7 @@ namespace discord_core_api {
 					if (targetGuildMember.user.id == 0 || !isItThere) {
 						jsonifier::string msgString = "------\n**hello! there was an error while trying to un-ghost <@" + userId + ">**\n------\n";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setColor("fefefe");
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -172,7 +172,7 @@ namespace discord_core_api {
 					discordGuild.writeDataToDB(managerAgent);
 					jsonifier::string msgString = "------\n**hello! you\'ve had your redacted status removed! have a great day!**\n------";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(discord_core_client::getInstance()->getBotUser().userName, discord_core_client::getInstance()->getBotUser().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -186,7 +186,7 @@ namespace discord_core_api {
 					jsonifier::string msgString2 = "------\n**hello! you've un-ghosted the following member:** <@" + targetGuildMember.user.id + "> (" +
 						jsonifier::string{ targetGuildMember.getUserData().userName } + ")\n------";
 					embed_data msgEmbed2;
-					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl(guild_member_image_types::Avatar));
+					msgEmbed2.setAuthor(sendingGuildMember.getUserData().userName, sendingGuildMember.getGuildMemberImageUrl<guild_member_image_types::Avatar>());
 					msgEmbed2.setColor("fefefe");
 					msgEmbed2.setDescription(msgString2);
 					msgEmbed2.setTimeStamp(getTimeAndDate());

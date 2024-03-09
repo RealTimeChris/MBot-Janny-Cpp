@@ -52,11 +52,11 @@ namespace discord_core_api {
 				int64_t numberOfMinutesToWait{ 0 };
 				try {
 					if (argsNew.getCommandArguments().values.size() > 1) {
-						if (argsNew.getCommandArguments().values["minutestosave"].value.operator std::streamoff() <= 0) {
+						if (argsNew.getCommandArguments().values["minutestosave"].operator std::streamoff() <= 0) {
 							jsonifier::string msgString = "------\n**please enter a valid number of minutes to save the messages for! (!setdeletionstatus = "
 													"add/remove, amountofmessagestosave, numberofminutestowaituntildeleted)**\n------";
 							unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 							msgEmbed->setColor("fefefe");
 							msgEmbed->setDescription(msgString);
 							msgEmbed->setTimeStamp(getTimeAndDate());
@@ -67,14 +67,14 @@ namespace discord_core_api {
 							auto event01 = input_events::respondToInputEventAsync(dataPackage).get();
 							return;
 						} else {
-							numberOfMinutesToWait = argsNew.getCommandArguments().values["minutestosave"].value.operator size_t();
+							numberOfMinutesToWait = argsNew.getCommandArguments().values["minutestosave"].operator size_t();
 						}
 					}
 				} catch (const std::exception&) {
 					jsonifier::string msgString = "------\n**please enter a valid number of minutes to save the messages for! (!setdeletionstatus = add/remove, "
 											"amountofmessagestosave, numberofminutestowaituntildeleted)**\n------";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -89,7 +89,7 @@ namespace discord_core_api {
 				if (argsNew.getCommandArguments().values.size() > 1) {
 					whatAreWeDoing = convertToLowerCase(argsNew.getSubCommandName());
 					std::cmatch howManyMatch;
-					howManyBack = argsNew.getCommandArguments().values["quantity"].value.operator size_t();
+					howManyBack = argsNew.getCommandArguments().values["quantity"].operator size_t();
 				} else if (argsNew.getCommandArguments().values.size() >= 0) {
 					whatAreWeDoing = convertToLowerCase(argsNew.getSubCommandName());
 					howManyBack	   = 0;
@@ -119,7 +119,7 @@ namespace discord_core_api {
 					msgString += "------";
 
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -147,7 +147,7 @@ namespace discord_core_api {
 					if (isItFound == true) {
 						jsonifier::string msgString = "------\n**this channel has already been added! i will update your number of saved messages though!**\n------";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setColor("fefefe");
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -175,7 +175,7 @@ namespace discord_core_api {
 						", or messages older than " + jsonifier::toString(currentDeletionChannel->minutesToWaitUntilDeleted) +
 						" minutes are being purged, in this channel.** __\n------";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());
@@ -210,7 +210,7 @@ namespace discord_core_api {
 					if (isItFound == false) {
 						jsonifier::string msgString = "------\n**sorry, but this channel could not be found in the list of active deletion channels!**\n------";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setColor("fefefe");
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setTimeStamp(getTimeAndDate());
@@ -227,7 +227,7 @@ namespace discord_core_api {
 
 					jsonifier::string msgString = "\n------\n__**channel_data name:**__ <#" + currentDeletionChannel->channelId + "> \n------";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setColor("fefefe");
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setTimeStamp(getTimeAndDate());

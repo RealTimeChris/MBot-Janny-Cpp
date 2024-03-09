@@ -681,7 +681,7 @@ namespace discord_core_api {
 		inline discord_guild() noexcept = default;
 		discord_guild_data data{};
 
-		inline discord_guild(database_manager_agent& other, guild_cache_data guildData) {
+		inline discord_guild(database_manager_agent& other, guild_data guildData) {
 			this->data.guildId	   = guildData.id;
 			this->data.guildName   = guildData.name;
 			this->data.memberCount = guildData.memberCount;
@@ -715,7 +715,7 @@ namespace discord_core_api {
 
 		inline discord_guild_member() noexcept = default;
 
-		inline discord_guild_member(database_manager_agent& other, guild_member_cache_data guildMemberData) {
+		inline discord_guild_member(database_manager_agent& other, guild_member_data guildMemberData) {
 			this->data.guildMemberId = guildMemberData.user.id;
 			this->data.guildId		 = guildMemberData.guildId.operator const uint64_t&();
 			this->data.globalId		 = this->data.guildId.operator jsonifier::string() + " + " + this->data.guildMemberId;

@@ -33,7 +33,7 @@ namespace discord_core_api {
 				guild_data guild{ argsNew.getInteractionData().guildId };
 
 				discord_guild discordGuild{ managerAgent, guild };
-				snowflake userId{ jsonifier::strToUint64(argsNew.getCommandArguments().values["user"].value.operator jsonifier::string()) };
+				snowflake userId{ jsonifier::strToUint64(argsNew.getCommandArguments().values["user"].operator jsonifier::string()) };
 				guild_member_data guildMember = guild_members::getCachedGuildMember({ .guildMemberId = userId, .guildId = guild.id });
 				user_data theUser			= users::getUserAsync({ .userId = argsNew.getUserData().id }).get();
 				jsonifier::vector<embed_field_data> fields;
@@ -107,8 +107,8 @@ namespace discord_core_api {
 				msgEmbed.setColor("fefefe");
 				msgEmbed.setTimeStamp(getTimeAndDate());
 				msgEmbed.setTitle("__**user_data info:**__");
-				msgEmbed.setImage(guildMember.getUserData().getUserImageUrl(user_image_types::Avatar) + "?size=4096");
-				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+				msgEmbed.setImage(guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>() + "?size=4096");
+				msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 				msgEmbed.fields = fields;
 				respond_to_input_event_data dataPackage02(argsNew.getInputEventData());
 				dataPackage02.addMessageEmbed(msgEmbed);

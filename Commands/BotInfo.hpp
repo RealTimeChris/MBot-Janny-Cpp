@@ -34,8 +34,8 @@ namespace discord_core_api {
 					userCount += value.memberCount;
 				}
 				embed_data messageEmbed;
-				messageEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
-				messageEmbed.setImage(discord_core_client::getInstance()->getBotUser().getUserImageUrl(user_image_types::Avatar));
+				messageEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
+				messageEmbed.setImage(discord_core_client::getInstance()->getBotUser().getUserImageUrl<user_image_types::Avatar>());
 				messageEmbed.setColor("fefefe");
 				messageEmbed.setTitle("__**Bot Info:**__");
 				messageEmbed.setTimeStamp(getTimeAndDate());
@@ -50,13 +50,13 @@ namespace discord_core_api {
 				messageEmbed.addField("__Running On:__", "[DiscordCoreAPI bot library](https://discordcoreapi.com)", true);
 				messageEmbed.addField("__Created By:__", "<@1030016136735100928>", true);
 				auto timePassed = discord_core_client::getInstance()->getTotalUpTime().count() > 0 ? discord_core_client::getInstance()->getTotalUpTime().count() : 0;
-				int64_t millisecondsPerSecond{ 1000 };
-				int64_t millisecondsPerMinute{ millisecondsPerSecond * 60 };
-				int64_t millisecondsPerHour{ millisecondsPerMinute * 60 };
-				int64_t millisecondsPerDay{ millisecondsPerHour * 24 };
-				int64_t daysPassed	  = ( int64_t )trunc(timePassed / millisecondsPerDay);
+				static constexpr int64_t millisecondsPerSecond{ 1000 };
+				static constexpr int64_t millisecondsPerMinute{ millisecondsPerSecond * 60 };
+				static constexpr int64_t millisecondsPerHour{ millisecondsPerMinute * 60 };
+				static constexpr int64_t millisecondsPerDay{ millisecondsPerHour * 24 };
+				int64_t daysPassed	   = ( int64_t )trunc(timePassed / millisecondsPerDay);
 				int64_t hoursPassed	  = ( int64_t )trunc((timePassed % millisecondsPerDay) / millisecondsPerHour);
-				int64_t minutesPassed = ( int64_t )trunc(((timePassed % millisecondsPerDay) % millisecondsPerHour) / millisecondsPerMinute);
+				int64_t minutesPassed  = ( int64_t )trunc(((timePassed % millisecondsPerDay) % millisecondsPerHour) / millisecondsPerMinute);
 
 				int64_t secondsPassed = ( int64_t )trunc((((timePassed % millisecondsPerDay) % millisecondsPerHour) % millisecondsPerMinute) / millisecondsPerSecond);
 				jsonifier::string string{ jsonifier::toString(daysPassed) + " days, " + jsonifier::toString(hoursPassed) + " hours, " + jsonifier::toString(minutesPassed) +

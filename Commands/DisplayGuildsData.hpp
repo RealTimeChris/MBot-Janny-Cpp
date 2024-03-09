@@ -28,7 +28,7 @@ namespace discord_core_api {
 
 		void execute(const base_function_arguments& argsNew) {
 			try {
-				channel_cache_data channel{ argsNew.getChannelData() };
+				channel_data channel{ argsNew.getChannelData() };
 
 				int32_t currentCount				  = 0;
 				jsonifier::vector<guild_data> theCache = guilds::getAllGuildsAsync();
@@ -40,15 +40,15 @@ namespace discord_core_api {
 					msgString += "__Guild id:__ " + valueNew.id + "\n";
 					msgString += "__Member count:__ " + jsonifier::toString(valueNew.memberCount) + "\n";
 
-					user_cache_data owner = users::getCachedUser({ valueNew.ownerId });
+					user_data owner = users::getCachedUser({ valueNew.ownerId });
 					msgString += jsonifier::string{ "__Guild owner:__ <@!" } + valueNew.ownerId.operator jsonifier::string() + jsonifier::string{ "> " } + owner.userName +
 						jsonifier::string{ "#" } + jsonifier::string{ owner.discriminator } + jsonifier::string{ "\n" };
 					msgString += "__Created at:__ " + valueNew.id.getCreatedAtTimeStamp();
 
 					embed_data msgEmbed{};
-					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setColor("fefefe");
-					msgEmbed.setImage(valueNew.getGuildImageUrl(guild_image_types::Icon));
+					msgEmbed.setImage(valueNew.getGuildImageUrl<guild_image_types::Icon>());
 					msgEmbed.setTitle("__**guild data " + jsonifier::toString(currentCount + 1) + " of " + jsonifier::toString(theCache.size()) + "**__");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					msgEmbed.setDescription(msgString);

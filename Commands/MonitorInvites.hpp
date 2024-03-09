@@ -50,7 +50,7 @@ namespace discord_core_api {
 					jsonifier::string msgString =
 						"**------\nNice! you've activated invite tracking by adding the channel <#" + channel.id + "> as the tracking channel for the invites!\n------** ";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setColor("fefefe");
@@ -66,7 +66,7 @@ namespace discord_core_api {
 					jsonifier::string msgString =
 						"**------\nNice! you've de-activated invite tracking by removing the channel <#" + channel.id + "> as the tracking channel for the invites!\n------** ";
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setDescription(msgString);
 					msgEmbed->setColor("fefefe");
@@ -132,7 +132,7 @@ namespace discord_core_api {
 					if (descriptionStrings.size() == 0) {
 						jsonifier::string msgString = "**------\nLooks like there's no stored invites!\n------**";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setTimeStamp(getTimeAndDate());
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setColor("fefefe");
@@ -141,7 +141,7 @@ namespace discord_core_api {
 					} else {
 						for (uint32_t x = 0; x < descriptionStrings.size(); x += 1) {
 							unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+							msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 							msgEmbed->setTimeStamp(getTimeAndDate());
 							msgEmbed->setDescription(descriptionStrings[x]);
 							msgEmbed->setColor("fefefe");
@@ -297,7 +297,7 @@ namespace discord_core_api {
 				pastPart:
 					embed_data msgEmbed{};
 					auto botUser = argsNew.guildMemberData.getUserData();
-					msgEmbed.setAuthor(botUser.userName, botUser.getUserImageUrl(user_image_types::Avatar));
+					msgEmbed.setAuthor(botUser.userName, botUser.getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed.setColor("fefefe");
 					msgEmbed.setTimeStamp(getTimeAndDate());
 					if (guildMemberInviterData.user.id != 0) {

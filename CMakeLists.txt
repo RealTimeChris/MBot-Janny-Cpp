@@ -21,9 +21,9 @@
 # CMakeLists.txt - The CMake script for building this library.
 # May 13, 2021
 # https://discordcoreapi.com
-set(LOCAL TRUE)
 
 set(VCPKG_ROOT_DIR "C:/vcpkg")
+#set(Jsonifier_DIR "C:/Users/Chris/source/repos/Jsonifier/Install/Windows-Release/share/jsonifier")
 
 if (WIN32)
 	set(OS "windows")
@@ -45,7 +45,7 @@ if (EXISTS "${VCPKG_INSTALLATION_ROOT_NEW}")
 	set(bsoncxx_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/bsoncxx")
 	set(ZLIB_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/zlib")
 	set(OPENSSL_ROOT_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/")
-	set(Jsonifier_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/jsonifier")
+	#set(Jsonifier_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/jsonifier")
 	set(Opus_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/opus")
 	set(unofficial-sodium_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/unofficial-sodium")
 	set(DiscordCoreAPI_DIR "${VCPKG_INSTALLATION_ROOT_NEW}/installed/x64-${OS}/share/discordcoreapi")

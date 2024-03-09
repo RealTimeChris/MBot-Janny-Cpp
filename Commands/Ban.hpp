@@ -69,15 +69,15 @@ namespace discord_core_api {
 				int32_t daysDigit = 0;
 
 				if (argsNew.getCommandArguments().values.size() > 2 && argsNew.getCommandArguments().values.contains("reason")) {
-					reason = argsNew.getCommandArguments().values["reason"].value.operator jsonifier::string();
+					reason = argsNew.getCommandArguments().values["reason"].operator jsonifier::string();
 				}
 				if (argsNew.getCommandArguments().values.size() > 3) {
-					if (argsNew.getCommandArguments().values["numberofdaystopurge"].value.operator size_t() > 7 ||
-						argsNew.getCommandArguments().values["numberofdaystopurge"].value.operator size_t() < 0) {
+					if (argsNew.getCommandArguments().values["numberofdaystopurge"].operator size_t() > 7 ||
+						argsNew.getCommandArguments().values["numberofdaystopurge"].operator size_t() < 0) {
 						jsonifier::string msgString = "------\n**please, enter a proper number of days for purging the user's messages (0-7) (!ban = @usermention, "
 												"reason, #ofdaystopurge)**\n------";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setColor("fefefe");
 						msgEmbed->setTitle("__**missing or invalid parameters:**__");
@@ -88,7 +88,7 @@ namespace discord_core_api {
 						argsNewer = input_events::respondToInputEventAsync(dataPackage).get();
 						return;
 					} else {
-						daysDigit = argsNew.getCommandArguments().values["numberofdaystopurge"].value.operator size_t();
+						daysDigit = argsNew.getCommandArguments().values["numberofdaystopurge"].operator size_t();
 					}
 				}
 				whatAreWeDoing = argsNew.getSubCommandName();
@@ -114,7 +114,7 @@ namespace discord_core_api {
 					if (highestUserRolePosition >= highestBotRolePosition) {
 						jsonifier::string msgString = "------\n**sorry, but i cannot ban them as their highest role is higher than mine!**\n------";
 						unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl(user_image_types::Avatar));
+						msgEmbed->setAuthor(argsNew.getUserData().userName, argsNew.getUserData().getUserImageUrl<user_image_types::Avatar>());
 						msgEmbed->setDescription(msgString);
 						msgEmbed->setColor("fefefe");
 						msgEmbed->setTitle("__**missing or invalid parameters:**__");
@@ -157,7 +157,7 @@ namespace discord_core_api {
 							}
 							newData.userId	  = userId;
 							newData.userName  = userNew.userName;
-							newData.avatarUrl = userNew.getUserImageUrl(user_image_types::Avatar);
+							newData.avatarUrl = userNew.getUserImageUrl<user_image_types::Avatar>();
 							newData.bannedAt  = getTimeAndDate();
 							newData.reason	  = reason;
 							discordGuild.data.userBanInfo[x].userBans.emplace_back(newData);
@@ -167,7 +167,7 @@ namespace discord_core_api {
 							jsonifier::string msgString = "------\n**nicely done! you owned that motherfucker " + jsonifier::string{ userNew.userName } +
 								" good!**\nYour current ban count is: " + jsonifier::toString(discordGuild.data.userBanInfo[x].userBans.size()) + "\n------";
 							unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-							msgEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl(user_image_types::Avatar));
+							msgEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>());
 							msgEmbed->setDescription(msgString);
 							msgEmbed->setColor("fefefe");
 							msgEmbed->setTitle("__**succesful ban:**__");
@@ -193,7 +193,7 @@ namespace discord_core_api {
 						}
 					} while (bans.size() > 0); 
 					unique_ptr<embed_data> msgEmbed{ makeUnique<embed_data>() };
-					msgEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl(user_image_types::Avatar));
+					msgEmbed->setAuthor(guildMember.getUserData().userName, guildMember.getUserData().getUserImageUrl<user_image_types::Avatar>());
 					msgEmbed->setDescription("------\n__**The number of bans in this server is:**__\n------\n__**" + convertToNumberEmoji(bansFinal.size()) + "**__\n------\n");
 					msgEmbed->setTimeStamp(getTimeAndDate());
 					msgEmbed->setTitle("__**Banned users:**__");

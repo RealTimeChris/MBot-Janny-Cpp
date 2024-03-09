@@ -22,13 +22,21 @@
 # May 13, 2021
 # https://discordcoreapi.com
 # Set this value...
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-	set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/windows-debug-dev/share/discordcoreapi/")
+if (ASAN_ENABLED)
+	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/out/Install/Windows-Debug-Asan/share/discordcoreapi/")
+	else()
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/out/Install/Windows-Release-Asan/share/discordcoreapi/")
+	endif()
 else()
-	set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/Install/windows-release-dev/share/discordcoreapi/")
+	if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/out/install/x64-debug/share/discordcoreapi")
+	else()
+		set(DiscordCoreAPI_DIR "C:/Users/Chris/source/repos/DiscordCoreAPI/out/install/x64-release/share/discordcoreapi")
+	endif()
 endif()
 
-include("${CMAKE_SOURCE_DIR}/CMake/GenerateProductVersion.cmake")
+include("GenerateProductVersion")
 generate_product_version(
 	PRODUCT_INFO
 	NAME "${PROJECT_NAME}"
@@ -42,7 +50,7 @@ generate_product_version(
 
 add_executable(
 	"${PROJECT_NAME}"
-	"./../Janny.cpp"
+	"../Janny.cpp"
 	"${PRODUCT_INFO}"
 )
 
@@ -66,57 +74,13 @@ set_target_properties(
 	"$<$<CXX_COMPILER_ID:MSVC>:$<$<CONFIG:Release>:COMPILE_PDB_OUTPUT_DIR ${CMAKE_BINARY_DIR}>>"
 	"$<$<CXX_COMPILER_ID:MSVC>:$<$<CONFIG:Release>:COMPILE_PDB_NAME ${PROJECT_NAME}>>"
 )
-
-if (LOCAL)
-	find_package(unofficial-sodium CONFIG REQUIRED)
-	find_package(DiscordCoreAPI CONFIG REQUIRED)
-	find_package(mongocxx CONFIG REQUIRED)
-	find_package(Opus CONFIG REQUIRED)
-	find_package(OpenSSL REQUIRED)
-else()
-	include(FetchContent)
-		FetchContent_Declare(
-		DiscordCoreAPI
-		GIT_REPOSITORY https://github.com/RealTimeChris/DiscordCoreAPI
-		GIT_TAG "${BRANCH}"
-	)
-	FetchContent_MakeAvailable(DiscordCoreAPI)
-
-	FetchContent_Declare(
-		Jsonifier
-		GIT_REPOSITORY https://github.com/RealTimeChris/Jsonifier
-		GIT_TAG "${BRANCH}"
-	)
-	FetchContent_MakeAvailable(Jsonifier)
-
-	FetchContent_Declare(
-		unofficial-sodium
-		GIT_REPOSITORY https://github.com/jedisct1/libsodium
-		GIT_TAG master
-	)
-	FetchContent_MakeAvailable(unofficial-sodium)
-
-	FetchContent_Declare(
-		Opus
-		GIT_REPOSITORY https://github.com/xiph/opus
-		GIT_TAG master
-	)
-	FetchContent_MakeAvailable(Opus)
-
-	FetchContent_Declare(
-		OpenSSL
-		GIT_REPOSITORY https://github.com/openssl/openssl
-		GIT_TAG master
-	)
-	FetchContent_MakeAvailable(OpenSSL)
-
-	FetchContent_Declare(
-		mongocxx 
-		GIT_REPOSITORY https://github.com/mongodb/mongo-cxx-driver
-		GIT_TAG master
-	)
-	FetchContent_MakeAvailable(mongocxx)
-endif()
+include(FetchContent)
+	
+find_package(unofficial-sodium CONFIG REQUIRED)
+find_package(DiscordCoreAPI CONFIG REQUIRED)
+find_package(mongocxx CONFIG REQUIRED)
+find_package(Opus CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 target_link_libraries(
 	"${PROJECT_NAME}" PUBLIC
@@ -155,5 +119,5 @@ endif()
 install(
 	FILES 
 	"$<TARGET_FILE:${PROJECT_NAME}>"
-	DESTINATION "./"
+	DESTINATION "${CMAKE_INSTALL_PREFIX}"
 )
